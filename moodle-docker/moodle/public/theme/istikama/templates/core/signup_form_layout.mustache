@@ -1,0 +1,40 @@
+<div class="login-page active" id="login-page" style="display: flex;">
+  <div class="login-left">
+    <img src="/local/istikama_admin/pix/landing/istakama-banner.jpg" alt="Mosque at dusk">
+    <div class="overlay"></div>
+    <div class="content">
+      {{#istikama_logourl}}
+        <img src="{{istikama_logourl}}" alt="Istikama Logo" style="max-height: 80px; width: auto; margin-bottom: 24px; position: relative;">
+      {{/istikama_logourl}}
+      {{^istikama_logourl}}
+        <div class="logo-circle">إ</div>
+      {{/istikama_logourl}}
+      <h1>Join <span class="accent">Istikama</span></h1>
+      <p>Start your journey of knowledge. Create an account to access comprehensive Quranic sciences education.</p>
+      <div class="golden-divider" style="margin-top:32px"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+    </div>
+  </div>
+  <div class="login-right geometric-pattern" style="overflow-y: auto; max-height: 100vh;">
+    <div class="login-form fade-in-up" style="max-width: 100%;">
+      <div class="mobile-logo-login">
+        {{#istikama_compactlogourl}}
+          <img src="{{istikama_compactlogourl}}" alt="Istikama Logo" style="max-height: 56px; width: auto; margin: 0 auto 8px auto;">
+        {{/istikama_compactlogourl}}
+        {{^istikama_compactlogourl}}
+          <div class="logo-circle">إ</div>
+        {{/istikama_compactlogourl}}
+        <h2>Istikama</h2>
+      </div>
+      <h2>{{#str}} newaccount {{/str}}</h2>
+      <p class="subtitle">Register to begin your learning journey</p>
+      
+      <div class="istikama-mform-override">
+        {{{formhtml}}}
+      </div>
+      
+      <p class="signup">Already have an account? <a href="/login/index.php">Sign In</a></p>
+      
+      <div class="back-link"><a href="/">← Back to Home</a></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="isti-card isti-mb-lg">
+    <div class="isti-card-header">
+        <h5><i class="fa fa-question-circle"></i> {{#str}}quizbank, local_istikama_admin{{/str}}</h5>
+    </div>
+    <div class="isti-card-body">
+        <div class="isti-action-row isti-mb-md">
+            <a class="isti-btn isti-btn-outline" href="{{corequestionbankurl}}">
+                <i class="fa fa-database"></i> Question bank
+            </a>
+            <a class="isti-btn isti-btn-primary" href="{{corequizcreateurl}}">
+                <i class="fa fa-plus"></i> Create quiz activity
+            </a>
+        </div>
+        <form method="post" action="{{baseurl}}" class="isti-row" style="align-items:flex-end">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <input type="hidden" name="action" value="addquiztemplate">
+            <div class="isti-col-4">
+                <label class="isti-form-label">Template name</label>
+                <input class="isti-form-input" type="text" name="quizname" placeholder="Template name" required>
+            </div>
+            <div class="isti-col-3">
+                <label class="isti-form-label">Quiz type</label>
+                <select class="isti-form-select" name="quiztype">
+                    <option value="online">Quiz (Online)</option>
+                    <option value="inperson">حضوري (In-person)</option>
+                </select>
+            </div>
+            <div class="isti-col-3">
+                <label class="isti-form-label">Questions JSON</label>
+                <input class="isti-form-input" type="text" name="questions_json" placeholder="[Q1, Q2, ...] IDs" required>
+            </div>
+            <div class="isti-col-2">
+                <button type="submit" class="isti-btn isti-btn-secondary" style="width:100%">
+                    <i class="fa fa-save"></i> Save template
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

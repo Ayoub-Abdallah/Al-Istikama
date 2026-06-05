@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/create_question.php /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/activities.php)",
+      "Bash(grep -n 'if \\($oldversion <' /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/db/upgrade.php)",
+      "Bash(grep -n 'if \\(\\\\$oldversion\\\\|return true\\\\|^}' /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/db/upgrade.php)",
+      "Bash(php -l /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/lang/en/local_istikama_admin.php)",
+      "Bash(php -l /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/lang/ar/local_istikama_admin.php)",
+      "Bash(php -l /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/lang/fr/local_istikama_admin.php)",
+      "Bash(php -l /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/teacher.php)",
+      "Bash(grep -n \"#page,\\\\|#page-wrapper,\\\\|#page-content {\" /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/styles/istikama_dashboard.css)",
+      "Bash(php -l /home/ayoub/istikama/moodle-docker/moodle/local/istikama_admin/add_library_content.php)",
+      "Bash(docker exec istikama-moodle_app php -r ' *)",
+      "Bash(grep -v \"^$\\\\|Deprecated\\\\|deprecated\\\\|Warning:\")"
+    ]
+  }
+}

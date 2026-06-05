@@ -1,0 +1,26 @@
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}} style="margin: 0 !important; padding: 0 !important; overflow-x: hidden;">
+{{! Isolated gold theme for auth pages — re-maps --golden to gold on .login-page only }}
+<link rel="stylesheet" href="/local/istikama_admin/styles/landing.css?v=1">
+{{> core/local/toast/wrapper}}
+
+<div style="display: none;">
+    {{{ output.standard_top_of_body_html }}}
+</div>
+
+<!-- ABSOLUTELY NO WRAPPERS. 100% UNRESTRICTED -->
+{{{ output.main_content }}}
+
+<div style="display: none;">
+    {{{ output.standard_after_main_region_html }}}
+</div>
+
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+  M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

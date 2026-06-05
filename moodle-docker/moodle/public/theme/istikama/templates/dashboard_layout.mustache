@@ -1,0 +1,713 @@
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}} data-istikama-tier="{{tier}}" data-istikama-level="{{userlevel}}">
+<script>
+/* Apply dark-mode preference synchronously to avoid a flash of light content.
+   ── TEMPORARILY DISABLED (2026-06) alongside the hidden dark-mode toggle ──
+   The dark-mode CSS + toggle JS are all preserved. To fully restore dark mode,
+   un-comment the line below AND remove style="display:none" hidden from the
+   #istiDarkModeToggle button later in this file. Nothing else is needed. */
+/* (function(){ try { if (localStorage.getItem('isti-dark-mode') === '1') { document.body.classList.add('dark-mode'); } } catch(e) {} })(); */
+
+/* Global safety net for legacy Moodle / 3rd-party JS that calls
+   addEventListener on null elements (boost drawer, block-level tour init,
+   etc.). We log but never let the dashboard die because of these. */
+(function() {
+    window.addEventListener('error', function(e) {
+        var msg = e && e.message ? String(e.message) : '';
+        if (msg.indexOf("Cannot read properties of null") !== -1 ||
+            msg.indexOf("Cannot read property 'addEventListener'") !== -1 ||
+            msg.indexOf("null is not an object") !== -1) {
+            if (window.console && console.warn) {
+                console.warn('[istikama] Suppressed dashboard JS error:', msg, e.filename + ':' + e.lineno);
+            }
+            e.preventDefault();
+            return true;
+        }
+    }, true);
+    window.addEventListener('unhandledrejection', function(e) {
+        if (window.console && console.warn) {
+            console.warn('[istikama] Unhandled promise rejection (suppressed):', e.reason);
+        }
+        e.preventDefault();
+    });
+})();
+</script>
+{{> core/local/toast/wrapper}}
+{{{ output.standard_top_of_body_html }}}
+
+{{! ── Global Istikama Fonts ── }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap">
+
+<link rel="stylesheet" href="/local/istikama_admin/styles/istikama_dashboard.css?v=19">
+<link rel="stylesheet" href="/local/istikama_admin/styles/istikama_admin.css?v=29">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="isti-sidebar" id="istiSidebar">
+    <div class="isti-sidebar-brand" title="{{schoolbrandname}}">
+        {{#schoolbrandlogo}}
+        {{#isplatformlogo}}
+        <img src="{{schoolbrandlogo}}" alt="{{schoolbrandname}}" class="isti-sidebar-logo">
+        {{/isplatformlogo}}
+        {{^isplatformlogo}}
+        <img src="{{schoolbrandlogo}}" alt="{{schoolbrandname}}" class="isti-sidebar-logo isti-school-logo">
+        {{/isplatformlogo}}
+        {{/schoolbrandlogo}}
+        {{^schoolbrandlogo}}
+        <div class="isti-sidebar-brand-badge">{{schoolbrandinitial}}</div>
+        {{/schoolbrandlogo}}
+        {{! Platform-wide roles (admin / technical professor) show the logo only — no name }}
+        {{^isplatformlogo}}
+        <div class="isti-sidebar-brand-text">
+            <span class="isti-sidebar-brand-name">{{schoolbrandname}}</span>
+        </div>
+        {{/isplatformlogo}}
+    </div>
+
+    <nav class="isti-sidebar-nav">
+        <div class="isti-sidebar-section">
+            <div class="isti-sidebar-section-title">{{#str}}dash_menu, local_istikama_admin{{/str}}</div>
+            {{#sidebaritems}}
+            <a href="{{url}}" class="isti-nav-item {{#active}}active{{/active}}">
+                <i class="fa {{icon}}"></i>
+                <span>{{label}}</span>
+            </a>
+            {{/sidebaritems}}
+        </div>
+    </nav>
+
+    <div class="isti-sidebar-footer">
+        <a href="{{logouturl}}" class="isti-nav-item" style="color:#f87171;">
+            <i class="fa fa-sign-out-alt"></i>
+            <span>{{#str}}logout{{/str}}</span>
+        </a>
+    </div>
+</aside>
+
+<!-- ═══ SIDEBAR OVERLAY (mobile) ═══ -->
+<div class="isti-sidebar-overlay" id="istiSidebarOverlay"></div>
+
+<!-- ═══ TOPBAR ═══ -->
+<header class="isti-topbar" id="istiTopbar">
+    <button class="isti-topbar-toggle" id="istiSidebarToggle" aria-label="Toggle sidebar">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <div class="isti-topbar-search" id="istiSearchWrap">
+        <i class="fa fa-search"></i>
+        <input type="text" placeholder="{{#str}}dash_search_ph, local_istikama_admin{{/str}}" id="istiGlobalSearch" autocomplete="off" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="istiSearchDropdown">
+        <span class="isti-search-spinner" id="istiSearchSpinner" aria-hidden="true"></span>
+        <div class="isti-search-dropdown" id="istiSearchDropdown" role="listbox"></div>
+    </div>
+
+    <div class="isti-topbar-actions">
+        {{!
+            ── DARK MODE TOGGLE — TEMPORARILY HIDDEN (2026-06) ──
+            The button is hidden from the UI only. NONE of the dark-mode code is
+            removed: the element still exists in the DOM (so the JS in this file
+            that wires #istiDarkModeToggle keeps working), the dark-mode CSS layer
+            and the synchronous localStorage applier at the top of <body> are all
+            intact. To restore: delete the inline style="display:none" + hidden
+            attribute below. That's the only change needed to bring it back.
+        }}
+        <button class="isti-topbar-btn" title="Dark mode" id="istiDarkModeToggle" style="display:none" hidden aria-hidden="true">
+            <i class="fa fa-moon"></i>
+        </button>
+
+        {{#langmenu}}
+            {{> theme_boost/language_menu }}
+        {{/langmenu}}
+
+        {{{ output.navbar_plugin_output }}}
+
+        <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+            {{#usermenu}}
+                {{> core/user_menu }}
+            {{/usermenu}}
+        </div>
+
+        {{{ output.edit_switch }}}
+    </div>
+</header>
+
+<!-- ═══ GLOBAL SEARCH (permission-aware dropdown) ═══ -->
+<script>
+(function(){
+  var input = document.getElementById('istiGlobalSearch');
+  var dd    = document.getElementById('istiSearchDropdown');
+  var wrap  = document.getElementById('istiSearchWrap');
+  var spin  = document.getElementById('istiSearchSpinner');
+  if(!input || !dd) return;
+
+  var SEARCH_URL = '/local/istikama_admin/search.php';
+  var STR = {
+    recent:   {{#quote}}{{#str}}search_recent, local_istikama_admin{{/str}}{{/quote}},
+    none:     {{#quote}}{{#str}}search_no_results, local_istikama_admin{{/str}}{{/quote}},
+    clear:    {{#quote}}{{#str}}search_clear_recent, local_istikama_admin{{/str}}{{/quote}}
+  };
+  var CATS = {
+    pages:   {{#quote}}{{#str}}search_cat_pages, local_istikama_admin{{/str}}{{/quote}},
+    users:   {{#quote}}{{#str}}search_cat_users, local_istikama_admin{{/str}}{{/quote}},
+    courses: {{#quote}}{{#str}}search_cat_courses, local_istikama_admin{{/str}}{{/quote}},
+    admin:   {{#quote}}{{#str}}search_cat_admin, local_istikama_admin{{/str}}{{/quote}}
+  };
+  var RECENT_KEY = 'isti-search-recent';
+  var timer=null, lastQ='', items=[], active=-1, open=false;
+
+  function esc(s){ var d=document.createElement('div'); d.textContent=(s==null?'':String(s)); return d.innerHTML; }
+  function getRecent(){ try{ return JSON.parse(localStorage.getItem(RECENT_KEY)||'[]'); }catch(e){ return []; } }
+  function pushRecent(it){ try{ var r=getRecent().filter(function(x){return x.url!==it.url;}); r.unshift({label:it.label,url:it.url,icon:it.icon}); localStorage.setItem(RECENT_KEY, JSON.stringify(r.slice(0,5))); }catch(e){} }
+  function clearRecent(){ try{ localStorage.removeItem(RECENT_KEY); }catch(e){} renderRecent(); }
+
+  function setOpen(v){ open=v; wrap.classList.toggle('isti-search-open', v); input.setAttribute('aria-expanded', v?'true':'false'); }
+  function close(){ setOpen(false); active=-1; }
+
+  function row(it, idx, cat){
+    return '<a class="isti-search-item" role="option" data-idx="'+idx+'" href="'+esc(it.url)+'">'+
+      '<span class="isti-search-ic"><i class="fa '+esc(it.icon||'fa-arrow-right')+'"></i></span>'+
+      '<span class="isti-search-tx"><span class="isti-search-lbl">'+esc(it.label)+'</span>'+
+      (it.sublabel?'<span class="isti-search-sub">'+esc(it.sublabel)+'</span>':'')+'</span></a>';
+  }
+
+  function renderResults(results){
+    items = results;
+    if(!results.length){ dd.innerHTML='<div class="isti-search-empty"><i class="fa fa-magnifying-glass"></i> '+esc(STR.none)+'</div>'; setOpen(true); return; }
+    var html='', cat=null, idx=0;
+    results.forEach(function(it){
+      if(it.category!==cat){ cat=it.category; html+='<div class="isti-search-cat">'+esc(CATS[cat]||cat)+'</div>'; }
+      html+=row(it, idx, cat); idx++;
+    });
+    dd.innerHTML=html; active=-1; setOpen(true); bindRows();
+  }
+
+  function renderRecent(){
+    var r=getRecent();
+    if(!r.length){ return false; }
+    items=r;
+    var html='<div class="isti-search-cat">'+esc(STR.recent)+'<button type="button" class="isti-search-clear" id="istiSearchClear">'+esc(STR.clear)+'</button></div>';
+    r.forEach(function(it,i){ html+=row(it,i,'recent'); });
+    dd.innerHTML=html; active=-1; setOpen(true); bindRows();
+    var cb=document.getElementById('istiSearchClear'); if(cb) cb.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation(); clearRecent(); });
+    return true;
+  }
+
+  function bindRows(){
+    dd.querySelectorAll('.isti-search-item').forEach(function(a){
+      a.addEventListener('mousedown', function(e){ e.preventDefault(); pushRecent(items[parseInt(a.getAttribute('data-idx'),10)]); window.location.href=a.getAttribute('href'); });
+      a.addEventListener('mouseenter', function(){ active=parseInt(a.getAttribute('data-idx'),10); paint(); });
+    });
+  }
+  function paint(){ dd.querySelectorAll('.isti-search-item').forEach(function(a){ a.classList.toggle('active', parseInt(a.getAttribute('data-idx'),10)===active); }); }
+
+  function doSearch(q){
+    if(spin) spin.classList.add('on');
+    fetch(SEARCH_URL+'?q='+encodeURIComponent(q), {credentials:'same-origin'})
+      .then(function(r){return r.json();})
+      .then(function(d){ if(spin) spin.classList.remove('on'); if(input.value.trim()===q){ renderResults((d&&d.results)||[]); } })
+      .catch(function(){ if(spin) spin.classList.remove('on'); });
+  }
+
+  input.addEventListener('input', function(){
+    var q=input.value.trim();
+    if(timer) clearTimeout(timer);
+    if(q.length<2){ if(!renderRecent()) close(); return; }
+    timer=setTimeout(function(){ if(q!==lastQ){ lastQ=q; } doSearch(q); }, 220);
+  });
+  input.addEventListener('focus', function(){ var q=input.value.trim(); if(q.length>=2){ if(items.length) setOpen(true); else doSearch(q); } else { renderRecent(); } });
+  input.addEventListener('keydown', function(e){
+    if(!open) return;
+    var n=dd.querySelectorAll('.isti-search-item').length;
+    if(e.key==='ArrowDown'){ e.preventDefault(); active=Math.min(active+1,n-1); paint(); scrollTo(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); active=Math.max(active-1,0); paint(); scrollTo(); }
+    else if(e.key==='Enter'){ if(active>=0&&items[active]){ e.preventDefault(); pushRecent(items[active]); window.location.href=items[active].url; } }
+    else if(e.key==='Escape'){ close(); input.blur(); }
+  });
+  function scrollTo(){ var el=dd.querySelector('.isti-search-item.active'); if(el&&el.scrollIntoView) el.scrollIntoView({block:'nearest'}); }
+
+  document.addEventListener('click', function(e){ if(!wrap.contains(e.target)) close(); });
+})();
+</script>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main class="isti-main" id="istiMainContent">
+    <div id="page-wrapper">
+        <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers">
+            <div id="topofscroll" class="main-inner">
+                {{{ output.full_header }}}
+                {{#secondarymoremenu}}
+                    <div class="secondary-navigation d-print-none">
+                        {{> core/moremenu}}
+                    </div>
+                {{/secondarymoremenu}}
+
+                {{#isdashboard}}
+                <!-- ═══ HERO WELCOME SECTION ═══ -->
+                <div class="isti-hero-welcome">
+                    <div class="isti-hero-content">
+                        <h1 class="isti-hero-title">{{#str}}dash_welcome, local_istikama_admin, {{userfirstname}}{{/str}}</h1>
+                        <p class="isti-hero-subtitle">{{#str}}dash_subtitle, local_istikama_admin{{/str}}</p>
+                    </div>
+                    <div class="isti-hero-illustration">
+                        <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Book stack -->
+                            <rect x="20" y="90" width="60" height="12" rx="3" fill="rgba(255,255,255,0.3)"/>
+                            <rect x="25" y="78" width="55" height="12" rx="3" fill="rgba(255,255,255,0.4)"/>
+                            <rect x="22" y="66" width="58" height="12" rx="3" fill="rgba(255,255,255,0.5)"/>
+                            <!-- Graduation cap -->
+                            <polygon points="100,20 140,40 100,60 60,40" fill="rgba(255,255,255,0.6)"/>
+                            <rect x="96" y="60" width="8" height="20" fill="rgba(255,255,255,0.4)"/>
+                            <rect x="88" y="80" width="24" height="4" rx="2" fill="rgba(255,255,255,0.5)"/>
+                            <!-- Star -->
+                            <polygon points="160,30 165,45 180,45 168,55 172,70 160,60 148,70 152,55 140,45 155,45" fill="rgba(255,255,255,0.35)"/>
+                            <!-- Chart bars -->
+                            <rect x="130" y="100" width="12" height="30" rx="3" fill="rgba(255,255,255,0.3)"/>
+                            <rect x="148" y="85" width="12" height="45" rx="3" fill="rgba(255,255,255,0.4)"/>
+                            <rect x="166" y="70" width="12" height="60" rx="3" fill="rgba(255,255,255,0.5)"/>
+                        </svg>
+                    </div>
+                </div>
+
+                {{#hasdashboardstats}}
+                <!-- ═══ PREMIUM STATS GRID (STUDDY INSPIRED) ═══ -->
+                <div class="isti-kpi-grid" style="margin-bottom: 32px;">
+                    {{#dashboardstats}}
+                    <div class="isti-kpi-card">
+                        <div class="isti-kpi-content">
+                            <span class="isti-kpi-label">{{label}}</span>
+                            <span class="isti-kpi-value">{{value}}</span>
+                        </div>
+                        <div class="isti-kpi-icon {{colorclass}}">
+                            <i class="fa {{icon}}"></i>
+                        </div>
+                    </div>
+                    {{/dashboardstats}}
+                </div>
+
+                <!-- ═══ DASHBOARD MAIN CONTENT (STUDDY INSPIRED) ═══ -->
+                <div class="isti-row">
+                    <!-- Schools Overview Table -->
+                    <div class="isti-col-6">
+                        <div class="isti-card-modern">
+                            <div class="isti-card-modern-header">
+                                <h3 class="isti-card-modern-title"><i class="fa fa-university"></i> {{#str}}dash_schools_overview, local_istikama_admin{{/str}}</h3>
+                                <a href="/local/istikama_admin/schools.php" style="font-size: 0.8rem; color: var(--primary-color); font-weight: 600; text-decoration: none;">{{#str}}dash_view_all, local_istikama_admin{{/str}}</a>
+                            </div>
+                            <div class="isti-card-modern-body" style="padding: 0">
+                                {{#hasrecentschools}}
+                                <div class="table-responsive">
+                                    <table class="isti-table">
+                                        <thead>
+                                            <tr>
+                                                <th>{{#str}}dash_col_school, local_istikama_admin{{/str}}</th>
+                                                <th>{{#str}}dash_col_students, local_istikama_admin{{/str}}</th>
+                                                <th>{{#str}}dash_col_teachers, local_istikama_admin{{/str}}</th>
+                                                <th>{{#str}}dash_col_courses, local_istikama_admin{{/str}}</th>
+                                                <th>{{#str}}dash_col_status, local_istikama_admin{{/str}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#recentschools}}
+                                            <tr>
+                                                <td>
+                                                    <div class="isti-table-user">
+                                                        {{#logourl}}<img src="{{logourl}}" alt="{{name}}">{{/logourl}}
+                                                        {{^logourl}}<div style="width:36px;height:36px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#94a3b8"><i class="fa fa-university"></i></div>{{/logourl}}
+                                                        <strong>{{name}}</strong>
+                                                    </div>
+                                                </td>
+                                                <td>{{students}}</td>
+                                                <td>{{teachers}}</td>
+                                                <td>{{courses}}</td>
+                                                <td><span class="isti-kpi-trend up" style="font-size:0.75rem;padding:4px 8px">{{status}}</span></td>
+                                            </tr>
+                                            {{/recentschools}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {{/hasrecentschools}}
+                                {{^hasrecentschools}}
+                                <div style="padding: 20px 28px; text-align: center; color: #94a3b8; font-size: 0.9rem;">
+                                    {{#str}}dash_no_schools, local_istikama_admin{{/str}}
+                                </div>
+                                {{/hasrecentschools}}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Activity Insights -->
+                    <div class="isti-col-6">
+                        <div class="isti-card-modern">
+                            <div class="isti-card-modern-header">
+                                <h3 class="isti-card-modern-title"><i class="fa fa-chart-pie"></i> {{#str}}dash_activity_insights, local_istikama_admin{{/str}}</h3>
+                            </div>
+                            <div class="isti-card-modern-body">
+                                <div style="display:flex; flex-direction:column; gap:16px;">
+                                    <!-- Placeholder Insight 1 -->
+                                    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px; border:1px solid #f1f5f9; border-radius:12px; background:#fafafa;">
+                                        <div style="display:flex; align-items:center; gap:12px;">
+                                            <div style="width:40px;height:40px;border-radius:10px;background:#e0e7ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-size:1.2rem;"><i class="fa fa-user-plus"></i></div>
+                                            <div>
+                                                <h4 style="margin:0;font-size:0.9rem;font-weight:600;color:#1e293b;">{{#str}}dash_new_enrollments, local_istikama_admin{{/str}}</h4>
+                                                <span style="font-size:0.75rem;color:#64748b;">{{#str}}dash_new_enrollments_desc, local_istikama_admin{{/str}}</span>
+                                            </div>
+                                        </div>
+                                        <div style="font-weight:700;color:#1e293b;font-size:1.1rem;">+24%</div>
+                                    </div>
+                                    <!-- Placeholder Insight 2 -->
+                                    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px; border:1px solid #f1f5f9; border-radius:12px; background:#fafafa;">
+                                        <div style="display:flex; align-items:center; gap:12px;">
+                                            <div style="width:40px;height:40px;border-radius:10px;background:#dcfce7;color:#16a34a;display:flex;align-items:center;justify-content:center;font-size:1.2rem;"><i class="fa fa-book-reader"></i></div>
+                                            <div>
+                                                <h4 style="margin:0;font-size:0.9rem;font-weight:600;color:#1e293b;">{{#str}}dash_course_completion, local_istikama_admin{{/str}}</h4>
+                                                <span style="font-size:0.75rem;color:#64748b;">{{#str}}dash_course_completion_desc, local_istikama_admin{{/str}}</span>
+                                            </div>
+                                        </div>
+                                        <div style="font-weight:700;color:#1e293b;font-size:1.1rem;">82%</div>
+                                    </div>
+                                    <!-- Placeholder Insight 3 -->
+                                    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px; border:1px solid #f1f5f9; border-radius:12px; background:#fafafa;">
+                                        <div style="display:flex; align-items:center; gap:12px;">
+                                            <div style="width:40px;height:40px;border-radius:10px;background:#fef3c7;color:#d97706;display:flex;align-items:center;justify-content:center;font-size:1.2rem;"><i class="fa fa-video"></i></div>
+                                            <div>
+                                                <h4 style="margin:0;font-size:0.9rem;font-weight:600;color:#1e293b;">{{#str}}dash_live_sessions, local_istikama_admin{{/str}}</h4>
+                                                <span style="font-size:0.75rem;color:#64748b;">{{#str}}dash_live_sessions_desc, local_istikama_admin{{/str}}</span>
+                                            </div>
+                                        </div>
+                                        <div style="font-weight:700;color:#1e293b;font-size:1.1rem;">12</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/hasdashboardstats}}
+                {{/isdashboard}}
+
+                <div id="page-content" class="d-print-block">
+                    <div id="region-main-box">
+                        {{#hasregionmainsettingsmenu}}
+                        <div id="region-main-settings-menu" class="d-print-none">
+                            <div> {{{ regionmainsettingsmenu }}} </div>
+                        </div>
+                        {{/hasregionmainsettingsmenu}}
+                        <div id="region-main">
+                            {{#hasregionmainsettingsmenu}}
+                                <div class="region_main_settings_menu_proxy"></div>
+                            {{/hasregionmainsettingsmenu}}
+                            {{{ output.course_content_header }}}
+                            {{#headercontent}}
+                                {{> core/activity_header }}
+                            {{/headercontent}}
+                            {{#overflow}}
+                                <div class="container-fluid tertiary-navigation">
+                                    <div class="navitem">
+                                        {{> core/url_select}}
+                                    </div>
+                                </div>
+                            {{/overflow}}
+                            {{{ output.main_content }}}
+                            {{{ output.activity_navigation }}}
+                            {{{ output.course_content_footer }}}
+                        </div>
+                    </div>
+                    {{#hasblocks}}
+                    {{/hasblocks}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{{ addblockbutton }}}
+    {{{ output.standard_after_main_region_html }}}
+</main>
+
+<!-- ═══ DASHBOARD JS ═══ -->
+<script>
+/**
+ * Istikama dashboard wiring.
+ *
+ * Every element lookup is null-guarded and every block is wrapped in
+ * try/catch so a missing element in one feature can never break another.
+ * The whole runner waits for DOMContentLoaded; if the script tag is loaded
+ * after DOMContentLoaded already fired we run immediately.
+ */
+(function() {
+    function safeRun(fn) {
+        try { fn(); } catch (err) {
+            if (window.console && console.warn) {
+                console.warn('[istikama] dashboard JS guarded error:', err);
+            }
+        }
+    }
+
+    function boot() {
+        var sidebar    = document.getElementById('istiSidebar');
+        var overlay    = document.getElementById('istiSidebarOverlay');
+        var toggle     = document.getElementById('istiSidebarToggle');
+        var darkToggle = document.getElementById('istiDarkModeToggle');
+        var isMobile   = window.innerWidth <= 1024;
+
+        // ── Sidebar toggle ────────────────────────────────────────────────
+        safeRun(function() {
+            if (!toggle) { return; }
+            toggle.addEventListener('click', function() {
+                if (!sidebar) { return; }
+                if (isMobile) {
+                    sidebar.classList.toggle('mobile-open');
+                    if (overlay) { overlay.classList.toggle('visible'); }
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    try {
+                        localStorage.setItem('isti-sidebar-collapsed',
+                            sidebar.classList.contains('collapsed') ? '1' : '0');
+                    } catch (e) { /* localStorage may be disabled */ }
+                }
+            });
+        });
+
+        // ── Mobile overlay click ──────────────────────────────────────────
+        safeRun(function() {
+            if (!overlay) { return; }
+            overlay.addEventListener('click', function() {
+                if (sidebar) { sidebar.classList.remove('mobile-open'); }
+                overlay.classList.remove('visible');
+            });
+        });
+
+        // ── Restore sidebar state from localStorage ───────────────────────
+        safeRun(function() {
+            if (!sidebar || isMobile) { return; }
+            try {
+                if (localStorage.getItem('isti-sidebar-collapsed') === '1') {
+                    sidebar.classList.add('collapsed');
+                }
+            } catch (e) { /* localStorage may be disabled */ }
+        });
+
+        // ── Responsive resize handler ─────────────────────────────────────
+        safeRun(function() {
+            window.addEventListener('resize', function() {
+                isMobile = window.innerWidth <= 1024;
+                if (!isMobile) {
+                    if (sidebar) { sidebar.classList.remove('mobile-open'); }
+                    if (overlay) { overlay.classList.remove('visible'); }
+                }
+            });
+        });
+
+        // ── Dark mode toggle ──────────────────────────────────────────────
+        safeRun(function() {
+            if (!darkToggle) { return; }
+            var isDark = false;
+            try { isDark = localStorage.getItem('isti-dark-mode') === '1'; }
+            catch (e) { /* localStorage may be disabled */ }
+            var darkIcon = darkToggle.querySelector('i');
+            if (isDark && document.body) {
+                document.body.classList.add('dark-mode');
+                if (darkIcon) { darkIcon.className = 'fa fa-sun'; }
+            }
+            darkToggle.addEventListener('click', function() {
+                if (!document.body) { return; }
+                document.body.classList.toggle('dark-mode');
+                var nowDark = document.body.classList.contains('dark-mode');
+                try { localStorage.setItem('isti-dark-mode', nowDark ? '1' : '0'); }
+                catch (e) { /* localStorage may be disabled */ }
+                var ic = darkToggle.querySelector('i');
+                if (ic) { ic.className = nowDark ? 'fa fa-sun' : 'fa fa-moon'; }
+            });
+        });
+
+    // ──────────────────────────────────────────────────────────────
+    // Teacher: intercept Moodle's activity chooser "+" button and
+    // show our custom 2-option modal (Library content / Quiz).
+    // ──────────────────────────────────────────────────────────────
+    safeRun(function() {
+        if (!document.body) { return; }
+        var bodyTier = document.body.getAttribute('data-istikama-tier') || '';
+        if (bodyTier !== 'teacher' && bodyTier !== 'teacher_creator') {
+            return;
+        }
+
+        var addModalEl = null;
+        var pendingCtx = null;
+
+        var courseIdFromContext = function() {
+            // Try Moodle's M.cfg first, then body class "course-{id}", then URL ?id=.
+            if (window.M && M.cfg && M.cfg.courseId) { return String(M.cfg.courseId); }
+            var bodyClass = (document.body && document.body.className) || '';
+            var m = bodyClass.match(/(?:^|\s)course-(\d+)/);
+            if (m) { return m[1]; }
+            var u = new URL(window.location.href);
+            var id = u.searchParams.get('id');
+            if (id && /course\/view\.php/.test(u.pathname)) { return id; }
+            return '';
+        };
+
+        var _istiM = {
+            title:      "{{#str}}addlesson_title, local_istikama_admin{{/str}}",
+            libTitle:   "{{#str}}addlesson_library_title, local_istikama_admin{{/str}}",
+            libDesc:    "{{#str}}addlesson_library_desc, local_istikama_admin{{/str}}",
+            quizTitle:  "{{#str}}addlesson_quiz_title, local_istikama_admin{{/str}}",
+            quizDesc:   "{{#str}}addlesson_quiz_desc, local_istikama_admin{{/str}}",
+            forumTitle: "{{#str}}addlesson_forum_title, local_istikama_admin{{/str}}",
+            forumDesc:  "{{#str}}addlesson_forum_desc, local_istikama_admin{{/str}}"
+        };
+        var buildModal = function() {
+            if (addModalEl) { return; }
+            addModalEl = document.createElement('div');
+            addModalEl.className = 'isti-addmodal-backdrop';
+            addModalEl.setAttribute('style',
+                'display:none;position:fixed;inset:0;z-index:1100;' +
+                'background:rgba(15,23,42,.55);align-items:center;justify-content:center;');
+            addModalEl.innerHTML =
+                '<div class="isti-addmodal-dialog" role="dialog" aria-modal="true" ' +
+                'style="background:#fff;border-radius:18px;width:min(620px,95vw);' +
+                'box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden;">' +
+                  '<div class="isti-addmodal-header" style="padding:18px 22px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">' +
+                    '<h5 style="margin:0;font-weight:700;color:#1e293b;font-size:1.05rem"><i class="fa fa-plus-circle" style="color:#006bff;margin-right:6px"></i> ' + _istiM.title + '</h5>' +
+                    '<button type="button" class="isti-addmodal-close" aria-label="Close" style="background:none;border:none;font-size:1.4rem;color:#64748b;cursor:pointer;line-height:1">&times;</button>' +
+                  '</div>' +
+                  '<div class="isti-addmodal-body" style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">' +
+                    '<a href="#" data-isti-add="library" class="isti-addmodal-option" style="display:block;padding:20px 16px;border:1.5px solid #e2e8f0;border-radius:14px;cursor:pointer;background:#fff;text-decoration:none;color:inherit">' +
+                      '<span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:12px;font-size:1.3rem;margin-bottom:12px;background:#eff6ff;color:#006bff"><i class="fa fa-folder-open"></i></span>' +
+                      '<strong style="display:block;color:#1e293b;font-size:.92rem;margin-bottom:5px">' + _istiM.libTitle + '</strong>' +
+                      '<span style="color:#64748b;font-size:.82rem;line-height:1.45">' + _istiM.libDesc + '</span>' +
+                    '</a>' +
+                    '<a href="#" data-isti-add="quiz" class="isti-addmodal-option" style="display:block;padding:20px 16px;border:1.5px solid #e2e8f0;border-radius:14px;cursor:pointer;background:#fff;text-decoration:none;color:inherit">' +
+                      '<span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:12px;font-size:1.3rem;margin-bottom:12px;background:#f0fdf4;color:#10b981"><i class="fa fa-question-circle"></i></span>' +
+                      '<strong style="display:block;color:#1e293b;font-size:.92rem;margin-bottom:5px">' + _istiM.quizTitle + '</strong>' +
+                      '<span style="color:#64748b;font-size:.82rem;line-height:1.45">' + _istiM.quizDesc + '</span>' +
+                    '</a>' +
+                    '<a href="#" data-isti-add="forum" class="isti-addmodal-option" style="display:block;padding:20px 16px;border:1.5px solid #e2e8f0;border-radius:14px;cursor:pointer;background:#fff;text-decoration:none;color:inherit">' +
+                      '<span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:12px;font-size:1.3rem;margin-bottom:12px;background:#fdf4ff;color:#a855f7"><i class="fa fa-comments"></i></span>' +
+                      '<strong style="display:block;color:#1e293b;font-size:.92rem;margin-bottom:5px">' + _istiM.forumTitle + '</strong>' +
+                      '<span style="color:#64748b;font-size:.82rem;line-height:1.45">' + _istiM.forumDesc + '</span>' +
+                    '</a>' +
+                  '</div>' +
+                '</div>';
+            if (document.body) { document.body.appendChild(addModalEl); }
+
+            addModalEl.addEventListener('click', function(e) {
+                if (e.target === addModalEl) { hideModal(); return; }
+                if (e.target && e.target.closest && e.target.closest('.isti-addmodal-close')) {
+                    hideModal(); return;
+                }
+                var opt = e.target && e.target.closest && e.target.closest('[data-isti-add]');
+                if (!opt) { return; }
+                e.preventDefault();
+                routeAddAction(opt.getAttribute('data-isti-add'));
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && addModalEl && addModalEl.style.display !== 'none') {
+                    hideModal();
+                }
+            });
+        };
+
+        var showModal = function(ctx) {
+            buildModal();
+            pendingCtx = ctx;
+            if (addModalEl) { addModalEl.style.display = 'flex'; }
+        };
+        var hideModal = function() {
+            if (addModalEl) { addModalEl.style.display = 'none'; }
+            pendingCtx = null;
+        };
+
+        var routeAddAction = function(kind) {
+            var ctx = pendingCtx || {};
+            var courseid = courseIdFromContext();
+            if (!courseid) {
+                if (window.console && console.warn) {
+                    console.warn('[istikama] No courseid — cannot open picker.');
+                }
+                hideModal();
+                return;
+            }
+            var params = new URLSearchParams();
+            params.set('courseid', courseid);
+            if (ctx.sectionnum) { params.set('sectionnum', ctx.sectionnum); }
+            if (ctx.sectionid)  { params.set('sectionid',  ctx.sectionid); }
+            if (ctx.beforemod)  { params.set('beforemod',  ctx.beforemod); }
+            var pages = {
+                quiz:    '/local/istikama_admin/add_course_quiz.php',
+                forum:   '/local/istikama_admin/add_course_forum.php',
+                library: '/local/istikama_admin/add_library_content.php',
+            };
+            window.location.href = (pages[kind] || pages.library) + '?' + params.toString();
+        };
+
+        // Capture-phase delegation: fires before any of Moodle's own
+        // listeners and works for buttons rendered after page load.
+        var interceptClick = function(e) {
+            if (!e || !e.target || !e.target.closest) { return; }
+            var btn = e.target.closest('[data-action="open-chooser"]');
+            if (!btn) { return; }
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); }
+            showModal({
+                sectionnum: btn.getAttribute('data-sectionnum') || '',
+                sectionid:  btn.getAttribute('data-section-id') || '',
+                beforemod:  btn.getAttribute('data-beforemod') || '',
+            });
+        };
+        // Listen on both document and body, capture phase, for maximum priority.
+        document.addEventListener('click',      interceptClick, true);
+        document.addEventListener('mousedown',  interceptClick, true);
+    });
+
+    // ──────────────────────────────────────────────────────────────
+    // Redirect resource/url activity clicks to the Istikama content
+    // viewer (view_content.php) for a richer YouTube / PDF experience.
+    // ──────────────────────────────────────────────────────────────
+    safeRun(function() {
+        // Skip if we're already in the viewer to avoid redirect loops.
+        if (/\/local\/istikama_admin\/view_content\.php/.test(window.location.pathname)) { return; }
+        document.addEventListener('click', function(e) {
+            if (!e || !e.target || !e.target.closest) { return; }
+            var link = e.target.closest('a[href]');
+            if (!link) { return; }
+            var href = link.href || '';
+            var m = href.match(/\/mod\/(url|resource)\/view\.php[^?]*\?(?:.*&)?id=(\d+)/);
+            if (!m) { return; }
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = '/local/istikama_admin/view_content.php?cmid=' + m[2];
+        }, false);
+
+        // Also intercept direct navigation to mod/url or mod/resource if user
+        // somehow lands there (e.g. from a bookmarked link).
+        var path = window.location.pathname;
+        var direct = path.match(/\/mod\/(url|resource)\/view\.php$/);
+        if (direct) {
+            var params = new URLSearchParams(window.location.search);
+            var cmid = params.get('id');
+            if (cmid) {
+                window.location.replace('/local/istikama_admin/view_content.php?cmid=' + cmid);
+            }
+        }
+    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+})();
+</script>
+
+{{{ output.standard_end_of_body_html }}}
+
+</body>
+</html>
+{{#js}}
+// Load the boost loader but NOT the boost drawer — our dashboard provides its
+// own sidebar (.isti-sidebar) instead of the boost drawer DOM elements, so
+// Drawer.init() would crash with addEventListener(null, …).
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function(Loader) {
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

@@ -1,0 +1,801 @@
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+{{{ output.standard_top_of_body_html }}}
+
+{{! ── Isolated gold landing stylesheet + Font Awesome (icons) ── }}
+<link rel="stylesheet" href="/local/istikama_admin/styles/landing.css?v=2">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap">
+
+{{! ── Landing-only polish: fonts, language switcher, RTL, motion ── }}
+<style>
+/* ── Unify landing typography with the platform identity (Montserrat) ── */
+#landing-page{--ld-font-display:'Montserrat','Noto Sans Arabic',system-ui,sans-serif;--ld-font-body:'Montserrat','Noto Sans Arabic',system-ui,sans-serif;--ld-font-ui:'Montserrat','Noto Sans Arabic',system-ui,sans-serif}
+/* Force the unified font over the theme's global font rule (which lacked an
+   Arabic fallback — the cause of the broken Arabic). Icons (<i>) are excluded. */
+#landing-page h1,#landing-page h2,#landing-page h3,#landing-page h4,#landing-page h5,#landing-page h6,
+#landing-page p,#landing-page a,#landing-page li,#landing-page button,#landing-page input,#landing-page textarea,
+#landing-page .ld-title,#landing-page .name,#landing-page .sub,#landing-page .cap,#landing-page .role,
+#landing-page .desc,#landing-page .excerpt,#landing-page .ld-eyebrow,#landing-page .meta,#landing-page .info,
+#landing-page .more,#landing-page .link,#landing-page .day,#landing-page .mon,#landing-page .knob,
+#landing-page .figures,#landing-page .loc,#landing-page .copy,#landing-page .ld-lang-label,#landing-page .ld-lang-menu button,
+#landing-page .contact-list li,#landing-page .ld-nav-links a,#landing-page .ld-mobile a{font-family:'Montserrat','Noto Sans Arabic',system-ui,sans-serif !important}
+#landing-page.ld-rtl h1,#landing-page.ld-rtl h2,#landing-page.ld-rtl h3,#landing-page.ld-rtl h4,#landing-page.ld-rtl h5,#landing-page.ld-rtl h6,
+#landing-page.ld-rtl p,#landing-page.ld-rtl a,#landing-page.ld-rtl li,#landing-page.ld-rtl button,#landing-page.ld-rtl input,
+#landing-page.ld-rtl .ld-title,#landing-page.ld-rtl .name,#landing-page.ld-rtl .sub,#landing-page.ld-rtl .cap,#landing-page.ld-rtl .role,
+#landing-page.ld-rtl .desc,#landing-page.ld-rtl .excerpt,#landing-page.ld-rtl .ld-eyebrow,#landing-page.ld-rtl .meta,#landing-page.ld-rtl .info,
+#landing-page.ld-rtl .more,#landing-page.ld-rtl .link,#landing-page.ld-rtl .loc,#landing-page.ld-rtl .copy,#landing-page.ld-rtl .day,#landing-page.ld-rtl .mon{font-family:'Noto Sans Arabic','Montserrat',system-ui,sans-serif !important}
+/* In Arabic, lead with Noto Sans Arabic everywhere for a uniform, clean look */
+#landing-page.ld-rtl{--ld-font-display:'Noto Sans Arabic','Montserrat',sans-serif;--ld-font-body:'Noto Sans Arabic','Montserrat',sans-serif;--ld-font-ui:'Noto Sans Arabic','Montserrat',sans-serif}
+/* Event date: day always stacked above the month */
+#landing-page .ld-event .date .day{display:block}
+#landing-page .ld-event .date .mon{display:block}
+/* Footer now has 2 columns (About + Contact) */
+#landing-page .ld-footer .info-card{grid-template-columns:1.3fr 1fr;gap:48px}
+#landing-page .ld-footer{padding-top:64px}
+#landing-page,#landing-page h1,#landing-page h2,#landing-page h3,#landing-page h4,#landing-page h5,
+#landing-page p,#landing-page a,#landing-page span,#landing-page li,#landing-page .ld-title,#landing-page .name,
+#landing-page .cap,#landing-page .role,#landing-page .desc,#landing-page .excerpt,#landing-page .ld-eyebrow,
+#landing-page .ld-btn,#landing-page input,#landing-page button{font-family:'Montserrat','Noto Sans Arabic',system-ui,sans-serif}
+#landing-page .ld-title,#landing-page h2,#landing-page h3{letter-spacing:-.015em;font-weight:800}
+
+/* ── Hero — bigger, modern, heavier ── */
+#landing-page .ld-hero .content h1{font-size:clamp(2.9rem,6.4vw,5.4rem);font-weight:900;letter-spacing:-.035em;line-height:1.03}
+#landing-page .ld-hero .content p{font-size:clamp(1rem,1.5vw,1.18rem);font-weight:400;max-width:680px;margin-inline:auto}
+#landing-page .ld-hero .content h1{animation:ldHeroUp .9s cubic-bezier(.22,1,.36,1) both}
+#landing-page .ld-hero .content p{animation:ldHeroUp 1s .12s cubic-bezier(.22,1,.36,1) both}
+#landing-page .ld-hero .content > a{animation:ldHeroUp 1s .24s cubic-bezier(.22,1,.36,1) both}
+@keyframes ldHeroUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+#landing-page .ld-hero .accent{background:linear-gradient(100deg,var(--ld-gold) 0%,#ffd87a 45%,var(--ld-gold) 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#landing-page .ld-service,#landing-page .ld-cause,#landing-page .ld-scholar,#landing-page .ld-post{transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease}
+
+/* ── Brand logo (image only, no text) ── */
+#landing-page .ld-brand .ld-logo-img{height:48px;width:auto;display:block}
+#landing-page.scrolled .ld-brand .ld-logo-img,#landing-page .ld-nav.scrolled .ld-brand .ld-logo-img{height:42px}
+
+/* ── Language switcher: globe + dropdown (dark, professional) ── */
+#landing-page .ld-lang{position:relative}
+#landing-page .ld-lang-toggle{display:inline-flex;align-items:center;gap:7px;border:1.5px solid rgba(20,28,46,.18);background:rgba(20,28,46,.04);color:#1e293b !important;border-radius:10px;padding:8px 13px;font-size:.78rem;font-weight:700;cursor:pointer;transition:.18s}
+#landing-page .ld-lang-toggle i{color:#1e293b}
+#landing-page .ld-lang-toggle:hover{border-color:var(--ld-gold);background:rgba(240,165,0,.08)}
+#landing-page .ld-lang-toggle .fa-chevron-down{font-size:.58rem;opacity:.7;transition:transform .2s}
+#landing-page .ld-lang.open .ld-lang-toggle .fa-chevron-down{transform:rotate(180deg)}
+#landing-page .ld-lang-menu{position:absolute;top:calc(100% + 8px);inset-inline-end:0;min-width:158px;background:#fff;border:1px solid #e8e8ee;border-radius:12px;box-shadow:0 18px 44px -14px rgba(15,23,42,.35);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.18s;z-index:60}
+#landing-page .ld-lang.open .ld-lang-menu{opacity:1;visibility:visible;transform:none}
+#landing-page .ld-lang-menu button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:#1e293b;font-family:'Montserrat','Noto Sans Arabic',sans-serif;font-size:.84rem;font-weight:600;padding:9px 11px;border-radius:8px;cursor:pointer;text-align:start}
+#landing-page .ld-lang-menu button:hover{background:#f4f5f8}
+#landing-page .ld-lang-menu button.on{background:var(--ld-gold);color:#fff}
+#landing-page .ld-lang-menu button .flag{font-size:.72rem;font-weight:800;opacity:.55;min-width:20px}
+#landing-page .ld-lang-menu button.on .flag{opacity:.9}
+#landing-page .ld-mobile .ld-lang{margin:8px 0}
+#landing-page .ld-mobile .ld-lang-toggle{width:100%;justify-content:center;color:#1e293b}
+
+/* ── Join CTA band (above footer) — rich, ornamented ── */
+#landing-page .ld-join{position:relative;overflow:hidden;background:linear-gradient(120deg,#10182b 0%,#1b2a47 55%,#243760 100%);padding:78px 0}
+#landing-page .ld-join::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 16% 130%,rgba(240,165,0,.22),transparent 42%),radial-gradient(circle at 94% -25%,rgba(240,165,0,.13),transparent 40%);pointer-events:none}
+#landing-page .ld-join-zk{position:absolute;pointer-events:none;width:340px;max-width:36vw;opacity:.07;filter:brightness(0) invert(1);z-index:1}
+/* Physical left/right so the ornaments never flip in RTL (Arabic) */
+#landing-page .ld-join-zk.tl{top:-34px;left:-24px;right:auto}
+#landing-page .ld-join-zk.br{bottom:-44px;right:-24px;left:auto;transform:rotate(180deg)}
+#landing-page.ld-rtl .ld-join-zk.tl{left:-24px;right:auto}
+#landing-page.ld-rtl .ld-join-zk.br{right:-24px;left:auto}
+#landing-page .ld-join .inner{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:36px;flex-wrap:wrap}
+#landing-page .ld-join-eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--ld-gold);font-family:var(--ld-font-ui);font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;margin-bottom:15px}
+#landing-page .ld-join-eyebrow::before{content:'';width:28px;height:2px;background:var(--ld-gold);display:inline-block}
+#landing-page .ld-join h3{color:#fff;font-size:clamp(1.9rem,3.4vw,2.75rem);font-weight:800;margin:0 0 12px;line-height:1.2}
+#landing-page .ld-join h3 .accent{color:var(--ld-gold);-webkit-text-fill-color:var(--ld-gold);background:none}
+#landing-page .ld-join p{color:rgba(255,255,255,.78);margin:0;font-size:1.02rem;max-width:560px;line-height:1.7}
+#landing-page .ld-join .acts{display:flex;gap:14px;flex-wrap:wrap;flex-shrink:0}
+#landing-page .ld-join .acts .ld-btn{padding:14px 30px}
+#landing-page .ld-join .ld-btn-ghost{background:transparent;border:1.6px solid rgba(255,255,255,.45);color:#fff}
+#landing-page .ld-join .ld-btn-ghost:hover{background:#fff;color:#10182b;border-color:#fff}
+#landing-page.ld-rtl .ld-join .inner{flex-direction:row-reverse;text-align:right}
+#landing-page.ld-rtl .ld-join-eyebrow{letter-spacing:0}
+@media(max-width:760px){#landing-page .ld-join .inner,#landing-page.ld-rtl .ld-join .inner{flex-direction:column;text-align:center;align-items:center}#landing-page .ld-join-eyebrow::before{display:none}}
+
+/* ── RTL / Arabic (Noto Sans Arabic — platform font) ── */
+#landing-page.ld-rtl{direction:rtl}
+#landing-page.ld-rtl,#landing-page.ld-rtl h1,#landing-page.ld-rtl h2,#landing-page.ld-rtl h3,#landing-page.ld-rtl h4,#landing-page.ld-rtl h5,
+#landing-page.ld-rtl p,#landing-page.ld-rtl a,#landing-page.ld-rtl span,#landing-page.ld-rtl li,#landing-page.ld-rtl .ld-title,#landing-page.ld-rtl .name,
+#landing-page.ld-rtl .cap,#landing-page.ld-rtl .role,#landing-page.ld-rtl .desc,#landing-page.ld-rtl .excerpt,#landing-page.ld-rtl .ld-eyebrow,
+#landing-page.ld-rtl .ld-btn,#landing-page.ld-rtl input,#landing-page.ld-rtl button{font-family:'Noto Sans Arabic','Montserrat',sans-serif}
+/* Arabic must never use negative letter-spacing — it breaks letter joining */
+#landing-page.ld-rtl,#landing-page.ld-rtl h1,#landing-page.ld-rtl h2,#landing-page.ld-rtl h3,#landing-page.ld-rtl h4,#landing-page.ld-rtl h5,
+#landing-page.ld-rtl .ld-title,#landing-page.ld-rtl .name,#landing-page.ld-rtl .ld-hero .content h1,#landing-page.ld-rtl .ld-eyebrow{letter-spacing:0}
+#landing-page.ld-rtl .ld-divider{direction:ltr}
+#landing-page.ld-rtl .ld-amounts,#landing-page.ld-rtl .ld-pillars-row,#landing-page.ld-rtl .meta,#landing-page.ld-rtl .info,
+#landing-page.ld-rtl .ld-topbar .right,#landing-page.ld-rtl .ld-topbar .social,#landing-page.ld-rtl .ld-join .inner{flex-direction:row-reverse}
+/* Bulleted lists — correct RTL (icon on the right) */
+#landing-page.ld-rtl .ld-causes-list{padding:0;direction:rtl}
+#landing-page.ld-rtl .ld-causes-list li{flex-direction:row-reverse;text-align:right;justify-content:flex-end}
+/* Numbers + progress always LTR so "%" and figures never break */
+#landing-page .ld-progress .knob,#landing-page .figures b{direction:ltr;unicode-bidi:isolate;display:inline-block}
+#landing-page.ld-rtl .ld-progress{direction:ltr}
+#landing-page.ld-rtl .figures{flex-direction:row-reverse}
+@media(max-width:600px){#landing-page .ld-lang-toggle{padding:7px 10px}}
+</style>
+
+<div id="landing-page" dir="ltr" lang="en">
+
+    {{! ════════════ TOP BAR ════════════ }}
+    <div class="ld-topbar">
+        <div class="ld-container inner">
+            <div class="social">
+                <span style="font-family:var(--ld-font-ui)" data-i18n="follow">Follow Us:</span>
+                <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+            <div class="right">
+                <a href="mailto:help@istikama.org" class="contact-link">
+                    <i class="fa-regular fa-envelope"></i><span>help@istikama.org</span>
+                </a>
+                <a href="tel:+00123345111" class="contact-link">
+                    <i class="fa-solid fa-phone"></i><span>+(00) 123-345-11</span>
+                </a>
+                <a href="/login/index.php" class="tb-donate" data-i18n="enroll">Enroll Now</a>
+            </div>
+        </div>
+    </div>
+
+    {{! ════════════ NAVBAR ════════════ }}
+    <nav class="ld-nav" id="ldNav">
+        <div class="ld-container inner">
+            <a href="/" class="ld-brand">
+                {{#output.get_compact_logo_url}}
+                    <img class="ld-logo-img" src="{{output.get_compact_logo_url}}" alt="Istikama">
+                {{/output.get_compact_logo_url}}
+                {{^output.get_compact_logo_url}}
+                    <img class="ld-logo-img" src="/local/istikama_admin/pix/landing/cropped-heading-img-32x32.png" alt="Istikama">
+                {{/output.get_compact_logo_url}}
+            </a>
+            <div class="ld-nav-links">
+                <a href="#home" data-i18n="nav_home">Home</a>
+                <a href="#services" data-i18n="nav_platform">Platform</a>
+                <a href="#pilgrimage" data-i18n="nav_method">Method</a>
+                <a href="#scholars" data-i18n="nav_teachers">Teachers</a>
+                <a href="#events" data-i18n="nav_news">News</a>
+                <a href="#contact" data-i18n="nav_contact">Contact</a>
+            </div>
+            <div class="ld-nav-right">
+                <div class="ld-lang" role="group" aria-label="Language">
+                    <button type="button" class="ld-lang-toggle" aria-haspopup="true"><i class="fa-solid fa-globe"></i> <span class="ld-lang-label">EN</span> <i class="fa-solid fa-chevron-down"></i></button>
+                    <div class="ld-lang-menu">
+                        <button type="button" data-lang="en" class="on"><span class="flag">EN</span> English</button>
+                        <button type="button" data-lang="fr"><span class="flag">FR</span> Français</button>
+                        <button type="button" data-lang="ar"><span class="flag">ع</span> العربية</button>
+                    </div>
+                </div>
+                <a href="/login/index.php" class="ld-btn" style="padding:9px 22px;font-size:.74rem" data-i18n="login">Login</a>
+                <button class="ld-hamburger" id="ldHamburger" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+        <div class="ld-mobile" id="ldMobile">
+            <a href="#home" data-i18n="nav_home">Home</a>
+            <a href="#services" data-i18n="nav_platform">Platform</a>
+            <a href="#pilgrimage" data-i18n="nav_method">Method</a>
+            <a href="#scholars" data-i18n="nav_teachers">Teachers</a>
+            <a href="#events" data-i18n="nav_news">News</a>
+            <a href="#contact" data-i18n="nav_contact">Contact</a>
+            <div class="ld-lang">
+                <button type="button" class="ld-lang-toggle"><i class="fa-solid fa-globe"></i> <span class="ld-lang-label">EN</span> <i class="fa-solid fa-chevron-down"></i></button>
+                <div class="ld-lang-menu">
+                    <button type="button" data-lang="en" class="on"><span class="flag">EN</span> English</button>
+                    <button type="button" data-lang="fr"><span class="flag">FR</span> Français</button>
+                    <button type="button" data-lang="ar"><span class="flag">ع</span> العربية</button>
+                </div>
+            </div>
+            <a href="/login/index.php" class="cta" data-i18n="login_student">Student Login</a>
+        </div>
+    </nav>
+
+    {{! ════════════ HERO ════════════ }}
+    <section class="ld-hero" id="home">
+        <img class="bg" src="/local/istikama_admin/pix/landing/istakama-banner.jpg" alt="Mosque at dusk" fetchpriority="high">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="ld-divider center" data-reveal><span class="dots"><span></span><span></span><span></span></span></div>
+            <h1 data-reveal data-i18n-html="hero_h1">Where <span class="accent">Learning</span><br>Shapes the Future</h1>
+            <div class="ld-divider center" data-reveal><span class="dots"><span></span><span></span><span></span></span></div>
+            <p data-reveal data-i18n="hero_p">One smart platform uniting the finest Quranic schools and the most dedicated teachers — guiding your children toward excellence in faith, knowledge and character.</p>
+            <a href="#about" class="ld-btn" data-reveal data-i18n="hero_cta">Discover the Platform</a>
+        </div>
+    </section>
+
+    {{! ════════════ ABOUT ════════════ }}
+    <section class="ld-about ld-pad" id="about">
+        <img class="ld-zakhrafa tl" src="/local/istikama_admin/pix/landing/bg-vector-2-1.png" alt="" aria-hidden="true">
+        <div class="ld-container">
+            <div class="grid">
+                <div class="frame" data-reveal="left">
+                    <img src="/local/istikama_admin/pix/landing/about-us-taqwa-theme.jpg" alt="Grand mosque" loading="lazy">
+                </div>
+                <div data-reveal="right">
+                    <span class="ld-eyebrow" data-i18n="about_eyebrow">Who We Are</span>
+                    <h2 class="ld-title" data-i18n="about_title">About Istikama</h2>
+                    <div class="ld-divider"><span class="dots"><span></span><span></span><span></span></span></div>
+                    <p class="desc" data-i18n="about_p1">Istikama is a unified digital platform that brings all our Quranic-sciences schools together under one intelligent system — blending authentic Islamic education with modern technology. From Tajweed and memorization to Tafseer and jurisprudence, every student learns through a structured, age-appropriate curriculum.</p>
+                    <p class="desc" data-i18n="about_p2">Our dedicated teachers, modern digital library, interactive lessons and real-time progress tracking give parents full visibility — so every child receives the guidance to become a hero of tomorrow.</p>
+                    <a href="#services" class="ld-btn" data-i18n="about_cta">Explore Features</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{! ════════════ ECOSYSTEM (was Donation) ════════════ }}
+    <section class="ld-donation">
+        <div class="media" data-reveal="left">
+            <img src="/local/istikama_admin/pix/landing/donation-bg.jpg" alt="Students learning" loading="lazy">
+        </div>
+        <div class="body" data-reveal="right">
+            <span class="ld-eyebrow" data-i18n="eco_eyebrow">Why Istikama</span>
+            <h2 class="ld-title" data-i18n="eco_title">A Complete Learning Ecosystem</h2>
+            <div class="ld-divider"><span class="dots"><span></span><span></span><span></span></span></div>
+            <div class="ld-amounts" id="ldAmounts">
+                <button class="ld-amount" data-i18n="eco_tag1">Digital Library</button>
+                <button class="ld-amount active" data-i18n="eco_tag2">Smart Quizzes</button>
+                <button class="ld-amount" data-i18n="eco_tag3">Live Tracking</button>
+                <button class="ld-amount" data-i18n="eco_tag4">Parent Portal</button>
+            </div>
+            <ul class="ld-causes-list">
+                <li><i class="fa-solid fa-circle-check"></i> <span data-i18n="eco_b1">A rich digital library of lessons, videos and PDFs — organised by level, subject and lesson.</span></li>
+                <li><i class="fa-solid fa-circle-check"></i> <span data-i18n="eco_b2">Interactive assignments and auto-graded quizzes that make learning engaging.</span></li>
+                <li><i class="fa-solid fa-circle-check"></i> <span data-i18n="eco_b3">Parents follow attendance, results and progress in real time, from anywhere.</span></li>
+            </ul>
+            <a href="/login/index.php" class="ld-btn ld-btn-dark" data-i18n="eco_cta">Get Started</a>
+        </div>
+    </section>
+
+    {{! ════════════ FEATURES (was Services) ════════════ }}
+    <section class="ld-services ld-pad" id="services">
+        <div class="ld-container">
+            <div class="ld-section-head" data-reveal>
+                <span class="ld-eyebrow" data-i18n="feat_eyebrow">What We Offer</span>
+                <h2 class="ld-title" data-i18n="feat_title">Everything in One Platform</h2>
+                <div class="ld-divider center"><span class="dots"><span></span><span></span><span></span></span></div>
+            </div>
+            <div class="ld-cards-4">
+                <div class="ld-service" data-reveal="zoom">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/quran-class-300x300.jpg" alt="Digital Library" loading="lazy"></div>
+                    <div class="cap" data-i18n="feat_c1">Digital Library</div>
+                </div>
+                <div class="ld-service" data-reveal="zoom" style="transition-delay:.08s">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/service-childcare.jpg" alt="Interactive Lessons" loading="lazy"></div>
+                    <div class="cap" data-i18n="feat_c2">Interactive Lessons</div>
+                </div>
+                <div class="ld-service" data-reveal="zoom" style="transition-delay:.16s">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/service-community.jpg" alt="Quizzes & Assignments" loading="lazy"></div>
+                    <div class="cap" data-i18n="feat_c3">Quizzes &amp; Assignments</div>
+                </div>
+                <div class="ld-service" data-reveal="zoom" style="transition-delay:.24s">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/service-building.jpg" alt="Progress & Reports" loading="lazy"></div>
+                    <div class="cap" data-i18n="feat_c4">Progress &amp; Reports</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{! ════════════ METHOD (was Pillars) ════════════ }}
+    <section class="ld-pillars ld-pad" id="pilgrimage">
+        <img class="bg" src="/local/istikama_admin/pix/landing/pillars-bg.jpg" alt="" aria-hidden="true">
+        <div class="overlay"></div>
+        <div class="ld-container inner">
+            <div class="ld-section-head" data-reveal>
+                <span class="ld-eyebrow" data-i18n="method_eyebrow">Our Approach</span>
+                <h2 class="ld-title" data-i18n="method_title">The Istikama Method</h2>
+                <div class="ld-divider center"><span class="dots"><span></span><span></span><span></span></span></div>
+            </div>
+            <div class="ld-pillars-row">
+                <div class="ld-pillar" data-reveal="zoom"><div class="box"><i class="fa-solid fa-book-open-reader"></i></div><h3 data-i18n="method_1">Memorization</h3><p data-i18n="method_1s">(Hifdh)</p><span class="connector"></span></div>
+                <div class="ld-pillar" data-reveal="zoom" style="transition-delay:.1s"><div class="box"><i class="fa-solid fa-feather-pointed"></i></div><h3 data-i18n="method_2">Recitation</h3><p data-i18n="method_2s">(Tajweed)</p><span class="connector"></span></div>
+                <div class="ld-pillar" data-reveal="zoom" style="transition-delay:.2s"><div class="box"><i class="fa-solid fa-lightbulb"></i></div><h3 data-i18n="method_3">Understanding</h3><p data-i18n="method_3s">(Tafseer)</p><span class="connector"></span></div>
+                <div class="ld-pillar" data-reveal="zoom" style="transition-delay:.3s"><div class="box"><i class="fa-solid fa-hand-holding-heart"></i></div><h3 data-i18n="method_4">Character</h3><p data-i18n="method_4s">(Akhlaq)</p><span class="connector"></span></div>
+                <div class="ld-pillar" data-reveal="zoom" style="transition-delay:.4s"><div class="box"><i class="fa-solid fa-award"></i></div><h3 data-i18n="method_5">Mastery</h3><p data-i18n="method_5s">(Itqan)</p><span class="connector"></span></div>
+            </div>
+        </div>
+    </section>
+
+    {{! ════════════ PROGRAMS (was Causes) ════════════ }}
+    <section class="ld-causes ld-pad" id="causes">
+        <img class="ld-zakhrafa br" src="/local/istikama_admin/pix/landing/bg-vector-2-1.png" alt="" aria-hidden="true">
+        <div class="ld-container">
+            <div class="ld-section-head" data-reveal>
+                <span class="ld-eyebrow" data-i18n="prog_eyebrow">Explore</span>
+                <h2 class="ld-title" data-i18n="prog_title">Our Programs</h2>
+                <div class="ld-divider center"><span class="dots"><span></span><span></span><span></span></span></div>
+                <p style="margin-top:14px" data-i18n="prog_intro">Structured learning paths for every age and level — taught by qualified teachers and powered by a smart digital platform.</p>
+            </div>
+            <div class="ld-cards-3">
+                <div class="ld-cause" data-reveal="zoom">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/service-childcare.jpg" alt="Primary Quran Program" loading="lazy"></div>
+                    <div class="body">
+                        <h3 data-i18n="prog1_t">Primary Quran Program</h3>
+                        <div class="meta"><span><i class="fa-solid fa-children"></i> <span data-i18n="prog1_age">Ages 6–10</span></span><span><i class="fa-solid fa-chalkboard-user"></i> <span data-i18n="prog1_teacher">Sheikh Bilal</span></span></div>
+                        <p class="excerpt" data-i18n="prog1_x">Foundations of reading, Tajweed and short Surahs through playful, interactive lessons.</p>
+                        <div class="ld-progress"><div class="fill" data-pct="80"><span class="knob">80%</span></div></div>
+                        <div class="figures"><span><span data-i18n="prog_enrolled">Enrolled</span>: <b>240</b></span><span><span data-i18n="prog_seats">Seats</span>: <b>300</b></span></div>
+                    </div>
+                </div>
+                <div class="ld-cause" data-reveal="zoom" style="transition-delay:.1s">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/quran-class-300x300.jpg" alt="Memorization Track" loading="lazy"></div>
+                    <div class="body">
+                        <h3 data-i18n="prog2_t">Memorization Track</h3>
+                        <div class="meta"><span><i class="fa-solid fa-children"></i> <span data-i18n="prog2_age">Ages 10–15</span></span><span><i class="fa-solid fa-chalkboard-user"></i> <span data-i18n="prog2_teacher">Sheikh Ali</span></span></div>
+                        <p class="excerpt" data-i18n="prog2_x">A guided Hifdh journey with revision tools, audio recitation and milestone tracking.</p>
+                        <div class="ld-progress"><div class="fill" data-pct="65"><span class="knob">65%</span></div></div>
+                        <div class="figures"><span><span data-i18n="prog_enrolled">Enrolled</span>: <b>180</b></span><span><span data-i18n="prog_seats">Seats</span>: <b>280</b></span></div>
+                    </div>
+                </div>
+                <div class="ld-cause" data-reveal="zoom" style="transition-delay:.2s">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/about-mosque.jpg" alt="Islamic Sciences" loading="lazy"></div>
+                    <div class="body">
+                        <h3 data-i18n="prog3_t">Islamic Sciences</h3>
+                        <div class="meta"><span><i class="fa-solid fa-children"></i> <span data-i18n="prog3_age">Ages 13+</span></span><span><i class="fa-solid fa-chalkboard-user"></i> <span data-i18n="prog3_teacher">Sheikh Nasir</span></span></div>
+                        <p class="excerpt" data-i18n="prog3_x">Tafseer, Hadith and Fiqh taught with depth, discussion and modern resources.</p>
+                        <div class="ld-progress"><div class="fill" data-pct="70"><span class="knob">70%</span></div></div>
+                        <div class="figures"><span><span data-i18n="prog_enrolled">Enrolled</span>: <b>210</b></span><span><span data-i18n="prog_seats">Seats</span>: <b>300</b></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{! ════════════ NEWS & EVENTS (was Blog) ════════════ }}
+    <section class="ld-blog ld-pad" id="events">
+        <div class="ld-container">
+            <div class="ld-section-head" data-reveal>
+                <span class="ld-eyebrow" data-i18n="news_eyebrow">News &amp; Events</span>
+                <h2 class="ld-title" data-i18n="news_title">Latest News &amp; Events</h2>
+                <div class="ld-divider center"><span class="dots"><span></span><span></span><span></span></span></div>
+            </div>
+            <div class="grid">
+                <div data-reveal="left">
+                    <article class="ld-post">
+                        <img src="/local/istikama_admin/pix/landing/blog-quran.jpg" alt="News">
+                        <div class="body">
+                            <h3 data-i18n="post1_t">New School Year, New Possibilities</h3>
+                            <div class="meta"><span><i class="fa-regular fa-calendar"></i> <span data-i18n="post1_date">Sep 1, 2025</span></span><span><i class="fa-regular fa-user"></i> <span data-i18n="post_author">Istikama Team</span></span></div>
+                            <p class="excerpt" data-i18n="post1_x">Discover what's new on the platform this year — richer libraries, smarter parent tools and more…</p>
+                            <a href="#" class="more" data-i18n="read_more">Read More &rarr;</a>
+                        </div>
+                    </article>
+                    <article class="ld-post">
+                        <img src="/local/istikama_admin/pix/landing/slider-green-taqwa-islamic-300x300.jpg" alt="Technology">
+                        <div class="body">
+                            <h3 data-i18n="post2_t">How Technology Elevates Quranic Learning</h3>
+                            <div class="meta"><span><i class="fa-regular fa-calendar"></i> <span data-i18n="post2_date">Aug 18, 2025</span></span><span><i class="fa-regular fa-user"></i> <span data-i18n="post_author">Istikama Team</span></span></div>
+                            <p class="excerpt" data-i18n="post2_x">Audio recitation, instant feedback and progress insights are transforming the classroom…</p>
+                            <a href="#" class="more" data-i18n="read_more">Read More &rarr;</a>
+                        </div>
+                    </article>
+                </div>
+                <div data-reveal="right">
+                    <div class="ld-event">
+                        <div class="date"><span class="day">28</span><span class="mon" data-i18n="mon_nov">Nov</span></div>
+                        <div>
+                            <h3 data-i18n="ev1_t">Open Day &amp; School Tour</h3>
+                            <div class="info"><span><i class="fa-solid fa-location-dot"></i> <span data-i18n="ev_loc_campus">Main Campus</span></span><span><i class="fa-regular fa-clock"></i> 9:30 — 13:15</span></div>
+                            <a href="#" class="link" data-i18n="ev_details">Event Details &rarr;</a>
+                        </div>
+                    </div>
+                    <div class="ld-event">
+                        <div class="date"><span class="day">24</span><span class="mon" data-i18n="mon_dec">Dec</span></div>
+                        <div>
+                            <h3 data-i18n="ev2_t">Quran Recitation Contest</h3>
+                            <div class="info"><span><i class="fa-solid fa-location-dot"></i> <span data-i18n="ev_loc_campus">Main Campus</span></span><span><i class="fa-regular fa-clock"></i> 9:30 — 13:15</span></div>
+                            <a href="#" class="link" data-i18n="ev_details">Event Details &rarr;</a>
+                        </div>
+                    </div>
+                    <div class="ld-event">
+                        <div class="date"><span class="day">25</span><span class="mon" data-i18n="mon_dec">Dec</span></div>
+                        <div>
+                            <h3 data-i18n="ev3_t">Parents &amp; Teachers Meetup</h3>
+                            <div class="info"><span><i class="fa-solid fa-location-dot"></i> <span data-i18n="ev_loc_online">Online</span></span><span><i class="fa-regular fa-clock"></i> 18:00 — 19:30</span></div>
+                            <a href="#" class="link" data-i18n="ev_details">Event Details &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{! ════════════ TEACHERS (was Scholars) ════════════ }}
+    <section class="ld-scholars ld-pad" id="scholars">
+        <div class="ld-container">
+            <div class="ld-section-head" data-reveal>
+                <span class="ld-eyebrow" data-i18n="team_eyebrow">Meet The Team</span>
+                <h2 class="ld-title" data-i18n="team_title">Our Expert Teachers</h2>
+                <div class="ld-divider center"><span class="dots"><span></span><span></span><span></span></span></div>
+            </div>
+            <div class="ld-cards-3">
+                <div class="ld-scholar" data-reveal="zoom">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/service-community.jpg" alt="" loading="lazy"></div>
+                    <div class="card">
+                        <div class="socials"><a href="#"><i class="fa-brands fa-x-twitter"></i></a><a href="#"><i class="fa-brands fa-facebook-f"></i></a><a href="#"><i class="fa-brands fa-linkedin-in"></i></a><a href="#"><i class="fa-brands fa-youtube"></i></a></div>
+                        <h3 data-i18n="t1_name">Sheikh Bilal Hatim</h3>
+                        <div class="role" data-i18n="t1_role">Founder &amp; Lead Educator</div>
+                    </div>
+                </div>
+                <div class="ld-scholar featured" data-reveal="zoom" style="transition-delay:.1s">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/service-childcare.jpg" alt="" loading="lazy"></div>
+                    <div class="card">
+                        <div class="socials"><a href="#"><i class="fa-brands fa-x-twitter"></i></a><a href="#"><i class="fa-brands fa-facebook-f"></i></a><a href="#"><i class="fa-brands fa-linkedin-in"></i></a><a href="#"><i class="fa-brands fa-youtube"></i></a></div>
+                        <h3 data-i18n="t2_name">Sheikh Ali Hammam</h3>
+                        <div class="role" data-i18n="t2_role">Memorization Specialist</div>
+                    </div>
+                </div>
+                <div class="ld-scholar" data-reveal="zoom" style="transition-delay:.2s">
+                    <div class="pic"><img src="/local/istikama_admin/pix/landing/quran-class-300x300.jpg" alt="" loading="lazy"></div>
+                    <div class="card">
+                        <div class="socials"><a href="#"><i class="fa-brands fa-x-twitter"></i></a><a href="#"><i class="fa-brands fa-facebook-f"></i></a><a href="#"><i class="fa-brands fa-linkedin-in"></i></a><a href="#"><i class="fa-brands fa-youtube"></i></a></div>
+                        <h3 data-i18n="t3_name">Ustadha Nasira Sheikh</h3>
+                        <div class="role" data-i18n="t3_role">Early-Years Teacher</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{! ════════════ JOIN CTA ════════════ }}
+    <section class="ld-join">
+        <img class="ld-join-zk tl" src="/local/istikama_admin/pix/landing/bg-vector-2-1.png" alt="" aria-hidden="true">
+        <img class="ld-join-zk br" src="/local/istikama_admin/pix/landing/bg-vector-2-1.png" alt="" aria-hidden="true">
+        <div class="ld-container inner">
+            <div data-reveal="left">
+                <span class="ld-join-eyebrow" data-i18n="join_eyebrow">Start Today</span>
+                <h3 data-i18n-html="join_title">Ready to unlock your child's <span class="accent">potential</span>?</h3>
+                <p data-i18n="join_p">Join Istikama today — give your children the finest teachers, an authentic curriculum and a smart platform that grows with them.</p>
+            </div>
+            <div class="acts" data-reveal="right">
+                <a href="/login/index.php" class="ld-btn" data-i18n="join_cta1">Enroll Now</a>
+                <a href="#about" class="ld-btn ld-btn-ghost" data-i18n="join_cta2">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    {{! ════════════ FOOTER ════════════ }}
+    <footer class="ld-footer" id="contact">
+        <div class="ld-container">
+            <div class="info-card">
+                <div class="about-col">
+                    <h4 data-i18n="f_about">About Us</h4>
+                    <p data-i18n="f_about_p">Istikama unites the finest Quranic schools and teachers on one smart platform — helping every child learn, grow and thrive through authentic education and modern technology.</p>
+                    <div class="logo-circle"><img src="/local/istikama_admin/pix/landing/cropped-heading-img-32x32.png" alt="Istikama"></div>
+                    <div class="loc"><i class="fa-solid fa-location-dot"></i> <span data-i18n="f_loc">Istikama Foundation — Headquarters</span></div>
+                </div>
+                <div>
+                    <h4 data-i18n="f_contact">Contact Info</h4>
+                    <ul class="contact-list">
+                        <li><i class="fa-regular fa-envelope"></i> info@istikama.org</li>
+                        <li><i class="fa-solid fa-phone"></i> 1800-123-456-7</li>
+                        <li><i class="fa-solid fa-location-dot"></i> <span data-i18n="f_addr">19 Education Avenue, Algeria</span></li>
+                        <li><i class="fa-solid fa-globe"></i> www.istikama.org</li>
+                    </ul>
+                    <div class="social-row">
+                        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gold-bar">
+            <div class="ld-container">
+                <div class="copy" style="margin:0 auto;text-align:center" data-i18n="g_copy">Istikama © Copyright 2026 — All Rights Reserved</div>
+            </div>
+        </div>
+    </footer>
+
+    <button class="ld-totop" id="ldTotop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+</div>
+{{! ── END LANDING PAGE ── }}
+
+<div class="d-none">{{{ output.main_content }}}</div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ════════════ i18n DICTIONARY (EN / FR / AR) ════════════
+    var I18N = {
+        en: {
+            follow:'Follow Us:', prayer:'Prayer Times', enroll:'Enroll Now',
+            join_eyebrow:'Start Today', join_title:'Ready to unlock your child\'s <span class="accent">potential</span>?', join_p:'Join Istikama today — give your children the finest teachers, an authentic curriculum and a smart platform that grows with them.', join_cta1:'Enroll Now', join_cta2:'Learn More',
+            brand_name:'Istikama <span class="accent">Academy</span>', brand_sub:'Quranic Sciences Association',
+            nav_home:'Home', nav_platform:'Platform', nav_method:'Method', nav_teachers:'Teachers', nav_news:'News', nav_contact:'Contact',
+            login:'Login', login_student:'Student Login',
+            hero_h1:'Where <span class="accent">Learning</span><br>Shapes the Future',
+            hero_p:'One smart platform uniting the finest Quranic schools and the most dedicated teachers — guiding your children toward excellence in faith, knowledge and character.',
+            hero_cta:'Discover the Platform',
+            about_eyebrow:'Who We Are', about_title:'About Istikama',
+            about_p1:'Istikama is a unified digital platform that brings all our Quranic-sciences schools together under one intelligent system — blending authentic Islamic education with modern technology. From Tajweed and memorization to Tafseer and jurisprudence, every student learns through a structured, age-appropriate curriculum.',
+            about_p2:'Our dedicated teachers, modern digital library, interactive lessons and real-time progress tracking give parents full visibility — so every child receives the guidance to become a hero of tomorrow.',
+            about_cta:'Explore Features',
+            eco_eyebrow:'Why Istikama', eco_title:'A Complete Learning Ecosystem',
+            eco_tag1:'Digital Library', eco_tag2:'Smart Quizzes', eco_tag3:'Live Tracking', eco_tag4:'Parent Portal',
+            eco_b1:'A rich digital library of lessons, videos and PDFs — organised by level, subject and lesson.',
+            eco_b2:'Interactive assignments and auto-graded quizzes that make learning engaging.',
+            eco_b3:'Parents follow attendance, results and progress in real time, from anywhere.',
+            eco_cta:'Get Started',
+            feat_eyebrow:'What We Offer', feat_title:'Everything in One Platform',
+            feat_c1:'Digital Library', feat_c2:'Interactive Lessons', feat_c3:'Quizzes & Assignments', feat_c4:'Progress & Reports',
+            method_eyebrow:'Our Approach', method_title:'The Istikama Method',
+            method_1:'Memorization', method_1s:'(Hifdh)', method_2:'Recitation', method_2s:'(Tajweed)',
+            method_3:'Understanding', method_3s:'(Tafseer)', method_4:'Character', method_4s:'(Akhlaq)',
+            method_5:'Mastery', method_5s:'(Itqan)',
+            prog_eyebrow:'Explore', prog_title:'Our Programs',
+            prog_intro:'Structured learning paths for every age and level — taught by qualified teachers and powered by a smart digital platform.',
+            prog1_t:'Primary Quran Program', prog1_age:'Ages 6–10', prog1_teacher:'Sheikh Bilal', prog1_x:'Foundations of reading, Tajweed and short Surahs through playful, interactive lessons.',
+            prog2_t:'Memorization Track', prog2_age:'Ages 10–15', prog2_teacher:'Sheikh Ali', prog2_x:'A guided Hifdh journey with revision tools, audio recitation and milestone tracking.',
+            prog3_t:'Islamic Sciences', prog3_age:'Ages 13+', prog3_teacher:'Sheikh Nasir', prog3_x:'Tafseer, Hadith and Fiqh taught with depth, discussion and modern resources.',
+            prog_enrolled:'Enrolled', prog_seats:'Seats',
+            news_eyebrow:'News & Events', news_title:'Latest News & Events',
+            post1_t:'New School Year, New Possibilities', post1_date:'Sep 1, 2025', post1_x:"Discover what's new on the platform this year — richer libraries, smarter parent tools and more…",
+            post2_t:'How Technology Elevates Quranic Learning', post2_date:'Aug 18, 2025', post2_x:'Audio recitation, instant feedback and progress insights are transforming the classroom…',
+            post_author:'Istikama Team', read_more:'Read More →',
+            mon_nov:'Nov', mon_dec:'Dec', ev_details:'Event Details →', ev_loc_campus:'Main Campus', ev_loc_online:'Online',
+            ev1_t:'Open Day & School Tour', ev2_t:'Quran Recitation Contest', ev3_t:'Parents & Teachers Meetup',
+            team_eyebrow:'Meet The Team', team_title:'Our Expert Teachers',
+            t1_name:'Sheikh Bilal Hatim', t1_role:'Founder & Lead Educator',
+            t2_name:'Sheikh Ali Hammam', t2_role:'Memorization Specialist',
+            t3_name:'Ustadha Nasira Sheikh', t3_role:'Early-Years Teacher',
+            f_about:'About Us', f_about_p:'Istikama unites the finest Quranic schools and teachers on one smart platform — helping every child learn, grow and thrive through authentic education and modern technology.',
+            f_loc:'Istikama Foundation — Headquarters',
+            f_news:'Latest News', f_news1:'New School Year, New Possibilities', f_news2:'Technology & Quranic Learning', f_news3:"A Parent's Guide to the Platform", f_news3_date:'Aug 6, 2025',
+            f_contact:'Contact Info', f_addr:'19 Education Avenue, Algeria',
+            f_subscribe:'Subscribe Newsletter', f_name:'Name', f_email:'Email', f_subscribe_btn:'Subscribe',
+            g_title:'Subscribe, For Weekly Updates', g_ph:'Enter Your Email Address *', g_btn:'Signup Now',
+            g_copy:'Istikama © Copyright 2026 — All Rights Reserved'
+        },
+        fr: {
+            follow:'Suivez-nous :', prayer:'Horaires de prière', enroll:'Inscrivez-vous',
+            join_eyebrow:'Commencez aujourd\'hui', join_title:'Prêt à révéler le <span class="accent">potentiel</span> de votre enfant ?', join_p:'Rejoignez Istikama dès aujourd\'hui — offrez à vos enfants les meilleurs enseignants, un programme authentique et une plateforme intelligente qui grandit avec eux.', join_cta1:'Inscrivez-vous', join_cta2:'En savoir plus',
+            brand_name:'Istikama <span class="accent">Academy</span>', brand_sub:'Association des sciences coraniques',
+            nav_home:'Accueil', nav_platform:'Plateforme', nav_method:'Méthode', nav_teachers:'Enseignants', nav_news:'Actualités', nav_contact:'Contact',
+            login:'Connexion', login_student:'Espace élève',
+            hero_h1:'Où le <span class="accent">savoir</span><br>façonne l\'avenir',
+            hero_p:'Une plateforme intelligente réunissant les meilleures écoles coraniques et les enseignants les plus dévoués — pour guider vos enfants vers l\'excellence dans la foi, le savoir et le caractère.',
+            hero_cta:'Découvrir la plateforme',
+            about_eyebrow:'Qui sommes-nous', about_title:'À propos d\'Istikama',
+            about_p1:'Istikama est une plateforme numérique unifiée qui rassemble toutes nos écoles de sciences coraniques au sein d\'un système intelligent — alliant un enseignement islamique authentique aux technologies modernes. Du Tajwid et de la mémorisation au Tafsir et à la jurisprudence, chaque élève apprend selon un programme structuré et adapté à son âge.',
+            about_p2:'Nos enseignants dévoués, notre bibliothèque numérique moderne, nos cours interactifs et le suivi en temps réel offrent aux parents une visibilité totale — pour que chaque enfant devienne un héros de demain.',
+            about_cta:'Voir les fonctionnalités',
+            eco_eyebrow:'Pourquoi Istikama', eco_title:'Un écosystème d\'apprentissage complet',
+            eco_tag1:'Bibliothèque', eco_tag2:'Quiz intelligents', eco_tag3:'Suivi en direct', eco_tag4:'Espace parents',
+            eco_b1:'Une riche bibliothèque numérique de cours, vidéos et PDF — classée par niveau, matière et leçon.',
+            eco_b2:'Des devoirs interactifs et des quiz auto-corrigés qui rendent l\'apprentissage captivant.',
+            eco_b3:'Les parents suivent la présence, les résultats et la progression en temps réel, partout.',
+            eco_cta:'Commencer',
+            feat_eyebrow:'Ce que nous offrons', feat_title:'Tout sur une seule plateforme',
+            feat_c1:'Bibliothèque numérique', feat_c2:'Cours interactifs', feat_c3:'Quiz & devoirs', feat_c4:'Suivi & rapports',
+            method_eyebrow:'Notre approche', method_title:'La méthode Istikama',
+            method_1:'Mémorisation', method_1s:'(Hifdh)', method_2:'Récitation', method_2s:'(Tajwid)',
+            method_3:'Compréhension', method_3s:'(Tafsir)', method_4:'Caractère', method_4s:'(Akhlaq)',
+            method_5:'Excellence', method_5s:'(Itqan)',
+            prog_eyebrow:'Découvrir', prog_title:'Nos programmes',
+            prog_intro:'Des parcours structurés pour chaque âge et niveau — encadrés par des enseignants qualifiés et soutenus par une plateforme numérique intelligente.',
+            prog1_t:'Programme coranique primaire', prog1_age:'6 à 10 ans', prog1_teacher:'Cheikh Bilal', prog1_x:'Les bases de la lecture, du Tajwid et des courtes sourates à travers des leçons interactives et ludiques.',
+            prog2_t:'Parcours de mémorisation', prog2_age:'10 à 15 ans', prog2_teacher:'Cheikh Ali', prog2_x:'Un parcours de Hifdh guidé avec outils de révision, récitation audio et suivi des étapes.',
+            prog3_t:'Sciences islamiques', prog3_age:'13 ans et +', prog3_teacher:'Cheikh Nasir', prog3_x:'Tafsir, Hadith et Fiqh enseignés avec profondeur, débat et ressources modernes.',
+            prog_enrolled:'Inscrits', prog_seats:'Places',
+            news_eyebrow:'Actualités & événements', news_title:'Dernières actualités & événements',
+            post1_t:'Nouvelle année scolaire, nouvelles possibilités', post1_date:'1 sept. 2025', post1_x:'Découvrez les nouveautés de la plateforme cette année — bibliothèques enrichies, outils parents et plus encore…',
+            post2_t:'Comment la technologie élève l\'apprentissage coranique', post2_date:'18 août 2025', post2_x:'Récitation audio, retour instantané et suivi des progrès transforment la classe…',
+            post_author:'Équipe Istikama', read_more:'Lire la suite →',
+            mon_nov:'Nov', mon_dec:'Déc', ev_details:'Détails →', ev_loc_campus:'Campus principal', ev_loc_online:'En ligne',
+            ev1_t:'Journée portes ouvertes', ev2_t:'Concours de récitation', ev3_t:'Rencontre parents & enseignants',
+            team_eyebrow:'L\'équipe', team_title:'Nos enseignants experts',
+            t1_name:'Cheikh Bilal Hatim', t1_role:'Fondateur & éducateur principal',
+            t2_name:'Cheikh Ali Hammam', t2_role:'Spécialiste en mémorisation',
+            t3_name:'Oustadha Nasira Sheikh', t3_role:'Enseignante des petites classes',
+            f_about:'À propos', f_about_p:'Istikama réunit les meilleures écoles et enseignants coraniques sur une plateforme intelligente — pour aider chaque enfant à apprendre, grandir et s\'épanouir grâce à un enseignement authentique et des technologies modernes.',
+            f_loc:'Fondation Istikama — Siège',
+            f_news:'Dernières actualités', f_news1:'Nouvelle année scolaire', f_news2:'Technologie & apprentissage coranique', f_news3:'Guide des parents pour la plateforme', f_news3_date:'6 août 2025',
+            f_contact:'Coordonnées', f_addr:'19 Avenue de l\'Éducation, Algérie',
+            f_subscribe:'Newsletter', f_name:'Nom', f_email:'E-mail', f_subscribe_btn:'S\'abonner',
+            g_title:'Abonnez-vous pour les mises à jour', g_ph:'Entrez votre adresse e-mail *', g_btn:'S\'inscrire',
+            g_copy:'Istikama © Copyright 2026 — Tous droits réservés'
+        },
+        ar: {
+            follow:'تابعونا:', prayer:'مواقيت الصلاة', enroll:'سجّل الآن',
+            join_eyebrow:'ابدأ اليوم', join_title:'هل أنت مستعدّ لإطلاق <span class="accent">إمكانات</span> طفلك؟', join_p:'انضمّ إلى الاستقامة اليوم — امنح أبناءك نخبة المعلّمين، ومنهجًا أصيلًا، ومنصة ذكية تكبر معهم.', join_cta1:'سجّل الآن', join_cta2:'اعرف المزيد',
+            brand_name:'الاستقامة', brand_sub:'جمعية العلوم القرآنية',
+            nav_home:'الرئيسية', nav_platform:'المنصة', nav_method:'منهجنا', nav_teachers:'المعلمون', nav_news:'الأخبار', nav_contact:'اتصل بنا',
+            login:'دخول', login_student:'دخول التلميذ',
+            hero_h1:'حيث يصنع <span class="accent">العلمُ</span><br>مستقبلَ أبنائنا',
+            hero_p:'منصة ذكية تجمع أفضل مدارس العلوم القرآنية ونخبة المعلمين، لنقود أبناءكم نحو التميّز في الإيمان والعلم والأخلاق.',
+            hero_cta:'اكتشف المنصة',
+            about_eyebrow:'من نحن', about_title:'عن منصة الاستقامة',
+            about_p1:'الاستقامة منصة رقمية موحَّدة تجمع كل مدارس العلوم القرآنية في نظام ذكي واحد، يمزج بين التعليم الإسلامي الأصيل وأحدث التقنيات. من التجويد والحفظ إلى التفسير والفقه، يتعلّم كل تلميذ وفق منهجٍ منظَّم يناسب سنّه ومستواه.',
+            about_p2:'معلّمونا المتفانون، ومكتبتنا الرقمية الحديثة، ودروسنا التفاعلية، ومتابعة الأداء لحظةً بلحظة، تمنح الأولياء رؤيةً كاملة — ليحظى كل طفل بالرعاية التي تجعله بطل الغد.',
+            about_cta:'استكشف المزايا',
+            eco_eyebrow:'لماذا الاستقامة', eco_title:'منظومة تعليمية متكاملة',
+            eco_tag1:'مكتبة رقمية', eco_tag2:'اختبارات ذكية', eco_tag3:'متابعة مباشرة', eco_tag4:'بوابة الأولياء',
+            eco_b1:'مكتبة رقمية غنية من الدروس والفيديوهات وملفات PDF، منظَّمة حسب المستوى والمادة والدرس.',
+            eco_b2:'واجبات تفاعلية واختبارات تُصحَّح آليًا تجعل التعلّم ممتعًا.',
+            eco_b3:'يتابع الأولياء الحضور والنتائج والتقدّم لحظيًا، من أي مكان.',
+            eco_cta:'ابدأ الآن',
+            feat_eyebrow:'ما الذي نقدّمه', feat_title:'كل شيء في منصة واحدة',
+            feat_c1:'المكتبة الرقمية', feat_c2:'دروس تفاعلية', feat_c3:'اختبارات وواجبات', feat_c4:'التقارير والمتابعة',
+            method_eyebrow:'منهجنا', method_title:'منهج الاستقامة',
+            method_1:'الحفظ', method_1s:'(التحفيظ)', method_2:'التلاوة', method_2s:'(التجويد)',
+            method_3:'الفهم', method_3s:'(التفسير)', method_4:'الأخلاق', method_4s:'(السلوك)',
+            method_5:'الإتقان', method_5s:'(الاستقامة)',
+            prog_eyebrow:'استكشف', prog_title:'برامجنا',
+            prog_intro:'مسارات تعليمية منظَّمة لكل سنٍّ ومستوى — يؤطّرها معلّمون أكفاء وتدعمها منصة رقمية ذكية.',
+            prog1_t:'برنامج القرآن الابتدائي', prog1_age:'٦ – ١٠ سنوات', prog1_teacher:'الشيخ بلال', prog1_x:'أسس القراءة والتجويد وقصار السور عبر دروس تفاعلية ممتعة.',
+            prog2_t:'مسار التحفيظ', prog2_age:'١٠ – ١٥ سنة', prog2_teacher:'الشيخ علي', prog2_x:'رحلة حفظٍ موجَّهة مع أدوات للمراجعة وتلاوة صوتية وتتبّع للمراحل.',
+            prog3_t:'العلوم الشرعية', prog3_age:'١٣ سنة فأكثر', prog3_teacher:'الشيخ ناصر', prog3_x:'تفسير وحديث وفقه يُدرَّس بعمق ونقاش وموارد حديثة.',
+            prog_enrolled:'المسجّلون', prog_seats:'المقاعد',
+            news_eyebrow:'الأخبار والفعاليات', news_title:'آخر الأخبار والفعاليات',
+            post1_t:'عام دراسي جديد، آفاق جديدة', post1_date:'١ سبتمبر ٢٠٢٥', post1_x:'اكتشف جديد المنصة هذا العام — مكتبات أغنى وأدوات أذكى للأولياء والمزيد…',
+            post2_t:'كيف ترتقي التقنية بتعلّم القرآن', post2_date:'١٨ أوت ٢٠٢٥', post2_x:'التلاوة الصوتية والتغذية الراجعة الفورية ومؤشرات التقدّم تُحوِّل القسم…',
+            post_author:'فريق الاستقامة', read_more:'اقرأ المزيد ←',
+            mon_nov:'نوف', mon_dec:'ديس', ev_details:'تفاصيل الفعالية ←', ev_loc_campus:'المقر الرئيسي', ev_loc_online:'عن بُعد',
+            ev1_t:'يوم مفتوح وجولة في المدرسة', ev2_t:'مسابقة في تلاوة القرآن', ev3_t:'لقاء الأولياء والمعلمين',
+            team_eyebrow:'تعرّف على الفريق', team_title:'نخبة معلّمينا',
+            t1_name:'الشيخ بلال حاتم', t1_role:'المؤسّس والمعلّم الرئيسي',
+            t2_name:'الشيخ علي همّام', t2_role:'مختصّ في التحفيظ',
+            t3_name:'الأستاذة نصيرة شيخ', t3_role:'معلّمة المراحل الأولى',
+            f_about:'من نحن', f_about_p:'الاستقامة تجمع أفضل المدارس والمعلّمين في منصة ذكية واحدة — لتساعد كل طفل على التعلّم والنموّ والتفوّق عبر تعليمٍ أصيل وتقنيات حديثة.',
+            f_loc:'مؤسسة الاستقامة — المقر الرئيسي',
+            f_news:'آخر الأخبار', f_news1:'عام دراسي جديد، آفاق جديدة', f_news2:'التقنية وتعلّم القرآن', f_news3:'دليل الأولياء لاستخدام المنصة', f_news3_date:'٦ أوت ٢٠٢٥',
+            f_contact:'معلومات التواصل', f_addr:'19 شارع التعليم، الجزائر',
+            f_subscribe:'النشرة البريدية', f_name:'الاسم', f_email:'البريد الإلكتروني', f_subscribe_btn:'اشترك',
+            g_title:'اشترك لتصلك التحديثات أسبوعيًا', g_ph:'أدخل بريدك الإلكتروني *', g_btn:'اشترك الآن',
+            g_copy:'الاستقامة © جميع الحقوق محفوظة ٢٠٢٦'
+        }
+    };
+
+    var lp = document.getElementById('landing-page');
+    function applyLang(lang) {
+        var dict = I18N[lang] || I18N.en;
+        lp.querySelectorAll('[data-i18n]').forEach(function (el) {
+            var k = el.getAttribute('data-i18n'); if (dict[k] != null) el.textContent = dict[k];
+        });
+        lp.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+            var k = el.getAttribute('data-i18n-html'); if (dict[k] != null) el.innerHTML = dict[k];
+        });
+        lp.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+            var k = el.getAttribute('data-i18n-ph'); if (dict[k] != null) el.setAttribute('placeholder', dict[k]);
+        });
+        lp.setAttribute('lang', lang);
+        lp.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        lp.classList.toggle('ld-rtl', lang === 'ar');
+        var labels = { en: 'EN', fr: 'FR', ar: 'العربية' };
+        document.querySelectorAll('#landing-page .ld-lang-label').forEach(function (el) { el.textContent = labels[lang] || 'EN'; });
+        document.querySelectorAll('#landing-page .ld-lang-menu [data-lang]').forEach(function (b) {
+            b.classList.toggle('on', b.getAttribute('data-lang') === lang);
+        });
+        try { localStorage.setItem('isti-landing-lang', lang); } catch (e) {}
+    }
+    // Dropdown open/close + selection
+    document.querySelectorAll('#landing-page .ld-lang').forEach(function (box) {
+        var toggle = box.querySelector('.ld-lang-toggle');
+        if (toggle) toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var willOpen = !box.classList.contains('open');
+            document.querySelectorAll('#landing-page .ld-lang.open').forEach(function (o) { o.classList.remove('open'); });
+            box.classList.toggle('open', willOpen);
+        });
+        box.querySelectorAll('.ld-lang-menu [data-lang]').forEach(function (btn) {
+            btn.addEventListener('click', function () { applyLang(btn.getAttribute('data-lang')); box.classList.remove('open'); });
+        });
+    });
+    document.addEventListener('click', function () {
+        document.querySelectorAll('#landing-page .ld-lang.open').forEach(function (o) { o.classList.remove('open'); });
+    });
+    var saved = 'en';
+    try { saved = localStorage.getItem('isti-landing-lang') || 'en'; } catch (e) {}
+    if (saved !== 'en') applyLang(saved);
+
+    // ── Sticky nav shadow ──
+    var nav = document.getElementById('ldNav');
+    var totop = document.getElementById('ldTotop');
+    function onScroll() {
+        var y = window.pageYOffset || document.documentElement.scrollTop;
+        if (nav) nav.classList.toggle('scrolled', y > 30);
+        if (totop) totop.classList.toggle('show', y > 600);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // ── Mobile menu ──
+    var burger = document.getElementById('ldHamburger');
+    var mobile = document.getElementById('ldMobile');
+    if (burger && mobile) {
+        burger.addEventListener('click', function () {
+            var open = mobile.classList.toggle('open');
+            burger.innerHTML = open ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
+        });
+        mobile.querySelectorAll('a').forEach(function (a) {
+            a.addEventListener('click', function () {
+                mobile.classList.remove('open');
+                burger.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            });
+        });
+    }
+
+    // ── Smooth in-page anchor scroll ──
+    document.querySelectorAll('#landing-page a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+            var id = a.getAttribute('href');
+            if (id.length < 2) return;
+            var t = document.querySelector(id);
+            if (!t) return;
+            e.preventDefault();
+            var top = t.getBoundingClientRect().top + window.pageYOffset - 70;
+            window.scrollTo({ top: top, behavior: 'smooth' });
+        });
+    });
+
+    // ── Back to top ──
+    if (totop) totop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+    // ── Feature-tag selector (visual) ──
+    var amounts = document.getElementById('ldAmounts');
+    if (amounts) amounts.addEventListener('click', function (e) {
+        var b = e.target.closest('.ld-amount');
+        if (!b) return;
+        amounts.querySelectorAll('.ld-amount').forEach(function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+    });
+
+    // ── Scroll-reveal via IntersectionObserver (with hard safety net) ──
+    var revealEls = document.querySelectorAll('#landing-page [data-reveal]');
+    function reveal(el) {
+        if (el.classList.contains('in')) return;
+        el.classList.add('in');
+        el.querySelectorAll('.ld-progress .fill').forEach(function (f) {
+            var p = f.getAttribute('data-pct') || 0;
+            requestAnimationFrame(function () { f.style.width = p + '%'; });
+        });
+    }
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) { reveal(en.target); io.unobserve(en.target); }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+        revealEls.forEach(function (el) { io.observe(el); });
+        requestAnimationFrame(function () {
+            revealEls.forEach(function (el) {
+                var r = el.getBoundingClientRect();
+                if (r.top < window.innerHeight && r.bottom > 0) reveal(el);
+            });
+        });
+        setTimeout(function () {
+            revealEls.forEach(function (el) {
+                var r = el.getBoundingClientRect();
+                if (r.top < window.innerHeight * 1.5) reveal(el);
+            });
+        }, 1200);
+        setTimeout(function () { revealEls.forEach(reveal); }, 3000);
+        var passTick = false;
+        window.addEventListener('scroll', function () {
+            if (passTick) return; passTick = true;
+            requestAnimationFrame(function () {
+                passTick = false;
+                revealEls.forEach(function (el) {
+                    if (el.classList.contains('in')) return;
+                    var r = el.getBoundingClientRect();
+                    if (r.top < window.innerHeight * 0.95) reveal(el);
+                });
+            });
+        }, { passive: true });
+    } else {
+        revealEls.forEach(reveal);
+    }
+})();
+</script>
+
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function(Loader) {
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

@@ -1,0 +1,24 @@
+<div class="isti-card isti-mb-lg">
+    <div class="isti-card-header">
+        <h5><i class="fa fa-cloud-upload-alt"></i> {{#str}}uploadnew, local_istikama_admin{{/str}}</h5>
+    </div>
+    <div class="isti-card-body">
+        <form method="post" action="{{baseurl}}" class="isti-row" style="align-items:flex-end">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <input type="hidden" name="action" value="addcontent">
+            <div class="isti-col-4">
+                <label class="isti-form-label">File name</label>
+                <input class="isti-form-input" type="text" name="filename" placeholder="File name" required>
+            </div>
+            <div class="isti-col-4">
+                <label class="isti-form-label">Category</label>
+                <input class="isti-form-input" type="text" name="category" placeholder="School / Level / Subject" required>
+            </div>
+            <div class="isti-col-4">
+                <button type="submit" class="isti-btn isti-btn-primary" style="width:100%">
+                    <i class="fa fa-plus"></i> {{#str}}uploadnew, local_istikama_admin{{/str}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/istikama_admin/db" VERSION="2026040101" COMMENT="XMLDB file for local_istikama_admin"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="istikama_content_bank" COMMENT="Istikama educational content bank">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Content display name"/>
+        <FIELD NAME="content_type" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="document" COMMENT="document|video|h5p|book|quiz|link"/>
+        <FIELD NAME="category" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="main" COMMENT="main|explanatory|enrichment"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="false"/>
+        <FIELD NAME="level" TYPE="char" LENGTH="255" NOTNULL="false"/>
+        <FIELD NAME="lesson" TYPE="char" LENGTH="255" NOTNULL="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="keywords" TYPE="char" LENGTH="1024" NOTNULL="false" COMMENT="Comma-separated tags"/>
+        <FIELD NAME="external_url" TYPE="char" LENGTH="1024" NOTNULL="false" COMMENT="YouTube or external link"/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="false" COMMENT="Original uploaded filename"/>
+        <FIELD NAME="file_itemid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Moodle file area item ID"/>
+        <FIELD NAME="contentbank_id" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Link to core contentbank_content.id"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="pending"/>
+        <FIELD NAME="reject_reason" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="uploaded_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="approved_by" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="status_ix" UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="content_type_ix" UNIQUE="false" FIELDS="content_type"/>
+        <INDEX NAME="uploaded_by_ix" UNIQUE="false" FIELDS="uploaded_by"/>
+        <INDEX NAME="subject_ix" UNIQUE="false" FIELDS="subject"/>
+        <INDEX NAME="level_ix" UNIQUE="false" FIELDS="level"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_content_ratings" COMMENT="Star ratings for content bank items">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="content_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="rating" TYPE="int" LENGTH="2" NOTNULL="true" COMMENT="1-5 stars"/>
+        <FIELD NAME="rating_type" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="usefulness" COMMENT="usefulness|design"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="content_fk" TYPE="foreign" FIELDS="content_id" REFTABLE="istikama_content_bank" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="content_user_type_uix" UNIQUE="true" FIELDS="content_id, userid, rating_type"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_content_comments" COMMENT="Comments and feedback on content bank items">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="content_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="comment_text" TYPE="text" NOTNULL="true"/>
+        <FIELD NAME="parent_id" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="For threaded replies"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="content_fk" TYPE="foreign" FIELDS="content_id" REFTABLE="istikama_content_bank" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="content_time_ix" UNIQUE="false" FIELDS="content_id, timecreated"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_quiz_templates" COMMENT="Reusable quiz templates">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="questions_json" TYPE="text" NOTNULL="true"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="32" NOTNULL="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="type_ix" UNIQUE="false" FIELDS="type"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_school_info" COMMENT="Extended school information linked to course categories">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Links to mdl_course_categories.id"/>
+        <FIELD NAME="institution_code" TYPE="char" LENGTH="50" NOTNULL="false" COMMENT="School institution code"/>
+        <FIELD NAME="wilaya_code" TYPE="char" LENGTH="10" NOTNULL="false" COMMENT="State/Province code"/>
+        <FIELD NAME="wilaya_name" TYPE="char" LENGTH="255" NOTNULL="false" COMMENT="Cached wilaya name"/>
+        <FIELD NAME="commune_code" TYPE="char" LENGTH="10" NOTNULL="false" COMMENT="Municipality code"/>
+        <FIELD NAME="commune_name" TYPE="char" LENGTH="255" NOTNULL="false" COMMENT="Cached commune name"/>
+        <FIELD NAME="address" TYPE="text" NOTNULL="false" COMMENT="Street address"/>
+        <FIELD NAME="phone" TYPE="char" LENGTH="30" NOTNULL="false"/>
+        <FIELD NAME="email" TYPE="char" LENGTH="255" NOTNULL="false"/>
+        <FIELD NAME="admin_userid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="School platform administrator"/>
+        <FIELD NAME="logo_itemid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="File area item ID for school logo"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="categoryid_fk" TYPE="foreign-unique" FIELDS="categoryid" REFTABLE="course_categories" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="institution_code_ix" UNIQUE="false" FIELDS="institution_code"/>
+        <INDEX NAME="wilaya_code_ix" UNIQUE="false" FIELDS="wilaya_code"/>
+        <INDEX NAME="admin_userid_ix" UNIQUE="false" FIELDS="admin_userid"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_user_school" COMMENT="User assignment to school hierarchy (season-aware)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to mdl_user.id"/>
+        <FIELD NAME="schoolid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to mdl_course_categories.id depth=1"/>
+        <FIELD NAME="levelid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="FK to mdl_course_categories.id depth=2"/>
+        <FIELD NAME="classid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="FK to mdl_course_categories.id depth=3"/>
+        <FIELD NAME="role" TYPE="char" LENGTH="20" NOTNULL="true" COMMENT="student|teacher|manager"/>
+        <FIELD NAME="seasonid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="FK to istikama_season.id (NULL = legacy unscoped row)"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="enrolled" COMMENT="enrolled|graduated|transferred|suspended"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_role_ix" UNIQUE="false" FIELDS="userid, role"/>
+        <INDEX NAME="schoolid_ix" UNIQUE="false" FIELDS="schoolid"/>
+        <INDEX NAME="seasonid_ix" UNIQUE="false" FIELDS="seasonid"/>
+        <INDEX NAME="userid_season_role_ix" UNIQUE="false" FIELDS="userid, seasonid, role"/>
+        <INDEX NAME="status_ix" UNIQUE="false" FIELDS="status"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_teacher_subject" COMMENT="Subjects assigned to a teacher per class (season-aware via assignment)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="assignmentid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to istikama_user_school.id"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="Subject key e.g. math, science"/>
+        <FIELD NAME="seasonid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="FK to istikama_season.id (denormalized from assignment for fast season filters)"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="assignmentid_fk" TYPE="foreign" FIELDS="assignmentid" REFTABLE="istikama_user_school" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="assignmentid_subject_uix" UNIQUE="true" FIELDS="assignmentid, subject"/>
+        <INDEX NAME="seasonid_ix" UNIQUE="false" FIELDS="seasonid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="istikama_teacher_activities" COMMENT="Activities and quizzes created by teachers (season-aware)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="quiz" COMMENT="quiz|assignment|discussion|worksheet"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="questions_json" TYPE="text" NOTNULL="false" COMMENT="JSON quiz questions for simple quizzes"/>
+        <FIELD NAME="created_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="schoolid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="classid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="100" NOTNULL="false"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="active"/>
+        <FIELD NAME="seasonid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="FK to istikama_season.id (NULL = legacy unscoped)"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="created_by_ix" UNIQUE="false" FIELDS="created_by"/>
+        <INDEX NAME="schoolid_ix" UNIQUE="false" FIELDS="schoolid"/>
+        <INDEX NAME="classid_ix" UNIQUE="false" FIELDS="classid"/>
+        <INDEX NAME="seasonid_ix" UNIQUE="false" FIELDS="seasonid"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_content_levels" COMMENT="Many-to-many: content can target multiple academic levels">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="content_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="level_key" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="Level slug/name as used by other tables"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="content_fk" TYPE="foreign" FIELDS="content_id" REFTABLE="istikama_content_bank" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="content_level_uix" UNIQUE="true" FIELDS="content_id, level_key"/>
+        <INDEX NAME="level_key_ix" UNIQUE="false" FIELDS="level_key"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_content_subjects" COMMENT="Many-to-many: content can target multiple subjects">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="content_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="subject_key" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="Subject slug/name"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="content_fk" TYPE="foreign" FIELDS="content_id" REFTABLE="istikama_content_bank" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="content_subject_uix" UNIQUE="true" FIELDS="content_id, subject_key"/>
+        <INDEX NAME="subject_key_ix" UNIQUE="false" FIELDS="subject_key"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_content_lesson_link" COMMENT="Links approved content to lessons and classes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="content_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Moodle course ID representing the lesson"/>
+        <FIELD NAME="classid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Class category ID"/>
+        <FIELD NAME="linked_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="content_fk" TYPE="foreign" FIELDS="content_id" REFTABLE="istikama_content_bank" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="content_course_uix" UNIQUE="true" FIELDS="content_id, courseid, classid"/>
+        <INDEX NAME="courseid_ix" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_activity_lesson_link" COMMENT="Links activities to lessons and classes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="activity_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="classid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="linked_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="activity_fk" TYPE="foreign" FIELDS="activity_id" REFTABLE="istikama_teacher_activities" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="activity_course_uix" UNIQUE="true" FIELDS="activity_id, courseid, classid"/>
+        <INDEX NAME="courseid_ix" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_attendance" COMMENT="Daily attendance and behavior records (season-aware)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="classid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="attend_date" TYPE="char" LENGTH="10" NOTNULL="true" COMMENT="YYYY-MM-DD"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="present" COMMENT="present|absent|late|excused"/>
+        <FIELD NAME="behavior_note" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="recorded_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="seasonid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="FK to istikama_season.id (NULL = legacy unscoped)"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="student_class_date_uix" UNIQUE="true" FIELDS="studentid, classid, attend_date"/>
+        <INDEX NAME="classid_date_ix" UNIQUE="false" FIELDS="classid, attend_date"/>
+        <INDEX NAME="seasonid_ix" UNIQUE="false" FIELDS="seasonid"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_assessments" COMMENT="Individual student assessments by teachers (season-aware)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="classid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="100" NOTNULL="true"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="score" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="max_score" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="notes" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="assessed_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="seasonid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="FK to istikama_season.id (NULL = legacy unscoped)"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="studentid_classid_ix" UNIQUE="false" FIELDS="studentid, classid"/>
+        <INDEX NAME="classid_subject_ix" UNIQUE="false" FIELDS="classid, subject"/>
+        <INDEX NAME="assessed_by_ix" UNIQUE="false" FIELDS="assessed_by"/>
+        <INDEX NAME="seasonid_ix" UNIQUE="false" FIELDS="seasonid"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_global_level" COMMENT="Globally shared academic levels for all schools">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="tier" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="primary" COMMENT="primary|middle|high"/>
+        <FIELD NAME="order_index" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Determines progression order"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="order_ix" UNIQUE="false" FIELDS="order_index"/>
+        <INDEX NAME="tier_ix" UNIQUE="false" FIELDS="tier"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_subject_names" COMMENT="Globally shared subjects linked to levels">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="level_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to istikama_global_level"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="level_fk" TYPE="foreign" FIELDS="level_id" REFTABLE="istikama_global_level" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="istikama_level_info" COMMENT="Links Moodle categories (depth 2) strictly to global levels">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="References mdl_course_categories.id"/>
+        <FIELD NAME="global_level_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to istikama_global_level"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="category_fk" TYPE="foreign-unique" FIELDS="categoryid" REFTABLE="course_categories" REFFIELDS="id"/>
+        <KEY NAME="global_level_fk" TYPE="foreign" FIELDS="global_level_id" REFTABLE="istikama_global_level" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="istikama_class_subjects" COMMENT="Maps global subjects to specific classes and actual courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="classid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="References mdl_course_categories.id"/>
+        <FIELD NAME="subject_name_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to istikama_subject_names"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="References mdl_course.id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="class_fk" TYPE="foreign" FIELDS="classid" REFTABLE="course_categories" REFFIELDS="id"/>
+        <KEY NAME="subject_fk" TYPE="foreign" FIELDS="subject_name_id" REFTABLE="istikama_subject_names" REFFIELDS="id"/>
+        <KEY NAME="course_fk" TYPE="foreign-unique" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="class_subject_uix" UNIQUE="true" FIELDS="classid, subject_name_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="istikama_support_tickets" COMMENT="Support tickets — one row per issue raised by any user">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Ticket submitter (mdl_user.id)"/>
+        <FIELD NAME="role" TYPE="char" LENGTH="32" NOTNULL="false" COMMENT="Submitter tier at creation: student|teacher|teacher_creator|parent|school_manager|technical_professor|full_admin"/>
+        <FIELD NAME="schoolid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Submitter school (course_categories.id at depth=1) — for school-scoped filtering"/>
+        <FIELD NAME="seasonid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Active season at ticket creation (istikama_season.id)"/>
+        <FIELD NAME="category" TYPE="char" LENGTH="64" NOTNULL="true" DEFAULT="other" COMMENT="bug|feature|access|content|account|other"/>
+        <FIELD NAME="priority" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="normal" COMMENT="low|normal|high|urgent"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="message" TYPE="text" NOTNULL="true" COMMENT="Initial ticket body"/>
+        <FIELD NAME="severity" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="normal" COMMENT="Legacy: low|normal|high (kept for back-compat)"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="open" COMMENT="open|under_review|in_progress|waiting_user|resolved|rejected|closed"/>
+        <FIELD NAME="assigned_to" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Staff member handling the ticket (mdl_user.id)"/>
+        <FIELD NAME="admin_notes" TYPE="text" NOTNULL="false" COMMENT="Legacy internal notes column (kept; new internal notes go via istikama_support_messages.is_internal)"/>
+        <FIELD NAME="lastreplytime" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Timestamp of most recent message — drives sorting"/>
+        <FIELD NAME="lastreplyby" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="userid of the most recent message author"/>
+        <FIELD NAME="resolvedtime" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="When the ticket moved to resolved/closed"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_ix" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="status_ix" UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="schoolid_ix" UNIQUE="false" FIELDS="schoolid"/>
+        <INDEX NAME="assigned_ix" UNIQUE="false" FIELDS="assigned_to"/>
+        <INDEX NAME="lastreply_ix" UNIQUE="false" FIELDS="lastreplytime"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="istikama_support_messages" COMMENT="Conversation messages for a support ticket (user replies and admin responses)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="ticketid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to istikama_support_tickets.id"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Message author (mdl_user.id)"/>
+        <FIELD NAME="message" TYPE="text" NOTNULL="true"/>
+        <FIELD NAME="is_internal" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="0=visible to user, 1=internal admin-only note"/>
+        <FIELD NAME="is_system" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="0=user/admin message, 1=system status-change log"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="ticketid_fk" TYPE="foreign" FIELDS="ticketid" REFTABLE="istikama_support_tickets" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ticketid_ix" UNIQUE="false" FIELDS="ticketid"/>
+        <INDEX NAME="userid_ix" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="istikama_parent_child" COMMENT="Parent-child relationship links">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="parentid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to mdl_user.id — parent user"/>
+        <FIELD NAME="childid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to mdl_user.id — child/student user"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="parentid_childid_uix" UNIQUE="true" FIELDS="parentid, childid"/>
+        <INDEX NAME="parentid_ix" UNIQUE="false" FIELDS="parentid"/>
+        <INDEX NAME="childid_ix" UNIQUE="false" FIELDS="childid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="istikama_question_meta" COMMENT="Level/Subject metadata + moderation status for every reusable question (keyed by question_bank_entry id).">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="qbe_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to mdl_question_bank_entries.id"/>
+        <FIELD NAME="levelid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="course_categories.id of the level (depth=2)"/>
+        <FIELD NAME="subjectid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="istikama_subject_names.id"/>
+        <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="user.id who created the question"/>
+        <FIELD NAME="review_status" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="approved" COMMENT="approved|pending|rejected"/>
+        <FIELD NAME="reported" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="reportedby" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="reportreason" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="qbe_uix" UNIQUE="true" FIELDS="qbe_id"/>
+        <INDEX NAME="levelid_ix" UNIQUE="false" FIELDS="levelid"/>
+        <INDEX NAME="subjectid_ix" UNIQUE="false" FIELDS="subjectid"/>
+        <INDEX NAME="reported_ix" UNIQUE="false" FIELDS="reported"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="istikama_quiz_meta" COMMENT="Level/Subject metadata + moderation status for every reusable quiz.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to mdl_quiz.id"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="course_module id of the quiz"/>
+        <FIELD NAME="levelid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="subjectid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="reusable" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="review_status" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="approved"/>
+        <FIELD NAME="reported" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="reportedby" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="reportreason" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="quizid_uix" UNIQUE="true" FIELDS="quizid"/>
+        <INDEX NAME="levelid_ix" UNIQUE="false" FIELDS="levelid"/>
+        <INDEX NAME="subjectid_ix" UNIQUE="false" FIELDS="subjectid"/>
+        <INDEX NAME="reusable_ix" UNIQUE="false" FIELDS="reusable"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_content_status_history" COMMENT="Audit trail of content bank status transitions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="content_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="old_status" TYPE="char" LENGTH="32" NOTNULL="true"/>
+        <FIELD NAME="new_status" TYPE="char" LENGTH="32" NOTNULL="true"/>
+        <FIELD NAME="changed_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="notes" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="content_fk" TYPE="foreign" FIELDS="content_id" REFTABLE="istikama_content_bank" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="content_time_ix" UNIQUE="false" FIELDS="content_id, timecreated"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_content_tags" COMMENT="Structured tags for content bank items">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="content_id" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="tag" TYPE="char" LENGTH="128" NOTNULL="true"/>
+        <FIELD NAME="tag_type" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="custom"/>
+        <FIELD NAME="added_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="content_fk" TYPE="foreign" FIELDS="content_id" REFTABLE="istikama_content_bank" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="content_tag_uix" UNIQUE="true" FIELDS="content_id, tag"/>
+        <INDEX NAME="tag_ix" UNIQUE="false" FIELDS="tag"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_season" COMMENT="Academic seasons (school years) — core scoping entity for season-aware data">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="Display name e.g. 2025/2026"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Unix timestamp for academic year start"/>
+        <FIELD NAME="end_date" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Unix timestamp for academic year end"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="draft" COMMENT="draft|upcoming|active|archived|closed"/>
+        <FIELD NAME="created_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name_uix" UNIQUE="true" FIELDS="name"/>
+        <INDEX NAME="status_ix" UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="start_date_ix" UNIQUE="false" FIELDS="start_date"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_season_promotion" COMMENT="Tracks student promotions/retentions across seasons (audit + history)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="from_seasonid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="to_seasonid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="from_classid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="course_categories.id for previous class"/>
+        <FIELD NAME="to_classid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="course_categories.id for new class (null = retained, removed)"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="promote" COMMENT="promote|retain|graduate|transfer"/>
+        <FIELD NAME="notes" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="performed_by" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="from_season_fk" TYPE="foreign" FIELDS="from_seasonid" REFTABLE="istikama_season" REFFIELDS="id"/>
+        <KEY NAME="to_season_fk" TYPE="foreign" FIELDS="to_seasonid" REFTABLE="istikama_season" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="studentid_to_season_ix" UNIQUE="false" FIELDS="studentid, to_seasonid"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="istikama_school_level" COMMENT="Maps which global levels are offered by each school (school-specific level catalog)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="schoolid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="course_categories.id at depth 1"/>
+        <FIELD NAME="global_level_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to istikama_global_level"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="global_level_fk" TYPE="foreign" FIELDS="global_level_id" REFTABLE="istikama_global_level" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="school_level_uix" UNIQUE="true" FIELDS="schoolid, global_level_id"/>
+        <INDEX NAME="schoolid_ix" UNIQUE="false" FIELDS="schoolid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="istikama_school_notification" COMMENT="School-manager-authored notifications: composed, scheduled, sent. One row per notification regardless of recipient count.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="schoolid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="course_categories.id (depth=1) — school scope"/>
+        <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="body" TYPE="text" NOTNULL="true"/>
+        <FIELD NAME="audience_role" TYPE="char" LENGTH="32" NOTNULL="false" COMMENT="all|student|teacher|parent (NULL = all in school)"/>
+        <FIELD NAME="audience_classid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Restrict to a single class (course_categories.id depth=3)"/>
+        <FIELD NAME="audience_levelid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Restrict to a single level (course_categories.id depth=2)"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="draft" COMMENT="draft|scheduled|sent"/>
+        <FIELD NAME="scheduledfor" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="sentat" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="sentby" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="recipients_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="read_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="schoolid_ix" UNIQUE="false" FIELDS="schoolid"/>
+        <INDEX NAME="status_ix"   UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="sentat_ix"   UNIQUE="false" FIELDS="sentat"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="istikama_advertisement" COMMENT="Admin-authored advertisements / announcements (popup, sidebar, login) shown to students and other audiences.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Admin label + popup/sidebar heading"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="false" COMMENT="Optional announcement body (HTML)"/>
+        <FIELD NAME="linkurl" TYPE="char" LENGTH="1024" NOTNULL="false" COMMENT="Optional click-through URL"/>
+        <FIELD NAME="linktext" TYPE="char" LENGTH="255" NOTNULL="false" COMMENT="Optional CTA label e.g. Learn More"/>
+        <FIELD NAME="placement" TYPE="char" LENGTH="64" NOTNULL="true" DEFAULT="popup" COMMENT="Comma set of surfaces: popup,sidebar,login"/>
+        <FIELD NAME="trigger_rule" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="everyvisit" COMMENT="Popup timing: everyvisit|login|return|once"/>
+        <FIELD NAME="audience" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="student" COMMENT="all|student|teacher|parent"/>
+        <FIELD NAME="schoolid" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Optional school scope (course_categories.id depth=1). NULL = all schools."/>
+        <FIELD NAME="dismissible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" COMMENT="1 = student may dismiss the sidebar/popup permanently"/>
+        <FIELD NAME="priority" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Higher shows first"/>
+        <FIELD NAME="bgcolor" TYPE="char" LENGTH="16" NOTNULL="false" COMMENT="Optional accent / background hex"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="active" COMMENT="active|inactive"/>
+        <FIELD NAME="starttime" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Visible from (NULL = immediately)"/>
+        <FIELD NAME="endtime" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Visible until (NULL = forever)"/>
+        <FIELD NAME="viewcount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="clickcount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="status_ix"   UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="schoolid_ix" UNIQUE="false" FIELDS="schoolid"/>
+        <INDEX NAME="window_ix"   UNIQUE="false" FIELDS="starttime, endtime"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="istikama_ad_dismissal" COMMENT="Per-user advertisement dismissal + seen tracking (server-side so it persists across devices).">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="adid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to istikama_advertisement.id"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="reason" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="dismissed" COMMENT="dismissed|seen"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="adid_fk" TYPE="foreign" FIELDS="adid" REFTABLE="istikama_advertisement" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ad_user_reason_uix" UNIQUE="true" FIELDS="adid, userid, reason"/>
+        <INDEX NAME="userid_ix" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

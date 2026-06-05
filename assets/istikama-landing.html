@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Istikama — Quranic Sciences Association</title>
+<meta name="description" content="Istikama is a multi-school association dedicated to teaching Quranic sciences from the ground up.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --golden:#D4A017;--golden-light:#E0B840;--golden-dark:#B8860B;
+  --dark-bg:#111827;--dark-surface:#1a2236;
+  --bg:#ffffff;--fg:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --card:#ffffff;--radius:0.5rem;
+  --font-heading:'Cormorant Garamond',serif;
+  --font-body:'Plus Jakarta Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);color:var(--fg);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5,h6{font-family:var(--font-heading);line-height:1.2}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+ul{list-style:none}
+.container{max-width:1200px;margin:0 auto;padding:0 1rem}
+
+/* ========== UTILITY ========== */
+.section-subtitle{color:var(--golden);font-family:var(--font-body);font-style:italic;font-weight:500;letter-spacing:0.05em}
+.section-title{font-family:var(--font-heading);font-weight:700;font-size:2.5rem}
+.golden-divider{display:flex;align-items:center;justify-content:center;gap:4px;margin:1rem 0}
+.golden-divider::before,.golden-divider::after{content:'';height:1px;width:64px;background:rgba(212,160,23,0.4)}
+.golden-divider.left{justify-content:flex-start}
+.golden-dots{display:flex;gap:4px}
+.golden-dots span{width:8px;height:8px;border-radius:50%;background:var(--golden)}
+.golden-dots span:nth-child(2){opacity:0.6}
+.btn-primary{display:inline-block;background:var(--golden);color:#fff;padding:12px 32px;border-radius:var(--radius);font-weight:600;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.1em;transition:all 0.3s;border:none;cursor:pointer}
+.btn-primary:hover{background:var(--golden-light);box-shadow:0 8px 25px rgba(212,160,23,0.3)}
+.geometric-pattern{background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23d4a017' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.fade-in{animation:fadeIn 0.8s ease-out forwards}
+.fade-in-up{animation:fadeInUp 0.8s ease-out forwards}
+.fade-in-left{animation:fadeInLeft 0.8s ease-out forwards}
+.fade-in-right{animation:fadeInRight 0.8s ease-out forwards}
+
+/* ========== TOP BAR ========== */
+.topbar{background:var(--dark-bg);border-bottom:1px solid rgba(212,160,23,0.2);font-size:0.85rem}
+.topbar .inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:8px 0;gap:8px}
+.topbar .social{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,0.6)}
+.topbar .social a{color:rgba(255,255,255,0.5);transition:color 0.3s;font-size:1rem}
+.topbar .social a:hover{color:var(--golden)}
+.topbar .right{display:flex;align-items:center;gap:16px}
+.topbar .contact-link{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.6);transition:color 0.3s}
+.topbar .contact-link:hover{color:var(--golden)}
+.topbar .btn-outline{border:1px solid var(--golden);color:var(--golden);padding:4px 16px;border-radius:var(--radius);font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;transition:all 0.3s;background:transparent}
+.topbar .btn-outline:hover{background:var(--golden);color:#fff}
+.topbar .btn-sm{background:var(--golden);color:#fff;padding:4px 16px;border-radius:var(--radius);font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;transition:all 0.3s;border:none;cursor:pointer}
+.topbar .btn-sm:hover{background:var(--golden-light)}
+@media(max-width:640px){.topbar .contact-text{display:none}.topbar .btn-outline{display:none}}
+
+/* ========== NAVBAR ========== */
+.navbar{background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.navbar .inner{display:flex;align-items:center;justify-content:space-between;height:72px}
+.navbar .logo{display:flex;align-items:center;gap:12px}
+.navbar .logo-icon{width:44px;height:44px;border-radius:50%;background:rgba(212,160,23,0.15);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.4rem;font-weight:700;color:var(--golden)}
+.navbar .logo-text h1{font-size:1.25rem;font-weight:700;color:var(--fg)}
+.navbar .logo-text p{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:rgba(30,41,59,0.75);font-size:0.875rem;font-weight:500;transition:color 0.3s;display:flex;align-items:center;gap:4px}
+.nav-links a:hover{color:var(--golden)}
+.nav-links .arrow{font-size:0.6rem;transition:color 0.3s}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-right .search-btn{background:none;border:none;cursor:pointer;color:rgba(30,41,59,0.5);transition:color 0.3s;font-size:1.1rem}
+.nav-right .search-btn:hover{color:var(--golden)}
+.hamburger{display:none;background:none;border:none;cursor:pointer;font-size:1.5rem;color:var(--fg)}
+.mobile-menu{display:none;flex-direction:column;gap:0;background:var(--bg);border-top:1px solid var(--border);padding:16px 0}
+.mobile-menu a{display:block;padding:10px 0;color:rgba(30,41,59,0.75);font-size:0.875rem;font-weight:500;border-bottom:1px solid rgba(226,232,240,0.5);transition:color 0.3s}
+.mobile-menu a:hover{color:var(--golden)}
+.mobile-menu a.login-link{color:var(--golden);border-bottom:none}
+@media(max-width:1023px){.nav-links{display:none}.hamburger{display:block}.mobile-menu.open{display:flex}}
+
+/* ========== HERO ========== */
+.hero{position:relative;min-height:85vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero img.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(17,24,39,0.7),rgba(17,24,39,0.5),rgba(17,24,39,0.8))}
+.hero .content{position:relative;z-index:2;text-align:center;padding:0 1rem;max-width:800px}
+.hero h1{font-size:3.5rem;font-weight:700;color:#fff;margin-bottom:1.5rem;line-height:1.1}
+.hero h1 .accent{color:var(--golden)}
+.hero p{color:rgba(255,255,255,0.8);font-size:1.15rem;max-width:600px;margin:0 auto 2.5rem}
+.hero .bottom-fade{position:absolute;bottom:0;left:0;right:0;height:96px;background:linear-gradient(to top,var(--bg),transparent)}
+@media(max-width:768px){.hero h1{font-size:2.2rem}.hero p{font-size:1rem}}
+
+/* ========== ABOUT ========== */
+.about{padding:80px 0}
+.about .grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.about .img-wrap{position:relative}
+.about .img-wrap::before{content:'';position:absolute;left:-12px;top:-12px;width:100%;height:100%;border:2px solid var(--golden);border-radius:4px}
+.about .img-wrap img{position:relative;z-index:1;width:100%;height:420px;object-fit:cover;border-radius:4px;box-shadow:0 20px 40px rgba(0,0,0,0.1)}
+.about .text p.desc{color:var(--muted);margin-bottom:1rem;line-height:1.8}
+@media(max-width:1023px){.about .grid{grid-template-columns:1fr;gap:32px}.about .img-wrap img{height:320px}}
+
+/* ========== DONATION ========== */
+.donation{position:relative}
+.donation .grid{display:grid;grid-template-columns:1fr 1fr;min-height:560px}
+.donation .img-side{position:relative;overflow:hidden}
+.donation .img-side img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.donation .img-side .overlay{position:absolute;inset:0;background:rgba(17,24,39,0.3)}
+.donation .content-side{padding:64px;background:var(--bg)}
+.donation .amounts{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
+.donation .amounts button{padding:12px 24px;border-radius:var(--radius);border:2px solid var(--border);background:transparent;font-weight:600;font-size:0.875rem;cursor:pointer;transition:all 0.3s;font-family:var(--font-body);color:var(--fg)}
+.donation .amounts button.active{border-color:var(--golden);background:var(--golden);color:#fff}
+.donation .amounts button:hover{border-color:var(--golden)}
+.donation .causes li{display:flex;align-items:flex-start;gap:12px;color:var(--muted);margin-bottom:12px;font-size:0.95rem}
+.donation .causes li::before{content:'💧';font-size:0.8rem;margin-top:2px;flex-shrink:0}
+@media(max-width:1023px){.donation .grid{grid-template-columns:1fr}.donation .img-side{min-height:300px}.donation .content-side{padding:40px 24px}}
+
+/* ========== SERVICES ========== */
+.services{padding:80px 0;background:var(--bg)}
+.services .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.services .card{cursor:pointer;overflow:hidden;border-radius:var(--radius) var(--radius) 0 0}
+.services .card .img-wrap{overflow:hidden;border-radius:var(--radius) var(--radius) 0 0}
+.services .card img{width:100%;height:200px;object-fit:cover;transition:transform 0.5s}
+.services .card:hover img{transform:scale(1.1)}
+.services .card .label{padding:16px;text-align:center;font-family:var(--font-heading);font-weight:600;font-size:1.1rem;transition:all 0.3s;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius)}
+.services .card:hover .label{background:var(--golden);color:#fff;border-color:var(--golden)}
+@media(max-width:768px){.services .grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.services .grid{grid-template-columns:1fr}}
+
+/* ========== PILLARS ========== */
+.pillars{position:relative;padding:80px 0;overflow:hidden}
+.pillars .bg{position:absolute;inset:0}
+.pillars .bg img{width:100%;height:100%;object-fit:cover}
+.pillars .bg .overlay{position:absolute;inset:0;background:rgba(17,24,39,0.88)}
+.pillars .inner{position:relative;z-index:2;text-align:center}
+.pillars .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:24px}
+.pillars .pillar{text-align:center}
+.pillars .pillar .icon{width:96px;height:112px;margin:0 auto 16px;border:2px solid rgba(212,160,23,0.4);border-radius:50% 50% 0 0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;transition:all 0.3s}
+.pillars .pillar:hover .icon{border-color:var(--golden);background:rgba(212,160,23,0.1)}
+.pillars .pillar h3{color:#fff;font-family:var(--font-heading);font-weight:600;font-size:1.15rem;margin-bottom:4px}
+.pillars .pillar p{color:rgba(255,255,255,0.55);font-size:0.85rem}
+@media(max-width:768px){.pillars .grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.pillars .grid{grid-template-columns:1fr 1fr}}
+
+/* ========== BLOG & EVENTS ========== */
+.blog-events{padding:80px 0}
+.blog-events .grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.blog-post{display:flex;gap:20px;cursor:pointer;margin-bottom:24px}
+.blog-post img{width:200px;height:160px;object-fit:cover;border-radius:var(--radius);flex-shrink:0}
+.blog-post h3{font-family:var(--font-heading);font-weight:700;font-size:1.2rem;color:var(--fg);transition:color 0.3s;margin-bottom:8px}
+.blog-post:hover h3{color:var(--golden)}
+.blog-post .meta{display:flex;gap:16px;font-size:0.8rem;color:var(--muted);margin-bottom:8px}
+.blog-post .meta span{display:flex;align-items:center;gap:4px}
+.blog-post .excerpt{font-size:0.875rem;color:var(--muted);line-height:1.7;margin-bottom:8px}
+.blog-post .read-more{color:var(--golden);font-size:0.85rem;font-weight:500}
+.blog-post .read-more:hover{text-decoration:underline}
+.event-card{display:flex;align-items:flex-start;gap:20px;padding:20px;border-radius:var(--radius);border:1px solid var(--border);transition:all 0.3s;cursor:pointer;margin-bottom:12px}
+.event-card:hover{border-color:rgba(212,160,23,0.3);box-shadow:0 4px 16px rgba(0,0,0,0.06)}
+.event-card .date{text-align:center;flex-shrink:0}
+.event-card .date .day{font-family:var(--font-heading);font-size:1.8rem;font-weight:700;color:var(--golden);line-height:1}
+.event-card .date .month{font-size:0.8rem;font-weight:500;color:var(--golden)}
+.event-card h3{font-family:var(--font-heading);font-weight:700;font-size:1.1rem;color:var(--fg);transition:color 0.3s;margin-bottom:8px}
+.event-card:hover h3{color:var(--golden)}
+.event-card .info{display:flex;flex-wrap:wrap;gap:16px;font-size:0.8rem;color:var(--muted)}
+.event-card .info span{display:flex;align-items:center;gap:4px}
+.event-card .details-link{font-size:0.8rem;color:var(--muted);margin-top:8px;display:inline-block;transition:color 0.3s}
+.event-card .details-link:hover{color:var(--golden)}
+@media(max-width:1023px){.blog-events .grid{grid-template-columns:1fr}}
+@media(max-width:640px){.blog-post{flex-direction:column}.blog-post img{width:100%;height:200px}}
+
+/* ========== FOOTER ========== */
+.footer{background:var(--dark-bg);color:#fff;padding:64px 0 0}
+.footer .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px}
+.footer .logo{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.footer .logo-icon{width:40px;height:40px;border-radius:50%;background:rgba(212,160,23,0.2);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.1rem;font-weight:700;color:var(--golden)}
+.footer .logo h3{font-family:var(--font-heading);font-size:1.25rem;font-weight:700}
+.footer .desc{color:rgba(255,255,255,0.55);font-size:0.875rem;line-height:1.7}
+.footer h4{font-family:var(--font-heading);font-weight:600;font-size:1.1rem;color:var(--golden);margin-bottom:16px}
+.footer ul li{margin-bottom:8px}
+.footer ul li a{color:rgba(255,255,255,0.55);font-size:0.875rem;transition:color 0.3s}
+.footer ul li a:hover{color:var(--golden)}
+.footer .contact-item{display:flex;align-items:flex-start;gap:8px;color:rgba(255,255,255,0.55);font-size:0.875rem;margin-bottom:12px}
+.footer .contact-item svg{flex-shrink:0;color:var(--golden);margin-top:2px}
+.footer .bottom{border-top:1px solid rgba(255,255,255,0.08);margin-top:48px;padding:20px 0;text-align:center;font-size:0.8rem;color:rgba(255,255,255,0.35)}
+@media(max-width:768px){.footer .grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.footer .grid{grid-template-columns:1fr}}
+
+/* ========== LOGIN PAGE (hidden by default) ========== */
+.login-page{display:none;min-height:100vh}
+.login-page.active{display:flex}
+.login-left{width:50%;position:relative;overflow:hidden}
+.login-left img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.login-left .overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(17,24,39,0.8),rgba(17,24,39,0.6),rgba(17,24,39,0.8))}
+.login-left .content{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;text-align:center;padding:48px}
+.login-left .logo-circle{width:80px;height:80px;border-radius:50%;background:rgba(212,160,23,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-family:var(--font-heading);font-size:2.5rem;font-weight:700;color:var(--golden)}
+.login-left h1{font-size:2.5rem;font-weight:700;color:#fff;margin-bottom:16px}
+.login-left h1 .accent{color:var(--golden)}
+.login-left p{color:rgba(255,255,255,0.65);font-size:1.05rem;max-width:420px;line-height:1.7}
+.login-right{width:50%;display:flex;align-items:center;justify-content:center;padding:48px}
+.login-form{width:100%;max-width:420px}
+.login-form h2{font-family:var(--font-heading);font-size:2rem;font-weight:700;margin-bottom:8px}
+.login-form .subtitle{color:var(--muted);margin-bottom:32px}
+.login-form label{display:block;font-size:0.85rem;font-weight:500;margin-bottom:8px;color:var(--fg)}
+.login-form .input-wrap{position:relative;margin-bottom:20px}
+.login-form .input-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);width:18px;height:18px}
+.login-form input[type="email"],.login-form input[type="password"],.login-form input[type="text"]{width:100%;padding:12px 12px 12px 42px;border:1px solid var(--border);border-radius:var(--radius);font-family:var(--font-body);font-size:0.95rem;color:var(--fg);transition:all 0.3s;outline:none;background:var(--bg)}
+.login-form input:focus{border-color:var(--golden);box-shadow:0 0 0 3px rgba(212,160,23,0.15)}
+.login-form .toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);transition:color 0.3s}
+.login-form .toggle-pw:hover{color:var(--fg)}
+.login-form .options{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;font-size:0.85rem}
+.login-form .options label{display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:0}
+.login-form .options a{color:var(--golden);font-weight:500}
+.login-form .options a:hover{text-decoration:underline}
+.login-form .btn-submit{width:100%;padding:14px;background:var(--golden);color:#fff;border:none;border-radius:var(--radius);font-weight:600;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.3s;font-family:var(--font-body)}
+.login-form .btn-submit:hover{background:var(--golden-light);box-shadow:0 8px 25px rgba(212,160,23,0.3)}
+.login-form .signup{text-align:center;margin-top:32px;font-size:0.875rem;color:var(--muted)}
+.login-form .signup a{color:var(--golden);font-weight:500}
+.login-form .back-link{text-align:center;margin-top:24px;font-size:0.85rem}
+.login-form .back-link a{color:var(--muted);transition:color 0.3s}
+.login-form .back-link a:hover{color:var(--golden)}
+.mobile-logo-login{display:none;text-align:center;margin-bottom:32px}
+.mobile-logo-login .logo-circle{width:56px;height:56px;border-radius:50%;background:rgba(212,160,23,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-family:var(--font-heading);font-size:1.8rem;font-weight:700;color:var(--golden)}
+.mobile-logo-login h2{font-family:var(--font-heading);font-size:1.5rem;font-weight:700}
+@media(max-width:1023px){.login-left{display:none}.login-right{width:100%}.mobile-logo-login{display:block}}
+
+/* SVG icons inline helper */
+.icon-sm{width:16px;height:16px;display:inline-block;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<!-- ==================== LANDING PAGE ==================== -->
+<div id="landing-page">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="container inner">
+    <div class="social">
+      <span>Follow Us:</span>
+      <a href="#">𝕏</a>
+      <a href="#">f</a>
+      <a href="#">▶</a>
+    </div>
+    <div class="right">
+      <a href="mailto:contact@istikama.org" class="contact-link">
+        <svg class="icon-sm" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span class="contact-text">contact@istikama.org</span>
+      </a>
+      <a href="tel:+00123345111" class="contact-link">
+        <svg class="icon-sm" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        <span class="contact-text">+(00) 123-345-11</span>
+      </a>
+      <a href="#" class="btn-outline" onclick="showLogin(event)">Student Login</a>
+      <button class="btn-sm">Make Donation</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="container inner">
+    <a href="#" class="logo" onclick="showLanding(event)">
+      <div class="logo-icon">إ</div>
+      <div class="logo-text">
+        <h1>Istikama</h1>
+        <p>Quranic Sciences Association</p>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#">Home <span class="arrow">▾</span></a>
+      <a href="#programs">Programs <span class="arrow">▾</span></a>
+      <a href="#scholars">Scholars <span class="arrow">▾</span></a>
+      <a href="#events">Events</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-right">
+      <button class="search-btn">🔍</button>
+      <button class="hamburger" onclick="toggleMobile()">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu container" id="mobile-menu">
+    <a href="#" onclick="closeMobile()">Home</a>
+    <a href="#programs" onclick="closeMobile()">Programs</a>
+    <a href="#scholars" onclick="closeMobile()">Scholars</a>
+    <a href="#events" onclick="closeMobile()">Events</a>
+    <a href="#about" onclick="closeMobile()">About</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+    <a href="#" class="login-link" onclick="showLogin(event)">Student Login</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <img class="hero-bg" src="https://images.unsplash.com/photo-1564769625905-50e93615e769?w=1920&q=80" alt="Beautiful mosque at night">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="golden-divider fade-in"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+    <h1 class="fade-in-up">Know the Path of<br><span class="accent">Quranic Sciences</span></h1>
+    <div class="golden-divider fade-in" style="animation-delay:200ms"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+    <p class="fade-in-up" style="animation-delay:400ms">When things are too hard to handle, retreat &amp; count your blessings instead. Join Istikama's multi-school association for comprehensive Quranic education.</p>
+    <a href="#about" class="btn-primary fade-in-up" style="animation-delay:600ms">Read More</a>
+  </div>
+  <div class="bottom-fade"></div>
+</section>
+
+<!-- ABOUT -->
+<section class="about geometric-pattern" id="about">
+  <div class="container">
+    <div class="grid">
+      <div class="img-wrap fade-in-left">
+        <img src="https://images.unsplash.com/photo-1585036156171-384164a8c675?w=800&q=80" alt="Beautiful mosque" loading="lazy">
+      </div>
+      <div class="text fade-in-right">
+        <p class="section-subtitle" style="font-size:1.1rem;margin-bottom:8px">Our History</p>
+        <h2 class="section-title" style="margin-bottom:16px">About Istikama</h2>
+        <div class="golden-divider left" style="margin-bottom:24px"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+        <p class="desc">We established our association to bring together the finest Quranic scholars and educators under one roof. Our multi-school system ensures students receive comprehensive education in Tajweed, Tafseer, Hadith, and Islamic jurisprudence from the ground up.</p>
+        <p class="desc" style="margin-bottom:32px">Visit our campuses across the region, where dedicated teachers guide students through a structured curriculum designed for all ages and levels.</p>
+        <a href="#programs" class="btn-primary">Read More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DONATION -->
+<section class="donation">
+  <div class="grid">
+    <div class="img-side">
+      <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=1200&q=80" alt="Charity work" loading="lazy">
+      <div class="overlay"></div>
+    </div>
+    <div class="content-side">
+      <p class="section-subtitle" style="font-size:1.1rem;margin-bottom:8px">Help Our Cause</p>
+      <h2 class="section-title" style="margin-bottom:16px">Make Your Donation</h2>
+      <div class="golden-divider left" style="margin-bottom:32px"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+      <div class="amounts" id="amounts">
+        <button onclick="selectAmount(0)">$50</button>
+        <button class="active" onclick="selectAmount(1)">$100</button>
+        <button onclick="selectAmount(2)">$150</button>
+        <button onclick="selectAmount(3)">$200</button>
+      </div>
+      <ul class="causes">
+        <li>Support Quran Memorization Programs</li>
+        <li>Fund Scholarship for Underprivileged Students</li>
+        <li>Build New Learning Centers</li>
+        <li>Maintain and Upgrade Facilities</li>
+      </ul>
+      <h3 style="font-family:var(--font-heading);font-size:1.25rem;font-weight:700;margin-top:24px">Educate &amp; Empower Communities</h3>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="programs">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:56px">
+      <p class="section-subtitle" style="font-size:1.1rem;margin-bottom:8px">What We Offer</p>
+      <h2 class="section-title">Our Services</h2>
+      <div class="golden-divider"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+    </div>
+    <div class="grid">
+      <div class="card fade-in-up">
+        <div class="img-wrap"><img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=640&q=80" alt="Community Service" loading="lazy"></div>
+        <div class="label">Community Service</div>
+      </div>
+      <div class="card fade-in-up" style="animation-delay:150ms">
+        <div class="img-wrap"><img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=640&q=80" alt="Special Child Care" loading="lazy"></div>
+        <div class="label">Special Child Care</div>
+      </div>
+      <div class="card fade-in-up" style="animation-delay:300ms">
+        <div class="img-wrap"><img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=640&q=80" alt="Quran Classes" loading="lazy"></div>
+        <div class="label">Quran Classes</div>
+      </div>
+      <div class="card fade-in-up" style="animation-delay:450ms">
+        <div class="img-wrap"><img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=640&q=80" alt="Building Upgrades" loading="lazy"></div>
+        <div class="label">Building Upgrades</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section class="pillars">
+  <div class="bg">
+    <img src="https://images.unsplash.com/photo-1542816417-0983c9c7ad02?w=1920&q=80" alt="Islamic architecture" loading="lazy">
+    <div class="overlay"></div>
+  </div>
+  <div class="inner container">
+    <p class="section-subtitle" style="font-size:1.1rem;margin-bottom:8px">About Essential</p>
+    <h2 class="section-title" style="color:#fff;margin-bottom:16px">Pillars of Islam</h2>
+    <div class="golden-divider" style="margin-bottom:56px"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+    <div class="grid">
+      <div class="pillar fade-in-up"><div class="icon">☪</div><h3>Shahada</h3><p>Declaration of Faith</p></div>
+      <div class="pillar fade-in-up" style="animation-delay:100ms"><div class="icon">🕌</div><h3>Salah</h3><p>Five Daily Prayers</p></div>
+      <div class="pillar fade-in-up" style="animation-delay:200ms"><div class="icon">🌙</div><h3>Sawm</h3><p>Fasting in Ramadan</p></div>
+      <div class="pillar fade-in-up" style="animation-delay:300ms"><div class="icon">🕋</div><h3>Hajj</h3><p>Pilgrimage to Mecca</p></div>
+      <div class="pillar fade-in-up" style="animation-delay:400ms"><div class="icon">💰</div><h3>Zakat</h3><p>Charitable Giving</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG & EVENTS -->
+<section class="blog-events geometric-pattern" id="events">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:56px">
+      <p class="section-subtitle" style="font-size:1.1rem;margin-bottom:8px">Event &amp; Blog</p>
+      <h2 class="section-title">Our Blog &amp; Events</h2>
+      <div class="golden-divider"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+    </div>
+    <div class="grid">
+      <div>
+        <div class="blog-post fade-in-left">
+          <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=640&q=80" alt="Quran study" loading="lazy">
+          <div>
+            <h3>Is Islam Old Philosophy?</h3>
+            <div class="meta"><span>📅 Jan 8, 2024</span><span>👤 Imam Abdullah</span></div>
+            <p class="excerpt">Islam is a comprehensive way of life that encompasses spiritual, moral, and social dimensions...</p>
+            <a href="#" class="read-more">View Details</a>
+          </div>
+        </div>
+        <div class="blog-post fade-in-left" style="animation-delay:200ms">
+          <img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?w=640&q=80" alt="Mosque" loading="lazy">
+          <div>
+            <h3>Ulama Sermons with Audio</h3>
+            <div class="meta"><span>📅 Jan 5, 2024</span><span>👤 Sheikh Omar</span></div>
+            <p class="excerpt">Access our growing library of recorded sermons from renowned scholars across the globe...</p>
+            <a href="#" class="read-more">View Details</a>
+          </div>
+        </div>
+      </div>
+      <div class="fade-in-right">
+        <div class="event-card">
+          <div class="date"><span class="day">28</span><span class="month">Nov</span></div>
+          <div>
+            <h3>World Scholars Meetup</h3>
+            <div class="info"><span>📍 Main Campus</span><span>🕐 9:30 am to 1:15 pm</span></div>
+            <a href="#" class="details-link">Event Details</a>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="date"><span class="day">24</span><span class="month">Dec</span></div>
+          <div>
+            <h3>Modern Islam Challenges</h3>
+            <div class="info"><span>📍 Main Campus</span><span>🕐 9:30 am to 1:15 pm</span></div>
+            <a href="#" class="details-link">Event Details</a>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="date"><span class="day">25</span><span class="month">Dec</span></div>
+          <div>
+            <h3>Islamic Teachings</h3>
+            <div class="info"><span>📍 Main Campus</span><span>🕐 9:30 am to 1:15 pm</span></div>
+            <a href="#" class="details-link">Event Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="contact">
+  <div class="container">
+    <div class="grid">
+      <div>
+        <div class="logo">
+          <div class="logo-icon">إ</div>
+          <h3>Istikama</h3>
+        </div>
+        <p class="desc">A multi-school association dedicated to teaching Quranic sciences from the ground up.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul><li><a href="#">Home</a></li><li><a href="#programs">Programs</a></li><li><a href="#">Scholars</a></li><li><a href="#events">Events</a></li><li><a href="#contact">Contact</a></li></ul>
+      </div>
+      <div>
+        <h4>Programs</h4>
+        <ul><li><a href="#">Quran Memorization</a></li><li><a href="#">Tajweed</a></li><li><a href="#">Tafseer</a></li><li><a href="#">Hadith Studies</a></li><li><a href="#">Arabic Language</a></li></ul>
+      </div>
+      <div>
+        <h4>Contact Info</h4>
+        <div class="contact-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          123 Islamic Center Ave, City
+        </div>
+        <div class="contact-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.11 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          +(00) 123-345-11
+        </div>
+        <div class="contact-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          contact@istikama.org
+        </div>
+      </div>
+    </div>
+    <div class="bottom">© 2024 Istikama. All Rights Reserved.</div>
+  </div>
+</footer>
+
+</div><!-- /landing-page -->
+
+<!-- ==================== LOGIN PAGE ==================== -->
+<div class="login-page" id="login-page">
+  <div class="login-left">
+    <img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?w=1920&q=80" alt="Mosque at night">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="logo-circle">إ</div>
+      <h1>Welcome to <span class="accent">Istikama</span></h1>
+      <p>Your gateway to comprehensive Quranic sciences education. Join our multi-school association and begin your journey of knowledge.</p>
+      <div class="golden-divider" style="margin-top:32px"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+    </div>
+  </div>
+  <div class="login-right geometric-pattern">
+    <div class="login-form fade-in-up">
+      <div class="mobile-logo-login">
+        <div class="logo-circle">إ</div>
+        <h2>Istikama</h2>
+      </div>
+      <h2>Student Login</h2>
+      <p class="subtitle">Enter your credentials to access your dashboard</p>
+      <form onsubmit="event.preventDefault()">
+        <label>Email Address</label>
+        <div class="input-wrap">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <input type="email" placeholder="your@email.com" required>
+        </div>
+        <label>Password</label>
+        <div class="input-wrap">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <input type="password" id="pw-input" placeholder="••••••••" required>
+          <button type="button" class="toggle-pw" onclick="togglePassword()">
+            <svg id="eye-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="options">
+          <label><input type="checkbox"> Remember me</label>
+          <a href="#">Forgot Password?</a>
+        </div>
+        <button type="submit" class="btn-submit">Sign In</button>
+      </form>
+      <p class="signup">Don't have an account? <a href="#">Contact Administration</a></p>
+      <div class="back-link"><a href="#" onclick="showLanding(event)">← Back to Home</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showLogin(e){e&&e.preventDefault();document.getElementById('landing-page').style.display='none';document.getElementById('login-page').classList.add('active');window.scrollTo(0,0)}
+function showLanding(e){e&&e.preventDefault();document.getElementById('login-page').classList.remove('active');document.getElementById('landing-page').style.display='block';window.scrollTo(0,0)}
+function toggleMobile(){document.getElementById('mobile-menu').classList.toggle('open');var btn=document.querySelector('.hamburger');btn.textContent=document.getElementById('mobile-menu').classList.contains('open')?'✕':'☰'}
+function closeMobile(){document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.hamburger').textContent='☰'}
+function selectAmount(idx){var btns=document.querySelectorAll('#amounts button');btns.forEach(function(b,i){b.classList.toggle('active',i===idx)})}
+function togglePassword(){var inp=document.getElementById('pw-input');inp.type=inp.type==='password'?'text':'password'}
+</script>
+
+</body>
+</html>

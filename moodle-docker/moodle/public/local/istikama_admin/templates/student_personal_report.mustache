@@ -1,0 +1,158 @@
+{{!
+  Student Personal Report — clean, age-appropriate, fully translated.
+
+  Context expected:
+    student_firstname  string
+    avg                int   overall % average
+    completion         int   course completion %
+    submissions        int   submissions in last 30d
+    logins             int   login days in last 30d
+    has_grades         bool
+    grades             array of { course, grade (0-100), grade_color }
+    has_insights       bool
+    insights           array of { type (positive|warning|info), icon, message }
+    trend_weeks        array of { label, percent }
+    str_*              translated UI strings passed from reports.php
+}}
+
+<div class="isti-student-report">
+
+  {{! ── Kid achievement banner — hidden by default, primary CSS reveals it ── }}
+  <div class="isti-sr-kid-banner" aria-hidden="true">
+    <div class="isti-sr-kid-stars-left">
+      <i class="fa fa-star isti-sr-kstar isti-sr-kstar-1"></i>
+      <i class="fa fa-star isti-sr-kstar isti-sr-kstar-2"></i>
+      <i class="fa fa-star isti-sr-kstar isti-sr-kstar-3"></i>
+    </div>
+    <div class="isti-sr-kid-banner-center">
+      <div class="isti-sr-kid-trophy-wrap">
+        <i class="fa fa-trophy"></i>
+      </div>
+      <span class="isti-sr-kid-banner-name">{{student_firstname}}</span>
+    </div>
+    <div class="isti-sr-kid-stars-right">
+      <i class="fa fa-star isti-sr-kstar isti-sr-kstar-4"></i>
+      <i class="fa fa-star isti-sr-kstar isti-sr-kstar-5"></i>
+      <i class="fa fa-star isti-sr-kstar isti-sr-kstar-6"></i>
+    </div>
+  </div>
+
+  {{! ── Greeting hero ───────────────────────────────────────── }}
+  <div class="isti-sr-hero">
+    <div class="isti-sr-hero-text">
+      <h1>{{str_hi}} {{student_firstname}} 👋</h1>
+      <p>{{str_subtitle}}</p>
+    </div>
+    <div class="isti-sr-hero-art" aria-hidden="true">
+      <svg viewBox="0 0 120 100" fill="none">
+        <circle cx="30" cy="50" r="22" fill="rgba(255,255,255,.25)"/>
+        <circle cx="80" cy="40" r="14" fill="rgba(255,255,255,.35)"/>
+        <path d="M10 80 L60 60 L110 80" stroke="rgba(255,255,255,.5)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="60" cy="60" r="5" fill="#fff"/>
+        <circle cx="10" cy="80" r="4" fill="#fff"/>
+        <circle cx="110" cy="80" r="4" fill="#fff"/>
+      </svg>
+    </div>
+  </div>
+
+  {{! ── Big KPI cards — only the essentials ─────────────────── }}
+  <div class="isti-sr-kpi-row">
+    <div class="isti-sr-kpi isti-sr-kpi-blue">
+      <div class="isti-sr-kpi-icon"><i class="fa fa-chart-line"></i></div>
+      <div class="isti-sr-kpi-value">{{avg}}<span class="isti-sr-kpi-unit">%</span></div>
+      <div class="isti-sr-kpi-label">{{str_kpi_avg}}</div>
+    </div>
+    <div class="isti-sr-kpi isti-sr-kpi-green">
+      <div class="isti-sr-kpi-icon"><i class="fa fa-check-circle"></i></div>
+      <div class="isti-sr-kpi-value">{{completion}}<span class="isti-sr-kpi-unit">%</span></div>
+      <div class="isti-sr-kpi-label">{{str_kpi_completion}}</div>
+    </div>
+    <div class="isti-sr-kpi isti-sr-kpi-amber">
+      <div class="isti-sr-kpi-icon"><i class="fa fa-bolt"></i></div>
+      <div class="isti-sr-kpi-value">{{submissions}}</div>
+      <div class="isti-sr-kpi-label">{{str_kpi_tasks}}</div>
+    </div>
+    <div class="isti-sr-kpi isti-sr-kpi-purple">
+      <div class="isti-sr-kpi-icon"><i class="fa fa-calendar-check"></i></div>
+      <div class="isti-sr-kpi-value">{{logins}}</div>
+      <div class="isti-sr-kpi-label">{{str_kpi_days}}</div>
+    </div>
+  </div>
+
+  {{! ── Insights (friendly, max 3) ───────────────────────────── }}
+  {{#has_insights}}
+  <div class="isti-sr-insights">
+    {{#insights}}
+    <div class="isti-sr-insight isti-sr-insight-{{type}}">
+      <div class="isti-sr-insight-icon"><i class="fa {{icon}}"></i></div>
+      <div class="isti-sr-insight-text">{{message}}</div>
+    </div>
+    {{/insights}}
+  </div>
+  {{/has_insights}}
+
+  {{! ── Two-column: grades + weekly trend ────────────────────── }}
+  <div class="isti-sr-grid">
+
+    {{! Grades card }}
+    <section class="isti-sr-card">
+      <header class="isti-sr-card-head">
+        <h3><i class="fa fa-list-check"></i> {{str_my_grades}}</h3>
+        <span class="isti-sr-card-meta">{{grade_count}} {{#grade_plural}}{{str_count_plural}}{{/grade_plural}}{{^grade_plural}}{{str_count_singular}}{{/grade_plural}}</span>
+      </header>
+      <div class="isti-sr-card-body">
+        {{#has_grades}}
+          {{#grades}}
+          <div class="isti-sr-grade-row">
+            <div class="isti-sr-grade-name">{{course}}</div>
+            <div class="isti-sr-grade-bar-wrap">
+              <div class="isti-sr-grade-bar" style="width:{{grade}}%;background:{{grade_color}}"></div>
+            </div>
+            <div class="isti-sr-grade-pct" style="color:{{grade_color}}">{{grade}}%</div>
+          </div>
+          {{/grades}}
+        {{/has_grades}}
+        {{^has_grades}}
+          <div class="isti-sr-empty">
+            <i class="fa fa-graduation-cap"></i>
+            <p>{{str_no_grades}}</p>
+          </div>
+        {{/has_grades}}
+      </div>
+    </section>
+
+    {{! Weekly activity card }}
+    <section class="isti-sr-card">
+      <header class="isti-sr-card-head">
+        <h3><i class="fa fa-chart-column"></i> {{str_my_activity}}</h3>
+        <span class="isti-sr-card-meta">{{str_last4weeks}}</span>
+      </header>
+      <div class="isti-sr-card-body">
+        {{#has_trend}}
+        <div class="isti-sr-bars">
+          {{#trend_weeks}}
+          <div class="isti-sr-bar-col" title="{{label}}: {{percent}}% activity">
+            <div class="isti-sr-bar" style="height:{{percent}}%"></div>
+            <div class="isti-sr-bar-label">{{label}}</div>
+          </div>
+          {{/trend_weeks}}
+        </div>
+        {{/has_trend}}
+        {{^has_trend}}
+        <div class="isti-sr-empty">
+          <i class="fa fa-chart-column"></i>
+          <p>{{str_no_activity}}</p>
+        </div>
+        {{/has_trend}}
+      </div>
+    </section>
+
+  </div>
+
+  {{! ── Encouragement footer ────────────────────────────────── }}
+  <div class="isti-sr-footer">
+    {{#has_grades}}{{str_footer_active}}{{/has_grades}}
+    {{^has_grades}}{{str_footer_empty}}{{/has_grades}}
+  </div>
+
+</div>

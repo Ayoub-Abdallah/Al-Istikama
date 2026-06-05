@@ -1,0 +1,3860 @@
+/* ═══════════════════════════════════════════════════════════════
+   ISTIKAMA DASHBOARD UI SYSTEM
+   Modern SaaS-style dashboard for school management
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Dashboard Base Reset ── */
+body.istikama-dashboard {
+    font-family: var(--font-dashboard) !important;
+    background: var(--bg-color) !important;
+    color: var(--text-color);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+body.istikama-dashboard h1,
+body.istikama-dashboard h2,
+body.istikama-dashboard h3,
+body.istikama-dashboard h4,
+body.istikama-dashboard h5,
+body.istikama-dashboard h6 {
+    font-family: var(--font-dashboard) !important;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════════ */
+.isti-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--sidebar-bg);
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+    transition: width var(--transition-normal), transform var(--transition-normal);
+    overflow: hidden;
+    border-right: 1px solid var(--card-border);
+}
+
+[dir="rtl"] .isti-sidebar {
+    left: auto;
+    right: 0;
+    border-right: none;
+    border-left: 1px solid var(--card-border);
+}
+
+/* Sidebar Brand */
+.isti-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    height: var(--topbar-height);
+    border-bottom: 1px solid var(--card-border);
+    flex-shrink: 0;
+}
+
+.isti-sidebar-brand img {
+    max-height: calc(var(--topbar-height) - 20px);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: brightness(0) saturate(100%) invert(32%) sepia(74%) saturate(6288%) hue-rotate(211deg) brightness(101%) contrast(101%);
+}
+
+/* Real school logos are full-colour photos — never apply the blue monochrome
+   or white tier filters used for the site mark. The tier/level selector below
+   matches the specificity of the primary-student override (line ~1946) and
+   carries !important so the logo always renders in its true colours. */
+.isti-sidebar-brand img.isti-school-logo,
+[data-istikama-tier] .isti-sidebar-brand img.isti-school-logo,
+[data-istikama-tier][data-istikama-level] .isti-sidebar-brand img.isti-school-logo {
+    filter: none !important;
+    border-radius: 8px;
+    max-height: calc(var(--topbar-height) - 18px);
+    max-width: 130px;
+}
+
+/* Fallback brand badge (school initial) when no logo is set. */
+.isti-sidebar-brand-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #006bff 0%, #0052cc 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px -4px rgba(0, 107, 255, 0.5);
+}
+
+.isti-sidebar-brand-text {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: opacity var(--transition-normal);
+}
+
+.isti-sidebar-brand-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.2;
+}
+
+.isti-sidebar-brand-sub {
+    font-size: 0.68rem;
+    color: var(--sidebar-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Sidebar Navigation */
+.isti-sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.isti-sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.isti-sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.isti-sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.isti-sidebar-section {
+    margin-bottom: 8px;
+}
+
+.isti-sidebar-section-title {
+    padding: 8px 20px 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(148, 163, 184, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity var(--transition-normal);
+}
+
+.isti-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    margin: 2px 8px;
+    border-radius: var(--radius-md);
+    color: var(--sidebar-text);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+    border: none;
+    background: transparent;
+    width: calc(100% - 16px);
+    text-align: left;
+}
+
+[dir="rtl"] .isti-nav-item {
+    text-align: right;
+}
+
+.isti-nav-item i,
+.isti-nav-item .isti-nav-icon {
+    width: 20px;
+    font-size: 1rem;
+    text-align: center;
+    flex-shrink: 0;
+    transition: color var(--transition-fast);
+}
+
+.isti-nav-item span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity var(--transition-normal);
+}
+
+.isti-nav-item:hover {
+    background: rgba(var(--primary-rgb), 0.04);
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.isti-nav-item.active {
+    background: var(--sidebar-active-bg);
+    color: var(--sidebar-text-active);
+}
+
+.isti-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 24px;
+    background: var(--sidebar-active-border);
+    border-radius: 0 3px 3px 0;
+}
+
+[dir="rtl"] .isti-nav-item.active::before {
+    left: auto;
+    right: -8px;
+    border-radius: 3px 0 0 3px;
+}
+
+.isti-nav-item.active i {
+    color: var(--primary-color);
+}
+
+.isti-nav-badge {
+    margin-left: auto;
+    padding: 2px 8px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    background: var(--primary-color);
+    color: #fff;
+}
+
+[dir="rtl"] .isti-nav-badge {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* Sidebar Footer */
+.isti-sidebar-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--card-border);
+    flex-shrink: 0;
+}
+
+/* Collapsed sidebar */
+.isti-sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.isti-sidebar.collapsed .isti-sidebar-brand-text,
+.isti-sidebar.collapsed .isti-nav-item span,
+.isti-sidebar.collapsed .isti-sidebar-section-title,
+.isti-sidebar.collapsed .isti-nav-badge {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.isti-sidebar.collapsed .isti-nav-item {
+    justify-content: center;
+    padding: 10px 0;
+    margin: 2px 6px;
+}
+
+.isti-sidebar.collapsed .isti-nav-item i {
+    font-size: 1.15rem;
+}
+
+.isti-sidebar.collapsed .isti-sidebar-brand {
+    justify-content: center;
+    padding: 16px 8px;
+}
+
+/* ═══════════════════════════════════════════════
+   TOPBAR
+   ═══════════════════════════════════════════════ */
+.isti-topbar {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    height: var(--topbar-height);
+    background: var(--topbar-bg);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    z-index: 1030;
+    transition: left var(--transition-normal);
+    box-shadow: var(--topbar-shadow);
+    overflow: visible;
+}
+
+[dir="rtl"] .isti-topbar {
+    left: 0;
+    right: var(--sidebar-width);
+    transition: right var(--transition-normal);
+}
+
+.isti-sidebar.collapsed~.isti-topbar {
+    left: var(--sidebar-collapsed-width);
+}
+
+[dir="rtl"] .isti-sidebar.collapsed~.isti-topbar {
+    left: 0;
+    right: var(--sidebar-collapsed-width);
+}
+
+.isti-topbar-toggle {
+    background: none;
+    border: none;
+    padding: 8px;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.isti-topbar-toggle:hover {
+    background: var(--bg-surface);
+    color: var(--text-color);
+}
+
+/* Search */
+.isti-topbar-search {
+    flex: 1;
+    max-width: 420px;
+    position: relative;
+}
+
+.isti-topbar-search input {
+    width: 100%;
+    padding: 8px 16px 8px 40px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-full);
+    background: var(--bg-surface);
+    font-size: 0.875rem;
+    font-family: var(--font-dashboard);
+    color: var(--text-color);
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+[dir="rtl"] .isti-topbar-search input {
+    padding: 8px 40px 8px 16px;
+}
+
+.isti-topbar-search input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
+    background: #fff;
+}
+
+.isti-topbar-search i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+[dir="rtl"] .isti-topbar-search i {
+    left: auto;
+    right: 14px;
+}
+
+/* Topbar Actions */
+.isti-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+[dir="rtl"] .isti-topbar-actions {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* Ensure dropdowns in topbar appear above everything */
+.isti-topbar-actions .dropdown-menu {
+    z-index: 1050;
+}
+
+.isti-topbar-actions .popover-region-container {
+    z-index: 1050;
+}
+
+.isti-topbar-btn {
+    position: relative;
+    background: none;
+    border: none;
+    padding: 8px;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.15rem;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.isti-topbar-btn:hover {
+    background: var(--bg-surface);
+    color: var(--text-color);
+}
+
+.isti-topbar-btn .isti-badge-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--danger);
+    border: 2px solid var(--topbar-bg);
+}
+
+.isti-topbar-btn .isti-badge-count {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: var(--danger);
+    color: #fff;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--topbar-bg);
+}
+
+/* Native Moodle Navbar Elements Fix */
+.isti-topbar-actions .popover-region {
+    margin: 0;
+}
+
+.isti-topbar-actions .popover-region-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+}
+
+.isti-topbar-actions .popover-region-toggle:hover {
+    background: var(--bg-surface);
+    color: var(--text-color);
+}
+
+.isti-topbar-actions .usermenu-container .userbutton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px 6px 6px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.isti-topbar-actions .usermenu-container .userbutton:hover {
+    background: var(--bg-surface);
+    border-color: var(--card-border);
+}
+
+.isti-topbar-actions .usermenu-container .userbutton .usertext {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.isti-topbar-actions .usermenu-container .userbutton .avatars {
+    display: flex;
+    align-items: center;
+}
+
+.isti-topbar-actions .usermenu-container .userpicture {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--card-border);
+}
+
+.isti-topbar-actions .editmode-switch-form {
+    margin: 0;
+}
+
+/* User Profile */
+.isti-topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px 6px 6px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.isti-topbar-user:hover {
+    background: var(--bg-surface);
+    border-color: var(--card-border);
+}
+
+.isti-topbar-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--card-border);
+}
+
+.isti-topbar-user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.isti-topbar-user-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.isti-topbar-user-role {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════
+   MAIN CONTENT AREA
+   ═══════════════════════════════════════════════ */
+.isti-main {
+    margin-left: var(--sidebar-width);
+    margin-top: var(--topbar-height);
+    padding: var(--space-lg);
+    min-height: calc(100vh - var(--topbar-height));
+    transition: margin-left var(--transition-normal);
+    background: var(--bg-color);
+}
+
+[dir="rtl"] .isti-main {
+    margin-left: 0;
+    margin-right: var(--sidebar-width);
+    transition: margin-right var(--transition-normal);
+}
+
+.isti-sidebar.collapsed~.isti-topbar~.isti-main,
+.isti-sidebar.collapsed~.isti-main {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+[dir="rtl"] .isti-sidebar.collapsed~.isti-topbar~.isti-main,
+[dir="rtl"] .isti-sidebar.collapsed~.isti-main {
+    margin-left: 0;
+    margin-right: var(--sidebar-collapsed-width);
+}
+
+/* Page Header */
+.isti-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.isti-page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.isti-page-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════════
+   KPI CARDS
+   ═══════════════════════════════════════════════ */
+.isti-kpi-grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.isti-kpi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-xs);
+    position: relative;
+    overflow: hidden;
+}
+
+.isti-kpi-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.isti-kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-color);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.isti-kpi-card:hover::after {
+    opacity: 1;
+}
+
+.isti-kpi-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.isti-kpi-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1e293b !important;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.isti-kpi-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748b !important;
+}
+
+.isti-kpi-trend {
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    margin-top: 4px;
+}
+
+.isti-kpi-trend.up {
+    background: var(--success-light);
+    color: var(--success-dark);
+}
+
+.isti-kpi-trend.down {
+    background: var(--danger-light);
+    color: var(--danger-dark);
+}
+
+.isti-kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.isti-kpi-icon.blue {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary-color);
+}
+
+.isti-kpi-icon.green {
+    background: var(--success-light);
+    color: var(--success-dark);
+}
+
+.isti-kpi-icon.amber {
+    background: var(--warning-light);
+    color: var(--warning-dark);
+}
+
+.isti-kpi-icon.red {
+    background: var(--danger-light);
+    color: var(--danger-dark);
+}
+
+.isti-kpi-icon.purple {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.isti-kpi-icon.primary {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary-color);
+}
+
+/* Gradient KPI (for special emphasis) */
+.isti-kpi-card.gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    border: none;
+}
+
+.isti-kpi-card.gradient .isti-kpi-value,
+.isti-kpi-card.gradient .isti-kpi-label {
+    color: #fff;
+}
+
+.isti-kpi-card.gradient .isti-kpi-icon {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* ── KPI Gradient Color Variants ── */
+.isti-kpi-card.isti-kpi-purple {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+}
+
+.isti-kpi-card.isti-kpi-pink {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: #fff;
+    border: none;
+}
+
+.isti-kpi-card.isti-kpi-cyan {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: #fff;
+    border: none;
+}
+
+.isti-kpi-card.isti-kpi-green {
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+    color: #fff;
+    border: none;
+}
+
+.isti-kpi-card.isti-kpi-sunset {
+    background: linear-gradient(135deg, #fa709a, #fee140);
+    color: #fff;
+    border: none;
+}
+
+.isti-kpi-card.isti-kpi-lavender {
+    background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+    color: #fff;
+    border: none;
+}
+
+.isti-kpi-card.isti-kpi-blue {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    border: none;
+}
+
+.isti-kpi-card[class*="isti-kpi-"] .isti-kpi-value,
+.isti-kpi-card[class*="isti-kpi-"] .isti-kpi-label {
+    color: #fff;
+}
+
+/* ── Row Grid Utility ── */
+.isti-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.isti-col-2 {
+    flex: 1 1 calc(16.66% - var(--space-md));
+    min-width: 150px;
+}
+
+.isti-col-3 {
+    flex: 1 1 calc(25% - var(--space-md));
+    min-width: 180px;
+}
+
+.isti-col-4 {
+    flex: 1 1 calc(33.33% - var(--space-md));
+    min-width: 220px;
+}
+
+.isti-col-6 {
+    flex: 1 1 calc(50% - var(--space-md));
+    min-width: 280px;
+}
+
+.isti-col-12 {
+    flex: 1 1 100%;
+}
+
+.isti-mb-lg {
+    margin-bottom: var(--space-lg);
+}
+
+.isti-mb-md {
+    margin-bottom: var(--space-md);
+}
+
+.isti-mt-md {
+    margin-top: var(--space-md);
+}
+
+/* ── Section Header ── */
+.isti-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: var(--space-md);
+}
+
+.isti-section-header i {
+    color: var(--primary-color);
+}
+
+/* ── Insight Card ── */
+.isti-insight-card {
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid;
+    height: 100%;
+}
+
+.isti-insight-card.info {
+    background: var(--info-light);
+    color: var(--info-dark);
+    border-color: #93c5fd;
+}
+
+.isti-insight-card.success {
+    background: var(--success-light);
+    color: var(--success-dark);
+    border-color: #6ee7b7;
+}
+
+.isti-insight-card.warning {
+    background: var(--warning-light);
+    color: var(--warning-dark);
+    border-color: #fcd34d;
+}
+
+.isti-insight-card.danger {
+    background: var(--danger-light);
+    color: var(--danger-dark);
+    border-color: #fca5a5;
+}
+
+/* ── Formula Card ── */
+.isti-formula-box {
+    background: var(--bg-surface);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    margin-top: var(--space-md);
+    color: var(--text-color);
+}
+
+/* ── Upload/Action Section ── */
+.isti-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: var(--space-md);
+}
+
+/* ═══════════════════════════════════════════════
+   CARDS (GENERAL)
+   ═══════════════════════════════════════════════ */
+.isti-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    overflow: hidden;
+    transition: box-shadow var(--transition-normal);
+}
+
+.isti-card:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.isti-card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--bg-surface);
+}
+
+.isti-card-header h3,
+.isti-card-header h4,
+.isti-card-header h5 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.isti-card-body {
+    padding: 20px;
+}
+
+.isti-card-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--card-border);
+    background: var(--bg-surface);
+}
+
+/* ═══════════════════════════════════════════════
+   PREMIUM MODERN CARDS & TABLES (STUDDY-INSPIRED)
+   ═══════════════════════════════════════════════ */
+.isti-card-modern {
+    background: #ffffff;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    margin-bottom: var(--space-lg);
+}
+
+.isti-card-modern:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+.isti-card-modern-header {
+    padding: 24px 28px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.isti-card-modern-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.isti-card-modern-title i {
+    color: var(--primary-color);
+}
+
+.isti-card-modern-body {
+    padding: 0 28px 28px;
+}
+
+/* ═══════════════════════════════════════════════
+   TABLES
+   ═══════════════════════════════════════════════ */
+.isti-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.isti-table thead th {
+    background: var(--primary-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    padding: 16px;
+    border: none !important;
+    text-align: left;
+    white-space: nowrap;
+}
+
+[dir="rtl"] .isti-table thead th {
+    text-align: right;
+}
+
+.isti-table tbody td {
+    padding: 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.isti-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.isti-table tbody tr {
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.isti-table tbody tr:hover {
+    background: rgba(0, 0, 0, 0.01);
+}
+
+.isti-table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.isti-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: #f1f5f9;
+    color: #006bff;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.isti-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+}
+
+.isti-action-btn.manage-btn {
+    color: #8b5cf6;
+    background: #ede9fe;
+}
+
+.isti-action-btn.manage-btn:hover {
+    background: #ddd6fe;
+}
+
+.isti-action-btn.edit-btn {
+    color: #f59e0b;
+    background: #fef3c7;
+}
+
+.isti-action-btn.edit-btn:hover {
+    background: #fde68a;
+}
+
+.isti-action-btn.view-btn {
+    color: #10b981;
+    background: #d1fae5;
+}
+
+.isti-action-btn.view-btn:hover {
+    background: #a7f3d0;
+}
+
+.isti-action-btn.delete-btn {
+    color: #ef4444;
+    background: #fee2e2;
+}
+
+.isti-action-btn.delete-btn:hover {
+    background: #fecaca;
+    color: #dc2626;
+}
+
+.isti-table .isti-table-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.isti-table .isti-table-user img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ═══════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════ */
+.isti-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-dashboard);
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.isti-btn:hover {
+    text-decoration: none;
+}
+
+.isti-btn:active {
+    transform: scale(0.97);
+}
+
+.isti-btn i {
+    font-size: 0.9rem;
+}
+
+.isti-btn-primary {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.25);
+}
+
+.isti-btn-primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.35);
+    color: #fff;
+}
+
+.isti-btn-outline {
+    background: transparent;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.isti-btn-outline:hover {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+.isti-btn-secondary {
+    background: var(--bg-surface);
+    color: var(--text-color);
+    border-color: var(--card-border);
+}
+
+.isti-btn-secondary:hover {
+    background: var(--card-border);
+    color: var(--text-color);
+}
+
+.isti-btn-success {
+    background: var(--success);
+    color: #fff;
+    border-color: var(--success);
+}
+
+.isti-btn-success:hover {
+    background: var(--success-dark);
+    border-color: var(--success-dark);
+    color: #fff;
+}
+
+.isti-btn-danger {
+    background: var(--danger);
+    color: #fff;
+    border-color: var(--danger);
+}
+
+.isti-btn-danger:hover {
+    background: var(--danger-dark);
+    border-color: var(--danger-dark);
+    color: #fff;
+}
+
+.isti-btn-sm {
+    padding: 5px 12px;
+    font-size: 0.78rem;
+}
+
+.isti-btn-lg {
+    padding: 12px 28px;
+    font-size: 0.95rem;
+}
+
+.isti-btn-icon {
+    padding: 8px;
+    min-width: 36px;
+}
+
+/* ═══════════════════════════════════════════════
+   BADGES / STATUS PILLS
+   ═══════════════════════════════════════════════ */
+.isti-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.isti-badge-primary {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary-dark);
+}
+
+.isti-badge-success {
+    background: var(--success-light);
+    color: var(--success-dark);
+}
+
+.isti-badge-warning {
+    background: var(--warning-light);
+    color: var(--warning-dark);
+}
+
+.isti-badge-danger {
+    background: var(--danger-light);
+    color: var(--danger-dark);
+}
+
+.isti-badge-info {
+    background: var(--info-light);
+    color: var(--info-dark);
+}
+
+.isti-badge-neutral {
+    background: #f3f4f6;
+    color: var(--text-secondary);
+}
+
+.isti-badge-purple {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+/* ═══════════════════════════════════════════════
+   TABS (PILL STYLE)
+   ═══════════════════════════════════════════════ */
+.isti-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--card-border);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.isti-tab {
+    flex: 1;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: var(--font-dashboard);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.isti-tab:hover {
+    background: rgba(var(--primary-rgb), 0.06);
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.isti-tab.active {
+    background: var(--primary-color);
+    color: #ffffff;
+    font-weight: 600;
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+}
+
+/* Classic underline tabs */
+.isti-tabs-line {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--card-border);
+    margin-bottom: var(--space-lg);
+}
+
+.isti-tab-line {
+    padding: 10px 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: var(--font-dashboard);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.isti-tab-line:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.isti-tab-line.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════
+   MODALS
+   ═══════════════════════════════════════════════ */
+.isti-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.isti-modal-overlay.visible {
+    opacity: 1;
+}
+
+.isti-modal {
+    width: 100%;
+    max-width: 640px;
+    max-height: 85vh;
+    background: var(--card-bg);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    flex-direction: column;
+    transform: translateY(16px) scale(0.97);
+    transition: transform var(--transition-normal);
+    overflow: hidden;
+}
+
+.isti-modal-overlay.visible .isti-modal {
+    transform: translateY(0) scale(1);
+}
+
+.isti-modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.isti-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.isti-modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--card-border);
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* ═══════════════════════════════════════════════
+   FORMS
+   ═══════════════════════════════════════════════ */
+.isti-form-group {
+    margin-bottom: var(--space-md);
+}
+
+.isti-form-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.isti-form-input,
+.isti-form-select {
+    width: 100%;
+    height: 42px;
+    padding: 8px 14px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-family: var(--font-dashboard);
+    color: var(--text-color);
+    background: var(--card-bg);
+    transition: all var(--transition-fast);
+    outline: none;
+    box-sizing: border-box;
+}
+
+.isti-form-input:focus,
+.isti-form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+.isti-form-input:disabled,
+.isti-form-select:disabled {
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+/* Filter Bar */
+.isti-filter-bar {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--bg-surface);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+    align-items: end;
+}
+
+.isti-filter-bar .isti-form-input,
+.isti-filter-bar .isti-form-select {
+    min-width: 0;
+}
+
+.isti-filter-bar .isti-form-input.search {
+    min-width: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   CHARTS
+   ═══════════════════════════════════════════════ */
+.isti-chart-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    overflow: hidden;
+}
+
+.isti-chart-card .isti-card-header {
+    border-bottom: 1px solid var(--card-border);
+    background: transparent;
+}
+
+.isti-chart-wrap {
+    padding: 16px 20px;
+    position: relative;
+    min-height: 280px;
+}
+
+/* ═══════════════════════════════════════════════
+   ALERTS / NOTICES
+   ═══════════════════════════════════════════════ */
+.isti-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: var(--space-md);
+}
+
+.isti-alert-info {
+    background: var(--info-light);
+    color: var(--info-dark);
+    border: 1px solid #93c5fd;
+}
+
+.isti-alert-success {
+    background: var(--success-light);
+    color: var(--success-dark);
+    border: 1px solid #6ee7b7;
+}
+
+.isti-alert-warning {
+    background: var(--warning-light);
+    color: var(--warning-dark);
+    border: 1px solid #fcd34d;
+}
+
+.isti-alert-danger {
+    background: var(--danger-light);
+    color: var(--danger-dark);
+    border: 1px solid #fca5a5;
+}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS BARS
+   ═══════════════════════════════════════════════ */
+.isti-progress {
+    height: 8px;
+    background: #f3f4f6;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.isti-progress-bar {
+    height: 100%;
+    border-radius: var(--radius-full);
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    transition: width 0.6s ease;
+}
+
+/* ═══════════════════════════════════════════════
+   EMPTY STATES
+   ═══════════════════════════════════════════════ */
+.isti-empty-state {
+    text-align: center;
+    padding: 48px 24px;
+}
+
+.isti-empty-state i,
+.isti-empty-state .icon {
+    font-size: 3rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-md);
+    display: block;
+}
+
+.isti-empty-state p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* ═══════════════════════════════════════════════
+   PAGINATION
+   ═══════════════════════════════════════════════ */
+.isti-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+    margin-top: var(--space-lg);
+}
+
+.isti-pagination a,
+.isti-pagination span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.isti-pagination a:hover {
+    background: var(--bg-surface);
+    border-color: var(--card-border);
+}
+
+.isti-pagination .active {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+/* ═══════════════════════════════════════════════
+   LOADING / SPINNER
+   ═══════════════════════════════════════════════ */
+.isti-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--card-border);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: istiDashSpin 0.7s linear infinite;
+}
+
+@keyframes istiDashSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.isti-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* ═══════════════════════════════════════════════
+   ROLE-BASED UI ADAPTATIONS
+   ═══════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════════════
+   PRIMARY STUDENT KID-FRIENDLY UI  (Primary 1 → 5 only)
+   Islamic Educational Platform · warm · clean · motivating
+   Middle/High school students are COMPLETELY UNAFFECTED.
+   All selectors scoped to [data-istikama-tier="student"][data-istikama-level="primary"]
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Keyframe animations (GPU-optimised: transform + opacity only) ── */
+@keyframes isti-kid-bounce-in {
+    0% {
+        transform: scale(0.88) translateY(10px);
+        opacity: 0;
+    }
+
+    65% {
+        transform: scale(1.04) translateY(-2px);
+        opacity: .9;
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes isti-kid-float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes isti-kid-float-slow {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-8px) rotate(4deg);
+    }
+}
+
+@keyframes isti-kid-slide-up {
+    from {
+        transform: translateY(14px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes isti-kid-star-pulse {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.18) rotate(12deg);
+        opacity: .8;
+    }
+}
+
+@keyframes isti-kid-shimmer-gold {
+    0% {
+        background-position: 200% center;
+    }
+
+    100% {
+        background-position: -200% center;
+    }
+}
+
+@keyframes isti-kid-pulse-btn {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 107, 255, .3);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(0, 107, 255, 0);
+    }
+}
+
+@keyframes isti-kid-wiggle {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-6deg);
+    }
+
+    75% {
+        transform: rotate(6deg);
+    }
+}
+
+/* ── CSS variables: warm educational palette ── */
+[data-istikama-tier="student"][data-istikama-level="primary"] {
+    --primary-color: #0077dd;
+    --primary-light: #4db3ff;
+    --primary-dark: #005ebb;
+    --primary-rgb: 0, 119, 221;
+    --kid-green: #2d8653;
+    --kid-gold: #c9972b;
+    --kid-teal: #0891b2;
+    --sidebar-bg: #ffffff;
+    --sidebar-active-bg: rgba(0, 119, 221, 0.12);
+    --sidebar-active-border: #0077dd;
+    --bg-color: #eef7ff;
+}
+
+/* ── Global background: calm Islamic educational palette ── */
+[data-istikama-tier="student"][data-istikama-level="primary"],
+[data-istikama-tier="student"][data-istikama-level="primary"] body {
+    background: linear-gradient(160deg, #eef7ff 0%, #e8f5f0 40%, #fef9ee 100%) !important;
+    font-size: 1.04rem;
+}
+
+/* ── Page title ── */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-page-title {
+    font-size: 1.55rem;
+    font-weight: 900;
+    color: #1a2e4a;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SIDEBAR: friendly, warm, colorful icon circles
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sidebar {
+    background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%) !important;
+    border-right: 2px solid #dbeafe !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sidebar-brand {
+    background: linear-gradient(135deg, #0077dd 0%, #2d8653 100%) !important;
+    border-radius: 0 0 20px 20px;
+    padding: 18px 16px;
+    margin-bottom: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sidebar-brand::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .08);
+    top: -20px;
+    right: -20px;
+    animation: isti-kid-float 5s ease-in-out infinite;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sidebar-section-title {
+    font-size: .7rem;
+    letter-spacing: 1.5px;
+    color: #94a3b8;
+    padding: 10px 16px 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+/* Nav items: bigger touch targets, icon circles */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item {
+    border-radius: 14px !important;
+    padding: 10px 14px !important;
+    margin: 2px 6px !important;
+    font-size: .92rem !important;
+    font-weight: 600 !important;
+    gap: 12px !important;
+    transition: all .2s cubic-bezier(.34, 1.56, .64, 1) !important;
+    align-items: center !important;
+}
+
+/* Icon circle inside each nav item */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item i {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1rem !important;
+    transition: transform .2s cubic-bezier(.34, 1.56, .64, 1) !important;
+}
+
+/* Color the icon circles per position */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item:nth-child(1) i {
+    background: #eff6ff;
+    color: #0077dd;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item:nth-child(2) i {
+    background: #f0fdf4;
+    color: #2d8653;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item:nth-child(3) i {
+    background: #fef9ee;
+    color: #c9972b;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item:nth-child(4) i {
+    background: #fdf2f8;
+    color: #db2777;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item:nth-child(5) i {
+    background: #ecfeff;
+    color: #0891b2;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item:nth-child(6) i {
+    background: #f5f3ff;
+    color: #7c3aed;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item:hover {
+    background: #f0f7ff !important;
+    transform: translateX(3px) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item:hover i {
+    transform: scale(1.15) rotate(-5deg) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item.active {
+    background: linear-gradient(135deg, #eff6ff, #f0fdf4) !important;
+    border-left: 3px solid #0077dd !important;
+    color: #0077dd !important;
+    transform: translateX(3px) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-nav-item.active i {
+    transform: scale(1.1) !important;
+}
+
+/* Sidebar footer with decorative gold stars */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sidebar-footer {
+    border-top: 2px dashed #dbeafe !important;
+    padding-top: 10px !important;
+    position: relative;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sidebar-footer::before {
+    content: '★   ★   ★';
+    display: block;
+    text-align: center;
+    font-size: .65rem;
+    color: #c9972b;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+    animation: isti-kid-float 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Logo: gradient brand header is blue/green — invert to white so any logo is visible */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sidebar-logo {
+    filter: brightness(0) invert(1) !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TOPBAR
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-topbar {
+    border-bottom: 2px solid #dbeafe !important;
+    background: #ffffff !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   KPI CARDS: big numbers, bouncy entrance, colorful
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-kpi-card {
+    border-radius: 22px !important;
+    border-width: 2px !important;
+    padding: 22px 18px !important;
+    animation: isti-kid-bounce-in .42s cubic-bezier(.34, 1.56, .64, 1) backwards;
+    overflow: hidden !important;
+    position: relative;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-kpi-card::after {
+    content: '';
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .08);
+    top: -25px;
+    right: -25px;
+    pointer-events: none;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-kpi-card:nth-child(1) {
+    animation-delay: .05s;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-kpi-card:nth-child(2) {
+    animation-delay: .10s;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-kpi-card:nth-child(3) {
+    animation-delay: .15s;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-kpi-card:nth-child(4) {
+    animation-delay: .20s;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-kpi-value {
+    font-size: 2.6rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-kpi-icon {
+    width: 58px !important;
+    height: 58px !important;
+    border-radius: 18px !important;
+    font-size: 1.5rem !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GENERAL CARDS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-card,
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-card-modern {
+    border-radius: 20px !important;
+    border: 2px solid rgba(0, 119, 221, .10) !important;
+    animation: isti-kid-bounce-in .42s cubic-bezier(.34, 1.56, .64, 1) backwards;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-table thead th {
+    background: linear-gradient(135deg, #0077dd, #2d8653) !important;
+    color: #ffffff !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-table tbody tr:hover td {
+    background: #f0f7ff !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BUTTONS: playful bounce, no jank
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-btn {
+    border-radius: 14px !important;
+    padding: 11px 22px !important;
+    font-size: .95rem !important;
+    font-weight: 700 !important;
+    transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), box-shadow .18s !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-btn:hover {
+    transform: translateY(-3px) scale(1.04) !important;
+    box-shadow: 0 8px 20px rgba(0, 119, 221, .28) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-btn:active {
+    transform: translateY(0) scale(.98) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-btn-primary {
+    animation: isti-kid-pulse-btn 2.5s ease-in-out infinite;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HERO WELCOME BANNER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-hero-welcome {
+    border-radius: 24px !important;
+    background: linear-gradient(135deg, #0077dd 0%, #2d8653 50%, #c9972b 100%) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-hero-welcome::before {
+    content: '';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .07);
+    top: -40px;
+    right: 60px;
+    animation: isti-kid-float 5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-hero-welcome::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .05);
+    bottom: -15px;
+    right: 20px;
+    animation: isti-kid-float 4s ease-in-out infinite reverse;
+    pointer-events: none;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-hero-title {
+    font-size: 1.65rem !important;
+    font-weight: 900 !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   COURSE / LESSONS PAGE  (path-course-view)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* Course header: warmer title */
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view header#page-header .page-header-headings h1,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view header#page-header h1 {
+    color: #0077dd !important;
+    font-size: 1.55rem !important;
+}
+
+/* Section title pill */
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .sectionname,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .section-title h3,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .section-name {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    background: linear-gradient(135deg, #eff6ff, #f0fdf4) !important;
+    color: #1a2e4a !important;
+    padding: 7px 18px !important;
+    border-radius: 30px !important;
+    font-size: .98rem !important;
+    font-weight: 700 !important;
+    border: 2px solid #dbeafe !important;
+    box-shadow: 0 2px 8px rgba(0, 119, 221, .08) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .sectionname::before,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .section-title h3::before {
+    content: '★';
+    color: #c9972b;
+    font-style: normal;
+    animation: isti-kid-star-pulse 3s ease-in-out infinite;
+    display: inline-block;
+}
+
+/* Section card: colorful rotating top border */
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view li.section.course-section {
+    background: #ffffff !important;
+    border: 2px solid #dbeafe !important;
+    border-radius: 20px !important;
+    padding: 20px 24px !important;
+    margin-bottom: 20px !important;
+    border-top: 4px solid #0077dd !important;
+    box-shadow: 0 4px 16px rgba(0, 119, 221, .06) !important;
+    animation: isti-kid-slide-up .4s ease backwards;
+    transition: box-shadow .2s ease, transform .2s ease !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view li.section.course-section:nth-child(2n) {
+    border-top-color: #2d8653 !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view li.section.course-section:nth-child(3n) {
+    border-top-color: #c9972b !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view li.section.course-section:nth-child(4n) {
+    border-top-color: #db2777 !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view li.section.course-section:nth-child(5n) {
+    border-top-color: #0891b2 !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view li.section.course-section:hover {
+    box-shadow: 0 8px 28px rgba(0, 119, 221, .12) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Activity row items */
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .course-section .activity,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .course-section li.activity {
+    background: #f8fafc !important;
+    border-radius: 14px !important;
+    padding: 12px 16px !important;
+    margin-bottom: 8px !important;
+    border: 1.5px solid #e2e8f0 !important;
+    transition: all .2s cubic-bezier(.34, 1.56, .64, 1) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .course-section .activity:hover,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .course-section li.activity:hover {
+    background: #eff6ff !important;
+    border-color: #93c5fd !important;
+    transform: translateX(5px) !important;
+    box-shadow: 0 4px 14px rgba(0, 119, 221, .10) !important;
+}
+
+/* Activity names: bigger, friendlier */
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .activityname a,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .activity-instance a {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #1a2e4a !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .activityname a:hover,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .activity-instance a:hover {
+    color: #0077dd !important;
+}
+
+/* Activity icon containers: rounded */
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .activityiconcontainer,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .activity-icon {
+    border-radius: 12px !important;
+}
+
+/* Completion checkmark: green friendly */
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .autocompletion img,
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .completion-icon {
+    filter: hue-rotate(120deg) brightness(1.1);
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"].path-course-view .completion-info {
+    font-size: .78rem !important;
+    font-weight: 600 !important;
+    padding: 3px 10px !important;
+    border-radius: 20px !important;
+    background: #f0fdf4 !important;
+    color: #2d8653 !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PERSONAL REPORT  (student_personal_report)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Kid achievement banner — hidden for all non-primary users */
+.isti-sr-kid-banner {
+    display: none;
+}
+
+/* Reveal + style for primary students */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kid-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 22px;
+    margin-bottom: 18px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fffde7 40%, #e8f5e9 100%);
+    border: 2px solid #f59e0b;
+    animation: isti-kid-slide-up .5s ease .1s backwards;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kid-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(201, 151, 43, .08) 50%, transparent 100%);
+    animation: isti-kid-shimmer-gold 2.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kid-stars-left,
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kid-stars-right {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kstar {
+    color: #c9972b;
+    font-size: 1.2rem;
+    animation: isti-kid-star-pulse 2.4s ease-in-out infinite;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kstar-1 {
+    animation-delay: 0s;
+    font-size: 1rem;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kstar-2 {
+    animation-delay: .2s;
+    font-size: 1.3rem;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kstar-3 {
+    animation-delay: .4s;
+    font-size: 1rem;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kstar-4 {
+    animation-delay: .6s;
+    font-size: 1rem;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kstar-5 {
+    animation-delay: .8s;
+    font-size: 1.3rem;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kstar-6 {
+    animation-delay: 1s;
+    font-size: 1rem;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kid-banner-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+    flex: 1;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kid-trophy-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #c9972b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 14px -2px rgba(201, 151, 43, .45);
+    animation: isti-kid-wiggle 3s ease-in-out 1.5s infinite;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kid-banner-name {
+    font-size: .9rem;
+    font-weight: 800;
+    color: #92400e;
+    letter-spacing: .3px;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-hero {
+    background: linear-gradient(135deg, #0077dd 0%, #2d8653 50%, #c9972b 100%) !important;
+    border-radius: 24px !important;
+    padding: 28px !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-hero::before {
+    content: '★';
+    position: absolute;
+    font-size: 7rem;
+    color: rgba(255, 255, 255, .06);
+    top: -15px;
+    right: 20px;
+    animation: isti-kid-float-slow 5s ease-in-out infinite;
+    pointer-events: none;
+    line-height: 1;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-hero h1 {
+    font-size: 1.7rem !important;
+    font-weight: 900 !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kpi {
+    border-radius: 18px !important;
+    padding: 16px !important;
+    border: 2px solid rgba(0, 119, 221, .12) !important;
+    animation: isti-kid-bounce-in .4s cubic-bezier(.34, 1.56, .64, 1) backwards !important;
+    transition: transform .2s cubic-bezier(.34, 1.56, .64, 1) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kpi:hover {
+    transform: translateY(-4px) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-kpi-value {
+    font-size: 2.2rem !important;
+    font-weight: 900 !important;
+}
+
+/* Grade bars: blue→green gradient */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-grade-bar {
+    height: 10px !important;
+    border-radius: 6px !important;
+    background: linear-gradient(90deg, #0077dd, #2d8653) !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-bar-track {
+    height: 10px !important;
+    border-radius: 6px !important;
+    background: #e2e8f0 !important;
+}
+
+/* Insight cards */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-insight {
+    border-radius: 16px !important;
+    padding: 14px 16px !important;
+    font-size: .92rem !important;
+    animation: isti-kid-slide-up .4s ease backwards !important;
+}
+
+/* Report section card headings */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-sr-section-title {
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    color: #1a2e4a !important;
+}
+
+/* Grades table header */
+[data-istikama-tier="student"][data-istikama-level="primary"] [data-istikama-level="primary"] .isti-sr-bar-label {
+    font-size: .88rem !important;
+    font-weight: 600 !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   VIDEO PLAYER + PDF READER  (view_content / view_cb_content)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* Content area background */
+[data-istikama-tier="student"][data-istikama-level="primary"] .container-fluid[style*="background:#f1f5f9"] {
+    background: linear-gradient(160deg, #eef7ff 0%, #e8f5f0 100%) !important;
+}
+
+/* Top breadcrumb bar */
+[data-istikama-tier="student"][data-istikama-level="primary"] .container-fluid>.isti-card:first-child {
+    background: linear-gradient(135deg, #eff6ff, #f0fdf4) !important;
+    border: 2px solid #dbeafe !important;
+    border-radius: 18px !important;
+}
+
+/* Video/PDF card: warmer borders */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-card[style*="overflow:hidden"] {
+    border-radius: 22px !important;
+    border: 2px solid #dbeafe !important;
+    box-shadow: 0 6px 24px rgba(0, 119, 221, .09) !important;
+}
+
+/* Back button: bouncy */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-btn-outline {
+    border: 2px solid #0077dd !important;
+    color: #0077dd !important;
+    border-radius: 14px !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-btn-outline:hover {
+    background: #eff6ff !important;
+    transform: translateX(-4px) translateY(-1px) !important;
+}
+
+/* Discussion sidebar */
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-card h6 {
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-form-input {
+    border-radius: 14px !important;
+    border: 2px solid #dbeafe !important;
+    font-size: .9rem !important;
+    transition: border-color .18s !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .isti-form-input:focus {
+    border-color: #0077dd !important;
+    box-shadow: 0 0 0 3px rgba(0, 119, 221, .15) !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MY COURSES PAGE  (/my/courses.php — block_myoverview)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* Warm page background already inherited from body rule */
+
+/* Course card grid — more generous gap */
+[data-istikama-tier="student"][data-istikama-level="primary"] .card-grid {
+    gap: 20px !important;
+    padding: 4px !important;
+}
+
+/* Individual course cards */
+[data-istikama-tier="student"][data-istikama-level="primary"] .card.course-card {
+    border-radius: 22px !important;
+    border: 2px solid #dbeafe !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 18px -4px rgba(0, 119, 221, .13) !important;
+    animation: isti-kid-bounce-in .45s cubic-bezier(.34, 1.56, .64, 1) backwards !important;
+    transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s ease, border-color .2s ease !important;
+    background: #ffffff !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .card.course-card:hover {
+    transform: translateY(-7px) scale(1.015) !important;
+    box-shadow: 0 14px 32px -6px rgba(0, 119, 221, .24) !important;
+    border-color: #0077dd !important;
+}
+
+/* Stagger card entrance */
+[data-istikama-tier="student"][data-istikama-level="primary"] .card-grid .col:nth-child(2) .card {
+    animation-delay: .07s !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .card-grid .col:nth-child(3) .card {
+    animation-delay: .14s !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .card-grid .col:nth-child(4) .card {
+    animation-delay: .21s !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .card-grid .col:nth-child(5) .card {
+    animation-delay: .28s !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .card-grid .col:nth-child(6) .card {
+    animation-delay: .35s !important;
+}
+
+/* Course image */
+[data-istikama-tier="student"][data-istikama-level="primary"] .card.course-card .card-img-top {
+    height: 148px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    border-radius: 0 !important;
+}
+
+/* Course name link */
+[data-istikama-tier="student"][data-istikama-level="primary"] .card.course-card .aalink.coursename {
+    font-size: .98rem !important;
+    font-weight: 800 !important;
+    color: #1a2e4a !important;
+    line-height: 1.3 !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .card.course-card .aalink.coursename:hover {
+    color: #0077dd !important;
+}
+
+/* Category name */
+[data-istikama-tier="student"][data-istikama-level="primary"] .card.course-card .categoryname {
+    font-size: .78rem !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+/* Progress bar */
+[data-istikama-tier="student"][data-istikama-level="primary"] .card.course-card .progress {
+    height: 8px !important;
+    border-radius: 6px !important;
+    background: #e2e8f0 !important;
+}
+
+[data-istikama-tier="student"][data-istikama-level="primary"] .card.course-card .progress-bar {
+    background: linear-gradient(90deg, #0077dd, #2d8653) !important;
+    border-radius: 6px !important;
+}
+
+/* myoverview nav bar (grouping/sort/search) */
+[data-istikama-tier="student"][data-istikama-level="primary"] [data-region="filter"] {
+    background: rgba(255, 255, 255, .7) !important;
+    border-radius: 14px !important;
+    padding: 8px 14px !important;
+    border: 1.5px solid #dbeafe !important;
+    backdrop-filter: blur(4px);
+}
+
+/* Dropdown buttons in the filter bar */
+[data-istikama-tier="student"][data-istikama-level="primary"] [data-region="filter"] .btn {
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: .85rem !important;
+}
+
+/* ── Reduced motion: kill all animations for accessibility ── */
+@media (prefers-reduced-motion: reduce) {
+
+    [data-istikama-tier="student"][data-istikama-level="primary"] *,
+    [data-istikama-tier="student"][data-istikama-level="primary"] *::before,
+    [data-istikama-tier="student"][data-istikama-level="primary"] *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ── End of primary student UI ── */
+
+/* ── Middle/High School Students: Balanced modern ── */
+[data-istikama-tier="student"][data-istikama-level="middle"],
+[data-istikama-tier="student"][data-istikama-level="high"] {
+    --primary-color: #3b82f6;
+    --primary-light: #60a5fa;
+    --primary-dark: #2563eb;
+    --primary-rgb: 59, 130, 246;
+    --sidebar-active-bg: rgba(59, 130, 246, 0.12);
+    --sidebar-active-border: #3b82f6;
+}
+
+/* Middle/High students: keep things tight and professional */
+[data-istikama-tier="student"][data-istikama-level="middle"] .isti-kpi-value,
+[data-istikama-tier="student"][data-istikama-level="high"] .isti-kpi-value {
+    font-size: 1.85rem;
+    font-weight: 700;
+}
+
+[data-istikama-tier="student"][data-istikama-level="middle"] .isti-card,
+[data-istikama-tier="student"][data-istikama-level="high"] .isti-card,
+[data-istikama-tier="student"][data-istikama-level="middle"] .isti-card-modern,
+[data-istikama-tier="student"][data-istikama-level="high"] .isti-card-modern {
+    border-radius: 14px;
+}
+
+/* ── Teacher and Admin grids use base 4 columns ── */
+[data-istikama-tier="full_admin"] .isti-table tbody td,
+[data-istikama-tier="school_manager"] .isti-table tbody td {
+    padding: 10px 16px;
+    font-size: 0.825rem;
+}
+
+/* ═══════════════════════════════════════════════
+   MOODLE OVERRIDES FOR DASHBOARD
+   ═══════════════════════════════════════════════ */
+body.istikama-dashboard .navbar.fixed-top,
+body.istikama-dashboard header#page-header,
+body.istikama-dashboard nav.navbar {
+    display: none !important;
+}
+
+/* ── Course view: clean title only — no edit button, no card wrapper ── */
+body.istikama-dashboard.path-course-view header#page-header {
+    display: block !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 0 14px 0 !important;
+    padding: 4px 0 4px 16px !important;
+    /* left-indent matches course content */
+}
+
+body.istikama-dashboard.path-course-view header#page-header .page-header-headings h1,
+body.istikama-dashboard.path-course-view header#page-header h1 {
+    font-size: 1.45rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    margin: 0 !important;
+    line-height: 1.3 !important;
+}
+
+body.istikama-dashboard.path-course-view header#page-header .breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 0 4px 0 !important;
+    font-size: .78rem !important;
+}
+
+body.istikama-dashboard.path-course-view header#page-header .breadcrumb-item a {
+    color: #006bff !important;
+    text-decoration: none !important;
+}
+
+body.istikama-dashboard.path-course-view header#page-header .breadcrumb-item.active {
+    color: #94a3b8 !important;
+}
+
+/* Hide edit-mode toggle and all action buttons from the page header area.
+   Teachers can still toggle editing via the topbar edit_switch. */
+body.istikama-dashboard.path-course-view header#page-header .header-actions-container,
+body.istikama-dashboard.path-course-view header#page-header .editmode-switch-form,
+body.istikama-dashboard.path-course-view header#page-header [data-action="toggle-editing"],
+body.istikama-dashboard.path-course-view header#page-header .btn-edit-mode {
+    display: none !important;
+}
+
+body.istikama-dashboard #page-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+body.istikama-dashboard #page,
+body.istikama-dashboard #page-wrapper,
+body.istikama-dashboard #page-content {
+    background: transparent !important;
+}
+
+body.istikama-dashboard #page-content {
+    padding: 0 !important;
+}
+
+body.istikama-dashboard .main-inner {
+    max-width: 100% !important;
+    margin: 0 !important;
+    background: transparent !important;
+}
+
+body.istikama-dashboard #region-main-box {
+    width: 100% !important;
+    background: transparent !important;
+}
+
+body.istikama-dashboard #region-main,
+body.istikama-dashboard #region-main.card {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+body.istikama-dashboard #region-main .card-body {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+body.istikama-dashboard .activity-navigation {
+    display: none !important;
+}
+
+/* Secondary Navigation (Admin tabs) Styling */
+body.istikama-dashboard .secondary-navigation {
+    margin-bottom: 16px;
+    padding: 0 4px;
+}
+
+body.istikama-dashboard .secondary-navigation .moremenu .nav-tabs {
+    border-bottom: 2px solid var(--card-border);
+    gap: 4px;
+}
+
+body.istikama-dashboard .secondary-navigation .moremenu .nav-tabs .nav-link {
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 10px 16px;
+    margin-bottom: -2px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    transition: all var(--transition-fast);
+}
+
+body.istikama-dashboard .secondary-navigation .moremenu .nav-tabs .nav-link:hover {
+    color: var(--primary-color);
+    background: rgba(var(--primary-rgb), 0.05);
+    border-bottom-color: rgba(var(--primary-rgb), 0.3);
+}
+
+body.istikama-dashboard .secondary-navigation .moremenu .nav-tabs .nav-link.active {
+    color: var(--primary-color);
+    font-weight: 600;
+    border-bottom-color: var(--primary-color);
+    background: rgba(var(--primary-rgb), 0.08);
+}
+
+body.istikama-dashboard .drawer-toggler {
+    display: none !important;
+}
+
+/* Block region styling */
+body.istikama-dashboard [data-region="blocks-column"] {
+    display: none !important;
+}
+
+body.istikama-dashboard [data-region="blocks-column"] .block {
+    display: none !important;
+}
+
+/* Hide dark Moodle page footer globally on all istikama pages */
+body.istikama-dashboard #page-footer,
+body.istikama-dashboard .footer-popover,
+#page-footer,
+.footer-popover,
+.pagelayout-base #page-footer,
+.pagelayout-mycourses #page-footer,
+.pagelayout-standard #page-footer,
+.pagelayout-course #page-footer,
+.pagelayout-incourse #page-footer,
+.pagelayout-report #page-footer,
+.pagelayout-admin #page-footer {
+    display: none !important;
+}
+
+/* Hide the dark blue block headers/footers Moodle adds to blocks */
+body.istikama-dashboard .block .card-body>.card-footer,
+body.istikama-dashboard .block .footer,
+.isti-main .block .card-footer,
+.isti-main .card-footer.bg-dark,
+.isti-main [class*="card-footer"],
+.isti-main .footer-info,
+.dashboard-card .card-footer,
+.coursebox .moreinfo,
+.course-list-item .card-footer {
+    display: none !important;
+}
+
+/* Add block button */
+body.istikama-dashboard .addblock {
+    margin: 16px 0;
+}
+
+body.istikama-dashboard .addblock .btn {
+    background: rgba(var(--primary-rgb), 0.08);
+    color: var(--primary-color);
+    border: 1px dashed rgba(var(--primary-rgb), 0.3);
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: all var(--transition-fast);
+}
+
+body.istikama-dashboard .addblock .btn:hover {
+    background: rgba(var(--primary-rgb), 0.14);
+    border-color: var(--primary-color);
+}
+
+/* ── My Courses page (/my/courses.php) ── */
+/* Give the native course grid a bit of breathing room. */
+body.istikama-dashboard.path-my-courses header#page-header {
+    display: block !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 4px 0 4px 16px !important;
+    margin: 0 0 18px 0 !important;
+}
+
+body.istikama-dashboard.path-my-courses header#page-header h1 {
+    font-size: 1.45rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    margin: 0 !important;
+}
+
+body.istikama-dashboard.path-my-courses header#page-header .header-actions-container {
+    display: none !important;
+}
+
+/* Course cards: ensure they sit on the clean white surface */
+body.istikama-dashboard.path-my-courses .dashboard-card,
+body.istikama-dashboard.path-my-courses .card.dashboard-card {
+    border-radius: 14px !important;
+    border: 2px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    transition: border-color .15s, box-shadow .15s, transform .12s !important;
+}
+
+body.istikama-dashboard.path-my-courses .dashboard-card:hover,
+body.istikama-dashboard.path-my-courses .card.dashboard-card:hover {
+    border-color: var(--primary-color, #006bff) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .08) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Sort/filter bar on my courses */
+body.istikama-dashboard.path-my-courses [data-region="courses-view"] {
+    padding: 0 16px 16px !important;
+}
+
+/* ── My Courses: card footer — hide dark enrollment footer strip ── */
+body.istikama-dashboard .dashboard-card .card-footer,
+body.istikama-dashboard [data-region="courses-view"] .card-footer,
+body.istikama-dashboard .coursebox .moreinfo,
+body.istikama-dashboard .course-list-item .card-footer,
+body.istikama-dashboard .enrollment-info,
+body.istikama-dashboard [data-region="courses-view"] .course-card-footer {
+    display: none !important;
+}
+
+/* ── Wrap native Moodle page content in a white card ── */
+body.istikama-dashboard.path-my-courses #region-main,
+body.istikama-dashboard.path-my-courses #region-main.card {
+    background: #fff !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .05) !important;
+    padding: 20px !important;
+    overflow: hidden !important;
+}
+
+/* ── Course page content card ── */
+body.istikama-dashboard.path-course-view #region-main,
+body.istikama-dashboard.path-course-view #region-main.card {
+    background: #fff !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .05) !important;
+    padding: 20px !important;
+}
+
+/* ── Kill ALL footer variants everywhere ── */
+body.istikama-dashboard #page-footer,
+body.istikama-dashboard [id="page-footer"],
+body.istikama-dashboard footer[role="contentinfo"],
+body.istikama-dashboard .footer-popover,
+body.istikama-dashboard footer:not(.isti-sidebar-footer),
+body.istikama-dashboard [data-region="footer"],
+body.istikama-dashboard .course-content-footer,
+body.istikama-dashboard .pagelayout-footer {
+    display: none !important;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+
+/* Sidebar overlay on mobile */
+.isti-sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1035;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.isti-sidebar-overlay.visible {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 1024px) {
+    .isti-sidebar {
+        transform: translateX(-100%);
+    }
+
+    [dir="rtl"] .isti-sidebar {
+        transform: translateX(100%);
+    }
+
+    .isti-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .isti-topbar {
+        left: 0 !important;
+    }
+
+    [dir="rtl"] .isti-topbar {
+        right: 0 !important;
+    }
+
+    .isti-main {
+        margin-left: 0 !important;
+    }
+
+    [dir="rtl"] .isti-main {
+        margin-right: 0 !important;
+    }
+
+    .isti-topbar-user-info {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .isti-main {
+        padding: var(--space-md);
+    }
+
+    .isti-kpi-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .isti-tabs {
+        flex-direction: column;
+    }
+
+    .isti-tab {
+        flex: none;
+    }
+
+    .isti-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .isti-filter-bar {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .isti-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .isti-topbar {
+        padding: 0 12px;
+    }
+
+    .isti-topbar-search {
+        display: none;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════ */
+@keyframes istiFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes istiFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes istiSlideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.isti-animate-fade {
+    animation: istiFadeIn 0.4s ease-out;
+}
+
+.isti-animate-up {
+    animation: istiFadeInUp 0.4s ease-out;
+}
+
+.isti-animate-slide {
+    animation: istiSlideInLeft 0.3s ease-out;
+}
+
+/* ═══════════════════════════════════════════════
+   DARK MODE (Optional Toggle)
+   ═══════════════════════════════════════════════ */
+body.istikama-dashboard.dark-mode {
+    --bg-color: #0f172a;
+    --bg-surface: #1e293b;
+    --card-bg: #1e293b;
+    --card-border: #334155;
+    --text-color: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --topbar-bg: #1e293b;
+    --topbar-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --sidebar-bg: #0f172a;
+}
+
+body.istikama-dashboard.dark-mode .isti-topbar-search input {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+body.istikama-dashboard.dark-mode .isti-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* ═══════════════════════════════════════════════
+   HERO WELCOME SECTION
+   ═══════════════════════════════════════════════ */
+.isti-hero-welcome {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #0052cc 50%, #003d99 100%);
+    border-radius: var(--radius-xl);
+    padding: 32px 40px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    min-height: 160px;
+}
+
+.isti-hero-welcome::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.isti-hero-content {
+    flex: 1;
+    z-index: 1;
+}
+
+.isti-hero-title {
+    color: #fff !important;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.isti-hero-subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    font-weight: 400;
+    margin: 0;
+    max-width: 480px;
+    line-height: 1.5;
+}
+
+.isti-hero-illustration {
+    width: 180px;
+    height: 140px;
+    flex-shrink: 0;
+    z-index: 1;
+    margin-left: 24px;
+}
+
+.isti-hero-illustration svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ═══════════════════════════════════════════════
+   STATS SUMMARY CARDS
+   ═══════════════════════════════════════════════ */
+.isti-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.isti-stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+}
+
+.isti-stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.isti-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: rgba(var(--primary-rgb), 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.isti-stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.isti-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.2;
+}
+
+.isti-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+    .isti-hero-welcome {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+
+    .isti-hero-illustration {
+        margin-left: 0;
+        margin-top: 16px;
+        width: 120px;
+        height: 100px;
+    }
+
+    .isti-hero-subtitle {
+        max-width: 100%;
+    }
+
+    .isti-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .isti-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .isti-hero-title {
+        font-size: 1.35rem;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   ISTIKAMA CUSTOM ADD-CONTENT MODAL
+   For teachers, the "+" button in course view is
+   intercepted by JS to open this custom 2-option
+   picker instead of Moodle's native activity chooser.
+   ═══════════════════════════════════════════════ */
+.isti-addmodal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.isti-addmodal-dialog {
+    background: #fff;
+    border-radius: 18px;
+    width: min(560px, 92vw);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    animation: istiAddPop 0.18s ease-out;
+}
+
+@keyframes istiAddPop {
+    from {
+        transform: scale(.94);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.isti-addmodal-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.isti-addmodal-header h5 {
+    margin: 0;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.isti-addmodal-close {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #64748b;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.isti-addmodal-close:hover {
+    color: #1e293b;
+}
+
+.isti-addmodal-body {
+    padding: 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 600px) {
+    .isti-addmodal-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+.isti-addmodal-option {
+    display: block;
+    padding: 22px 20px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    cursor: pointer;
+    background: #fff;
+    transition: all .15s ease;
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+.isti-addmodal-option:hover {
+    border-color: #006bff;
+    box-shadow: 0 6px 16px rgba(0, 107, 255, .12);
+    transform: translateY(-2px);
+}
+
+.isti-addmodal-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+}
+
+.isti-addmodal-option strong {
+    display: block;
+    color: #1e293b;
+    font-size: 1rem;
+    margin-bottom: 6px;
+}
+
+.isti-addmodal-option .isti-addmodal-desc {
+    color: #64748b;
+    font-size: .85rem;
+    line-height: 1.45;
+}
+
+/* ═══════════════════════════════════════════════
+   COURSE SECTIONS — white-card look on the slate page
+   Applies to /course/view.php and similar lesson layouts.
+   ═══════════════════════════════════════════════ */
+body.istikama-dashboard #region-main {
+    /* Reserve a comfortable card area on the slate page. */
+    padding: 0 !important;
+}
+
+body.istikama-dashboard .course-content,
+body.istikama-dashboard ul.topics,
+body.istikama-dashboard ul.weeks,
+body.istikama-dashboard ul.section-list {
+    background: transparent !important;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Each section becomes a white rounded card. */
+body.istikama-dashboard li.section.course-section,
+body.istikama-dashboard li.section.main,
+body.istikama-dashboard .course-section.main {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .04) !important;
+    margin: 0 0 18px 0 !important;
+    padding: 18px 22px !important;
+    list-style: none !important;
+}
+
+body.istikama-dashboard li.section.course-section.current {
+    border-color: #006bff !important;
+    box-shadow: 0 6px 18px rgba(0, 107, 255, .08) !important;
+}
+
+body.istikama-dashboard .section-item {
+    background: transparent !important;
+}
+
+body.istikama-dashboard .course-section .sectionname,
+body.istikama-dashboard .course-section h3,
+body.istikama-dashboard .course-section h4 {
+    color: #1e293b !important;
+    font-weight: 700 !important;
+}
+
+/* Activity items inside a section */
+body.istikama-dashboard .course-section .activity,
+body.istikama-dashboard .course-section li.activity {
+    background: #fafbfc !important;
+    border: 1px solid #eef2f7 !important;
+    border-radius: 10px !important;
+    margin: 8px 0 !important;
+    padding: 10px 14px !important;
+}
+
+body.istikama-dashboard .course-section .activity:hover {
+    border-color: #cbd5e1 !important;
+    background: #ffffff !important;
+}
+
+/* "Add an activity or resource" divider button keeps the slate context */
+body.istikama-dashboard .section-modchooser,
+body.istikama-dashboard .section-modchooser-link {
+    background: transparent !important;
+}
+
+/* Course header (top-of-course area) should also sit on a clean card */
+body.istikama-dashboard #coursecontentcollapse,
+body.istikama-dashboard .course-content-inner {
+    background: transparent !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL FONT SYSTEM
+   Montserrat  → EN / FR
+   Noto Sans Arabic → AR (auto-applied via lang/dir)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 1. Define the font variables */
+:root {
+    --font-latin: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    --font-arabic: 'Noto Sans Arabic', 'Segoe UI', Arial, sans-serif;
+    --font-dashboard: var(--font-latin);
+}
+
+/* 2. Base: apply Montserrat everywhere */
+body.istikama-dashboard,
+body.istikama-dashboard *:not([class*="fa"]):not([class*="icon"]) {
+    font-family: var(--font-latin) !important;
+}
+
+/* 3. RTL override: switch to Noto Sans Arabic for Arabic content */
+[dir="rtl"] body.istikama-dashboard,
+body.istikama-dashboard[dir="rtl"],
+body.istikama-dashboard [dir="rtl"],
+body.istikama-dashboard:lang(ar),
+body.istikama-dashboard *:lang(ar):not([class*="fa"]):not([class*="icon"]) {
+    font-family: var(--font-arabic) !important;
+}
+
+/* 4. When the whole page is Arabic (RTL layout) */
+html[dir="rtl"] body.istikama-dashboard,
+html[lang="ar"] body.istikama-dashboard,
+html[lang="ar"] body.istikama-dashboard *:not([class*="fa"]):not([class*="icon"]) {
+    font-family: var(--font-arabic) !important;
+    line-height: 1.75;
+    /* Arabic needs more line-height */
+    letter-spacing: 0;
+    /* Arabic doesn't use letter-spacing */
+}
+
+/* 5. Preserve icon fonts */
+body.istikama-dashboard [class*="fa-"],
+body.istikama-dashboard [class*=" fa-"],
+body.istikama-dashboard .fa,
+body.istikama-dashboard .fas,
+body.istikama-dashboard .far,
+body.istikama-dashboard .fab,
+body.istikama-dashboard i[class*="fa"] {
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free', FontAwesome !important;
+}
+
+/* 6. Font weight mapping for Arabic (Noto Sans Arabic has slightly different weight names) */
+html[lang="ar"] body.istikama-dashboard h1,
+html[lang="ar"] body.istikama-dashboard h2,
+html[lang="ar"] body.istikama-dashboard h3,
+html[lang="ar"] body.istikama-dashboard h4,
+html[lang="ar"] body.istikama-dashboard h5,
+html[lang="ar"] body.istikama-dashboard .isti-hero-title,
+html[lang="ar"] body.istikama-dashboard .isti-card-modern-title,
+html[lang="ar"] body.istikama-dashboard .isti-kpi-value {
+    font-weight: 700 !important;
+    font-family: var(--font-arabic) !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PADDING & SPACING — FINAL OVERRIDE LAYER
+   (placed at the end to win all cascade battles)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── My Courses page (/my/courses.php) ── */
+body.istikama-dashboard.path-my-courses #region-main,
+body.istikama-dashboard.path-my-courses #region-main.card {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 6px rgba(15, 23, 42, .06) !important;
+    padding: 24px !important;
+    overflow: hidden !important;
+}
+
+/* ── Course view page (/course/view.php) ── */
+body.istikama-dashboard.path-course-view #region-main,
+body.istikama-dashboard.path-course-view #region-main.card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Course sections inside course view — each is a white card */
+body.istikama-dashboard.path-course-view li.section.course-section,
+body.istikama-dashboard.path-course-view li.section.main,
+body.istikama-dashboard.path-course-view .course-section.main {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    padding: 20px 24px !important;
+    margin-bottom: 18px !important;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, .05) !important;
+}
+
+/* Activity items inside each section */
+body.istikama-dashboard.path-course-view .course-section .activity,
+body.istikama-dashboard.path-course-view .course-section li.activity {
+    padding: 12px 16px !important;
+    margin: 8px 0 !important;
+    border-radius: 10px !important;
+    border: 1px solid #eef2f7 !important;
+    background: #f8fafc !important;
+}
+
+body.istikama-dashboard.path-course-view .course-section .activity:hover,
+body.istikama-dashboard.path-course-view .course-section li.activity:hover {
+    border-color: #c7d7f5 !important;
+    background: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(0, 107, 255, .08) !important;
+}
+
+/* ── Admin plugin pages (/local/istikama_admin/*.php) ── */
+body.istikama-dashboard.path-local-istikama-admin #region-main,
+body.istikama-dashboard.path-local-istikama-admin #region-main.card {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* ── Generic Moodle content pages (not course/admin) ── */
+body.istikama-dashboard:not(.path-course-view):not(.path-local-istikama-admin):not(.path-my-courses) #region-main,
+body.istikama-dashboard:not(.path-course-view):not(.path-local-istikama-admin):not(.path-my-courses) #region-main.card {
+    background: #ffffff !important;
+    border-radius: 14px !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 24px !important;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, .05) !important;
+}
+
+/* ── My courses: filter bar + cards breathing room ── */
+body.istikama-dashboard.path-my-courses [data-region="courses-view"],
+body.istikama-dashboard.path-my-courses .courses-view-content {
+    padding: 0 !important;
+    margin-top: 8px !important;
+}
+
+body.istikama-dashboard.path-my-courses .dashboard-card-img,
+body.istikama-dashboard.path-my-courses .card-img-top {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+/* ── isti-main breathing room ── */
+/* Top padding is intentionally small (10px) — the topbar already has 64px of
+   height; pages should hug the topbar, not float away from it. Sides keep
+   28px for content breathing room; bottom keeps 40px so footer-less pages
+   don't bottom out abruptly. */
+.isti-main {
+    padding: 10px 28px 40px !important;
+}
+
+@media (max-width: 768px) {
+    .isti-main {
+        padding: 8px 14px 32px !important;
+    }
+}
+
+/* ── Kill ALL page footers — absolute final rule ── */
+body.istikama-dashboard #page-footer,
+body.istikama-dashboard footer:not(.isti-sidebar-footer),
+body.istikama-dashboard [data-region="footer"],
+body.istikama-dashboard .footer-popover,
+body.istikama-dashboard .course-content-footer,
+body.istikama-dashboard .dashboard-card .card-footer,
+body.istikama-dashboard [data-region="courses-view"] .card-footer,
+body.istikama-dashboard .coursebox .moreinfo {
+    display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LESSONS / COURSE CARDS — RESPONSIVE GRID  (applies to ALL students,
+   parents, and any user viewing the My Courses / dashboard course list)
+   Default grid: 3 columns desktop, 2 columns tablet, 1 column mobile.
+   Cards get proper internal padding so titles, images, progress breathe.
+
+   IMPORTANT: We override BOTH containers used by Moodle:
+   - `.card-grid` (block_myoverview's full Lessons view)
+   - `.card-carousel[data-region="card-deck"]` (recentlyaccessedcourses block)
+   The carousel uses flex-nowrap which makes cards collapse to one squashed
+   row — we convert it to a real grid like the myoverview one.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Grid container — full width with proper spacing between cards. */
+body.istikama-dashboard .card-grid,
+body.istikama-dashboard .card-carousel,
+body.istikama-dashboard [data-region="card-deck"] {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 22px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 24px 0 !important;
+    padding: 4px 0 !important;
+    /* Defeat the carousel's flex-nowrap + overflow-hidden which clipped cards. */
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+    height: auto !important;
+    justify-content: stretch !important;
+}
+
+@media (max-width: 1100px) {
+
+    body.istikama-dashboard .card-grid,
+    body.istikama-dashboard .card-carousel,
+    body.istikama-dashboard [data-region="card-deck"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 18px !important;
+    }
+}
+
+@media (max-width: 640px) {
+
+    body.istikama-dashboard .card-grid,
+    body.istikama-dashboard .card-carousel,
+    body.istikama-dashboard [data-region="card-deck"] {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+}
+
+/* Neutralize Bootstrap's row/col padding inside the grid so our gap controls spacing. */
+body.istikama-dashboard .card-grid>.col,
+body.istikama-dashboard .card-carousel>.col,
+body.istikama-dashboard [data-region="card-deck"]>.col,
+body.istikama-dashboard .card-grid>div,
+body.istikama-dashboard [data-region="card-deck"]>div {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    flex: unset !important;
+    min-width: 0 !important;
+}
+
+/* The course card itself — clean card with proper padding + nice hover. */
+body.istikama-dashboard .card.course-card,
+body.istikama-dashboard [data-region="card-deck"] .card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06) !important;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+
+body.istikama-dashboard .card.course-card:hover,
+body.istikama-dashboard [data-region="card-deck"] .card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 12px 28px -6px rgba(0, 107, 255, 0.18) !important;
+    border-color: #006bff !important;
+}
+
+/* Course banner image */
+body.istikama-dashboard .card.course-card .card-img-top {
+    height: 140px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+
+/* Card body — proper padding so content doesn't touch edges. */
+body.istikama-dashboard .card.course-card .card-body,
+body.istikama-dashboard .card.course-card .course-info-container {
+    padding: 18px 20px !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Override Moodle's pe-1 (padding-right: 0.25rem) which crowds the card. */
+body.istikama-dashboard .card.course-card .card-body.pe-1 {
+    padding-right: 20px !important;
+}
+
+/* Course title */
+body.istikama-dashboard .card.course-card .aalink.coursename,
+body.istikama-dashboard .card.course-card .multiline {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    line-height: 1.35 !important;
+    text-decoration: none !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    margin-bottom: 8px !important;
+}
+
+body.istikama-dashboard .card.course-card .aalink.coursename:hover {
+    color: #006bff !important;
+}
+
+/* Category/subject sub-label */
+body.istikama-dashboard .card.course-card .categoryname,
+body.istikama-dashboard .card.course-card .text-muted {
+    font-size: 0.78rem !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+    margin-bottom: 10px !important;
+}
+
+/* Progress bar — sleek and on-brand. */
+body.istikama-dashboard .card.course-card .progress {
+    height: 6px !important;
+    border-radius: 4px !important;
+    background: #e2e8f0 !important;
+    overflow: hidden !important;
+    margin-top: auto !important;
+}
+
+body.istikama-dashboard .card.course-card .progress-bar {
+    background: linear-gradient(90deg, #006bff, #00a5ff) !important;
+    border-radius: 4px !important;
+}
+
+/* "X% complete" caption under the progress bar */
+body.istikama-dashboard .card.course-card .progresstext {
+    font-size: 0.75rem !important;
+    color: #64748b !important;
+    font-weight: 600 !important;
+    margin-top: 6px !important;
+}
+
+/* Remove default mx-1 horizontal margin that pushed the card off-center
+   in our CSS-grid layout (it was needed for Bootstrap's row/col flex,
+   but our grid handles spacing via `gap`). */
+body.istikama-dashboard .card.course-card.mx-1 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Card footer — Moodle's action menu (favorite, hide, etc.) */
+body.istikama-dashboard .card.course-card .card-footer {
+    background: transparent !important;
+    border-top: 1px solid #f1f5f9 !important;
+    padding: 8px 12px !important;
+}
+
+/* Filter bar (groupings, sorts, search) above the grid — modern look. */
+body.istikama-dashboard.path-my-courses [data-region="filter"],
+body.istikama-dashboard [data-region="filter"] {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    margin-bottom: 16px !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+/* ═══════════════════════════════════════════════
+   GLOBAL SEARCH DROPDOWN (permission-aware)
+   ═══════════════════════════════════════════════ */
+.isti-search-spinner {
+    position: absolute;
+    inset-inline-end: 14px;
+    top: 50%;
+    width: 15px;
+    height: 15px;
+    margin-top: -7px;
+    border: 2px solid rgba(0, 107, 255, 0.25);
+    border-top-color: #006bff;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s;
+}
+.isti-search-spinner.on { opacity: 1; animation: istiSpin .7s linear infinite; }
+@keyframes istiSpin { to { transform: rotate(360deg); } }
+
+.isti-search-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    inset-inline-start: 0;
+    width: min(440px, 92vw);
+    max-height: 60vh;
+    overflow-y: auto;
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--card-border, #e2e8f0);
+    border-radius: 18px;
+    box-shadow: 0 24px 60px -18px rgba(15, 23, 42, 0.35);
+    padding: 8px;
+    z-index: 1200;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity .18s ease, transform .18s ease, visibility .18s;
+}
+.isti-search-open .isti-search-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.isti-search-cat {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-weight: 700;
+    color: #94a3b8;
+    padding: 10px 12px 6px;
+}
+.isti-search-clear {
+    background: none;
+    border: 0;
+    color: #006bff;
+    font-size: .68rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0;
+}
+.isti-search-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--text-color, #1e293b);
+    transition: background .12s;
+}
+.isti-search-item.active,
+.isti-search-item:hover { background: rgba(0, 107, 255, 0.08); }
+.isti-search-ic {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #eff6ff;
+    color: #006bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .9rem;
+}
+.isti-search-tx { display: flex; flex-direction: column; overflow: hidden; }
+.isti-search-lbl { font-weight: 600; font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.isti-search-sub { font-size: .74rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.isti-search-empty { padding: 22px 14px; text-align: center; color: #94a3b8; font-size: .85rem; }
+body.dark-mode .isti-search-dropdown { background: var(--card-bg); border-color: var(--card-border); }

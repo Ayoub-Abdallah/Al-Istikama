@@ -1,0 +1,3 @@
+# Live PHP session files — container-owned (mode 600, unreadable without root),
+# ephemeral runtime state, and sensitive. Excluded by necessity.
+moodle-docker/moodledata/sessions/

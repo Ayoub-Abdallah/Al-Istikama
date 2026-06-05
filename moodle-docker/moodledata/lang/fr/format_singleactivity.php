@@ -1,0 +1,36 @@
+<?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'format_singleactivity', language 'fr', version '5.1'.
+ *
+ * @package     format_singleactivity
+ * @category    string
+ * @copyright   1999 Ayoub Ben Chahla and contributors
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+$string['activitytype'] = 'Type d’activité';
+$string['activitytype_help'] = 'Le type d’activité ou de ressource à utiliser dans ce cours';
+$string['defactivitytype'] = 'Type d’activité par défaut';
+$string['defactivitytypedesc'] = 'Indiquez le type d’activité qui sera sélectionné par défaut lors de la création d’un nouveau cours';
+$string['erroractivitytype'] = 'Le type d’activité n’est pas configuré dans les paramètres du cours';
+$string['plugin_description'] = 'Le cours n’affiche qu’une activité sur la page de cours. D’autres activités peuvent être ajouté dans le bloc Activités supplémentaires.';
+$string['pluginname'] = 'Activité unique';
+$string['privacy:metadata'] = 'Le plugin format activité unique n’enregistre aucune donnée personnelle.';
+$string['sectionname'] = '';

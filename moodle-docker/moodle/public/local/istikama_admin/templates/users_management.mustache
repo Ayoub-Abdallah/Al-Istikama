@@ -1,0 +1,874 @@
+<div class="istikama-section" dir="auto">
+
+    {{!-- ═══════ TAB BAR ═══════ --}}
+    <div class="isti-tabs" id="istikama-user-tabs" style="margin-bottom:var(--space-lg)">
+        <button type="button" class="isti-tab active" data-tab="all">
+            <i class="fa fa-users"></i> {{str_tab_all}}
+        </button>
+        <button type="button" class="isti-tab" data-tab="students">
+            <i class="fa fa-graduation-cap"></i> {{str_tab_students}}
+        </button>
+        <button type="button" class="isti-tab" data-tab="teachers">
+            <i class="fa fa-chalkboard-teacher"></i> {{str_tab_teachers}}
+        </button>
+        <button type="button" class="isti-tab" data-tab="parents">
+            <i class="fa fa-user-friends"></i> {{str_tab_parents}}
+        </button>
+        {{^is_school_manager}}
+        <button type="button" class="isti-tab" data-tab="managers">
+            <i class="fa fa-building"></i> {{str_tab_managers}}
+        </button>
+        {{/is_school_manager}}
+    </div>
+
+    {{!-- ═══════ FILTERS ═══════ --}}
+    <form method="get" action="{{baseurl}}" class="isti-filter-bar" id="istikama-filter-form" style="justify-content: flex-start; align-items: flex-end;">
+        <div class="isti-form-group">
+            <label class="isti-form-label" style="font-size:0.85rem; font-weight:600; margin-bottom:0px;">{{#str}}filter_search, local_istikama_admin{{/str}}</label>
+            <input class="isti-form-input search" type="text" name="search" value="{{search}}" id="istikama-search-input" style="width: 350px;">
+        </div>
+        <div class="isti-form-group" style="width: 200px;">
+            <label class="isti-form-label" style="font-size:0.85rem; font-weight:600; margin-bottom:0px;">{{#str}}filter_role, local_istikama_admin{{/str}}</label>
+            <select class="isti-form-select" name="roleid">
+                {{#roleoptions}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/roleoptions}}
+            </select>
+        </div>
+        {{^is_school_manager}}
+        <div class="isti-form-group" style="width: 200px;">
+            <label class="isti-form-label" style="font-size:0.85rem; font-weight:600; margin-bottom:0px;">{{#str}}filter_school, local_istikama_admin{{/str}}</label>
+            <select class="isti-form-select" name="school">
+                {{#schooloptions}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/schooloptions}}
+            </select>
+        </div>
+        {{/is_school_manager}}
+        <div class="isti-form-group">
+            <button class="isti-btn isti-btn-primary" type="submit" style="height: 42px;">{{#str}}filter_apply, local_istikama_admin{{/str}}</button>
+        </div>
+    </form>
+
+    {{!-- ═══════ BULK ACTIONS ═══════ --}}
+    <form method="post" action="{{baseurl}}" id="istikama-users-bulk-form">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <div class="isti-action-row isti-mb-md">
+         
+            <select class="isti-form-select bulk-action-btn" name="newroleid" style="width:auto; border-radius: 20px;" disabled>
+                {{#roleassignoptions}}
+                <option value="{{value}}">{{label}}</option>
+                {{/roleassignoptions}}
+            </select>
+            <button class="isti-btn isti-btn-primary bulk-action-btn" type="submit" name="action" value="bulkassign" style="border-radius: 20px;" disabled>
+                <i class="fa fa-user-plus"></i> {{#str}}action_assign_role, local_istikama_admin{{/str}}
+            </button>
+            <button class="isti-btn isti-btn-danger bulk-action-btn" type="submit" name="action" value="bulkremove" style="border-radius: 20px;" disabled>
+                <i class="fa fa-user-minus"></i> {{str_action_remove_role}}
+            </button>
+            <button class="isti-btn isti-btn-success bulk-action-btn" type="submit" name="download" value="csv" style="border-radius: 20px;" disabled>
+                <i class="fa fa-download"></i> {{#str}}action_export_selected, local_istikama_admin{{/str}}
+            </button>
+        </div>
+
+        {{!-- ═══════ TABLE ═══════ --}}
+        <div class="isti-card-modern">
+            <div class="isti-card-body" style="padding:0">
+                <div class="table-responsive">
+                    <table class="isti-table isti-table-striped" id="istikama-users-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 48px; border: none;"><input type="checkbox" id="istikama-select-all"></th>
+                                <th style="border: none; border-left: none; border-right: none;">{{#str}}name, local_istikama_admin{{/str}}</th>
+                                <th style="border: none; border-left: none; border-right: none;">{{#str}}email, local_istikama_admin{{/str}}</th>
+                                <th style="border: none; border-left: none; border-right: none;">{{#str}}role, local_istikama_admin{{/str}}</th>
+                                <th style="border: none; border-left: none; border-right: none;">{{#str}}school, local_istikama_admin{{/str}}</th>
+                                <th style="border: none; border-left: none; border-right: none;">{{#str}}lastlogin, local_istikama_admin{{/str}}</th>
+                                <th style="border: none; text-align: center; border-left: none; border-right: none;">{{#str}}actions, local_istikama_admin{{/str}}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="istikama-users-tbody">
+                            {{#users}}
+                            <tr data-userid="{{id}}" data-roletype="{{role_type}}">
+                                <td style="border-left: none; border-right: none;"><input type="checkbox" name="selectedusers[]" value="{{id}}" class="istikama-user-checkbox"></td>
+                                <td style="border-left: none; border-right: none;"><strong>{{name}}</strong></td>
+                                <td style="border-left: none; border-right: none;"><span class="isti-kpi-label">{{email}}</span></td>
+                                <td style="border-left: none; border-right: none;"><span class="istikama-role-badge istikama-role-{{role_type}}">{{role}}</span></td>
+                                <td style="border-left: none; border-right: none;">{{{school}}}</td>
+                                <td style="border-left: none; border-right: none;">{{lastlogin}}</td>
+                                <td style="border-left: none; border-right: none;">
+                                    <div style="display: flex; justify-content: center; gap: 8px;">
+                                        <button type="button" class="isti-action-btn istikama-btn-manage" data-userid="{{id}}" data-username="{{name}}" data-roletype="{{role_type}}" title="{{str_manage}}">
+                                            <i class="fa fa-cog"></i>
+                                        </button>
+                                        <a href="{{editurl}}" class="isti-action-btn" title="Edit">
+                                            <i class="fa fa-pencil-alt"></i>
+                                        </a>
+                                        <a href="{{viewurl}}" class="isti-action-btn" title="View">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                        {{^is_school_manager}}
+                                        <a href="{{deleteurl}}" class="isti-action-btn delete-btn" title="Delete">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                        {{/is_school_manager}}
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/users}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{{!-- ═══════ MODAL ═══════ --}}
+<div class="isti-modal-overlay" id="istikama-manage-modal">
+    <div class="isti-modal">
+        <div class="isti-modal-header">
+            <div>
+                <h3 id="istikama-modal-title" style="margin:0;font-size:1.15rem;font-weight:700">{{str_manage_assignment}}</h3>
+                <span class="isti-kpi-label" id="istikama-modal-subtitle"></span>
+            </div>
+            <button class="isti-btn" style="background:transparent;border:none;font-size:1.5rem;padding:0;color:var(--text-muted)" id="istikama-modal-close">&times;</button>
+        </div>
+        <div class="isti-modal-body" id="istikama-modal-body">
+            <div class="isti-loading" id="istikama-modal-loading">
+                <div class="isti-spinner"></div>
+                <span>{{str_loading}}</span>
+            </div>
+            <div id="istikama-modal-content" style="display:none;"></div>
+        </div>
+        <div class="isti-modal-footer">
+            <div id="istikama-modal-feedback" class="isti-alert" style="display:none;margin-bottom:0;flex:1"></div>
+            <button class="isti-btn isti-btn-outline" id="istikama-modal-cancel-btn">{{str_close}}</button>
+            <button class="isti-btn isti-btn-primary" id="istikama-modal-save-btn">
+                <i class="fa fa-check"></i> {{str_save_changes}}
+            </button>
+        </div>
+    </div>
+</div>
+
+{{!-- ═══════ HIDDEN DATA ═══════ --}}
+<script id="istikama-subjects-data" type="application/json">{{{subjectsJson}}}</script>
+<script id="istikama-sm-config" type="application/json">{"is_school_manager": {{#is_school_manager}}true{{/is_school_manager}}{{^is_school_manager}}false{{/is_school_manager}}, "manager_schoolid": {{#manager_schoolid}}{{manager_schoolid}}{{/manager_schoolid}}{{^manager_schoolid}}0{{/manager_schoolid}}, "manager_schoolname": "{{manager_schoolname}}"}</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var AJAX_URL = '{{ajaxurl}}';
+    var SESSKEY = '{{sesskey}}';
+    var SM_CONFIG = JSON.parse(document.getElementById('istikama-sm-config').textContent);
+    var IS_SCHOOL_MANAGER = SM_CONFIG.is_school_manager;
+    var MANAGER_SCHOOLID = SM_CONFIG.manager_schoolid;
+    var MANAGER_SCHOOLNAME = SM_CONFIG.manager_schoolname;
+    var STRINGS = {
+        manage_assignment: '{{str_manage_assignment}}',
+        assign_school: '{{str_assign_school}}',
+        assign_level: '{{str_assign_level}}',
+        assign_class: '{{str_assign_class}}',
+        assign_subjects: '{{str_assign_subjects}}',
+        select_school: '{{str_select_school}}',
+        select_level: '{{str_select_level}}',
+        select_class: '{{str_select_class}}',
+        assignment_saved: '{{str_assignment_saved}}',
+        assignment_error: '{{str_assignment_error}}',
+        no_assignment: '{{str_no_assignment}}',
+        saving: '{{str_saving}}',
+        loading: '{{str_loading}}',
+        close: '{{str_close}}',
+        save_changes: '{{str_save_changes}}',
+        managed_schools: '{{str_managed_schools}}',
+        add_school: '{{str_add_school_assignment}}',
+        add_class: '{{str_add_class_assignment}}',
+        no_role: '{{str_no_role_detected}}',
+        student_title: '{{str_student_title}}',
+        teacher_title: '{{str_teacher_title}}',
+        manager_title: '{{str_manager_title}}',
+        parent_title: '{{str_parent_title}}',
+        parent_search: '{{str_parent_search_students}}',
+        parent_linked: '{{str_parent_linked_to_others}}',
+        parent_no_students: '{{str_parent_no_students}}',
+        remove: '{{str_remove_assignment}}',
+        confirm_remove: '{{str_confirm_remove}}'
+    };
+
+    // ── Select all checkbox ──
+    var selectAll = document.getElementById('istikama-select-all');
+    
+    function toggleBulkActions() {
+        var anyChecked = document.querySelectorAll('.istikama-user-checkbox:checked').length > 0;
+        document.querySelectorAll('.bulk-action-btn').forEach(function(btn) {
+            if (anyChecked) {
+                btn.removeAttribute('disabled');
+                btn.classList.remove('disabled');
+                btn.style.pointerEvents = 'auto';
+                btn.style.opacity = '1';
+            } else {
+                btn.setAttribute('disabled', 'disabled');
+                btn.classList.add('disabled');
+                btn.style.pointerEvents = 'none';
+                btn.style.opacity = '0.5';
+            }
+        });
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function() {
+            document.querySelectorAll('input[name="selectedusers[]"]').forEach(function(cb) {
+                cb.checked = selectAll.checked;
+            });
+            toggleBulkActions();
+        });
+    }
+    
+    // Bind to individual checkboxes (delegated to tbody)
+    var tbodyNode = document.getElementById('istikama-users-tbody');
+    if (tbodyNode) {
+        tbodyNode.addEventListener('change', function(e) {
+            if (e.target && e.target.classList.contains('istikama-user-checkbox')) {
+                toggleBulkActions();
+            }
+        });
+    }
+
+    // ── Tab switching ──
+    var currentTab = 'all';
+    document.querySelectorAll('.isti-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            var tabName = this.getAttribute('data-tab');
+            if (tabName === currentTab) return;
+            currentTab = tabName;
+
+            document.querySelectorAll('.isti-tab').forEach(function(t) { t.classList.remove('active'); });
+            this.classList.add('active');
+
+            if (tabName === 'all') {
+                loadUsersForTab('all');
+                return;
+            }
+
+            // AJAX fetch for tab
+            loadUsersForTab(tabName);
+        });
+    });
+
+    function loadUsersForTab(tab) {
+        var tbody = document.getElementById('istikama-users-tbody');
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4"><div class="istikama-spinner"></div></td></tr>';
+
+        var search = document.getElementById('istikama-search-input') ? document.getElementById('istikama-search-input').value : '';
+        var selectSchool = document.querySelector('select[name="school"]');
+        var school = selectSchool ? selectSchool.value : '';
+        var actionName = IS_SCHOOL_MANAGER ? 'smgetusersbytab' : 'getusersbytab';
+        var url = AJAX_URL + '?action=' + actionName + '&tab=' + encodeURIComponent(tab) +
+                  '&search=' + encodeURIComponent(search) +
+                  '&school=' + encodeURIComponent(school) +
+                  '&sesskey=' + SESSKEY;
+
+        fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (!data.users || data.users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No users found</td></tr>';
+                    return;
+                }
+                var html = '';
+                data.users.forEach(function(u) {
+                    html += '<tr data-userid="' + u.id + '" data-roletype="' + esc(u.role_type) + '">';
+                    html += '<td><input type="checkbox" name="selectedusers[]" value="' + u.id + '" class="istikama-user-checkbox"></td>';
+                    html += '<td>' + esc(u.name) + '</td>';
+                    html += '<td>' + esc(u.email) + '</td>';
+                    html += '<td><span class="istikama-role-badge istikama-role-' + esc(u.role_type) + '">' + esc(u.role) + '</span></td>';
+                    html += '<td>' + esc(u.assignment || '-') + '</td>';
+                    html += '<td>' + esc(u.lastlogin) + '</td>';
+                    html += '<td style="border-left: none; border-right: none;">';
+                    html += '<div style="display: flex; justify-content: center; gap: 8px;">';
+                    html += '<button type="button" class="isti-action-btn istikama-btn-manage" data-userid="' + u.id + '" data-username="' + esc(u.name) + '" data-roletype="' + esc(u.role_type) + '" title="Manage"><i class="fa fa-cog"></i></button>';
+                    html += '<a class="isti-action-btn" href="' + esc(u.editurl) + '" title="Edit"><i class="fa fa-pencil-alt"></i></a>';
+                    html += '<a class="isti-action-btn" href="' + esc(u.viewurl) + '" title="View"><i class="fa fa-eye"></i></a>';
+                    if (u.deleteurl) {
+                        html += '<a class="isti-action-btn delete-btn" href="' + esc(u.deleteurl) + '" title="Delete"><i class="fa fa-trash"></i></a>';
+                    }
+                    html += '</div></td></tr>';
+                });
+                tbody.innerHTML = html;
+                bindManageButtons();
+            })
+            .catch(function() {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger py-4">Error loading users</td></tr>';
+            });
+    }
+
+    // ── Modal management ──
+    var modal = document.getElementById('istikama-manage-modal');
+    var modalTitle = document.getElementById('istikama-modal-title');
+    var modalSubtitle = document.getElementById('istikama-modal-subtitle');
+    var modalBody = document.getElementById('istikama-modal-content');
+    var modalLoading = document.getElementById('istikama-modal-loading');
+    var modalFeedback = document.getElementById('istikama-modal-feedback');
+    var saveBtn = document.getElementById('istikama-modal-save-btn');
+    var currentUserId = null;
+    var currentRoleType = null;
+
+    function openModal(userid, username, roletype) {
+        currentUserId = userid;
+        currentRoleType = roletype;
+        modalTitle.textContent = STRINGS.manage_assignment;
+        modalSubtitle.textContent = username;
+        modalBody.style.display = 'none';
+        modalLoading.style.display = 'flex';
+        modalFeedback.style.display = 'none';
+        modal.style.display = 'flex';
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+
+        setTimeout(function() { modal.classList.add('visible'); }, 10);
+
+        // Load assignment data.
+        var assignAction = IS_SCHOOL_MANAGER ? 'smgetuserassignment' : 'getuserassignment';
+        var url = AJAX_URL + '?action=' + assignAction + '&userid=' + userid + '&sesskey=' + SESSKEY;
+        fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                renderModalContent(data);
+                modalLoading.style.display = 'none';
+                modalBody.style.display = 'block';
+            })
+            .catch(function(err) {
+                modalLoading.style.display = 'none';
+                modalBody.style.display = 'block';
+                modalBody.innerHTML = '<div class="alert alert-danger">Error loading data</div>';
+            });
+    }
+
+    function closeModal() {
+        modal.classList.remove('visible');
+        setTimeout(function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            modalBody.innerHTML = '';
+        }, 300);
+    }
+
+    document.getElementById('istikama-modal-close').addEventListener('click', closeModal);
+    document.getElementById('istikama-modal-cancel-btn').addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // ── Render modal content based on role type ──
+    function renderModalContent(data) {
+        var rt = data.roletype || currentRoleType;
+        currentRoleType = rt;
+
+        if (rt === 'none') {
+            modalBody.innerHTML = '<div class="istikama-no-role-notice"><i class="fa fa-exclamation-triangle"></i> ' + esc(STRINGS.no_role) + '</div>';
+            saveBtn.style.display = 'none';
+            return;
+        }
+
+        saveBtn.style.display = '';
+
+        if (rt === 'student') {
+            modalTitle.innerHTML = '<i class="fa fa-graduation-cap"></i> ' + esc(STRINGS.student_title);
+            renderStudentForm(data);
+        } else if (rt === 'teacher') {
+            modalTitle.innerHTML = '<i class="fa fa-chalkboard-teacher"></i> ' + esc(STRINGS.teacher_title);
+            renderTeacherForm(data);
+        } else if (rt === 'technical_professor') {
+            modalTitle.innerHTML = '<i class="fa fa-globe"></i> Technical Professor';
+            renderTechProfForm(data);
+        } else if (rt === 'manager') {
+            modalTitle.innerHTML = '<i class="fa fa-building"></i> ' + esc(STRINGS.manager_title);
+            renderManagerForm(data);
+        } else if (rt === 'parent') {
+            modalTitle.innerHTML = '<i class="fa fa-user-friends"></i> ' + esc(STRINGS.parent_title);
+            renderParentForm(data);
+        }
+    }
+
+    // ── Technical Professor form ──
+    function renderTechProfForm(data) {
+        var html = '<div class="istikama-assignment-form">';
+        html += '<div class="alert alert-info" style="background:#e0f2fe;color:#0369a1;border-color:#bae6fd;border-radius:12px;display:flex;align-items:center;gap:12px;padding:16px;">';
+        html += '<i class="fa fa-info-circle" style="font-size:1.5rem"></i>';
+        html += '<div><strong>Platform-wide Role</strong><br>Technical Professors manage content across all schools. They do not need to be assigned to specific schools or classes.</div>';
+        html += '</div>';
+        html += '</div>';
+        modalBody.innerHTML = html;
+        saveBtn.style.display = 'none'; // Nothing to save
+    }
+
+    // ── Student form ──
+    function renderStudentForm(data) {
+        var a = (data.assignments && data.assignments.length > 0) ? data.assignments[0] : null;
+        var html = '<div class="istikama-assignment-form">';
+        html += '<div class="istikama-cascade-group">';
+        html += '<div class="istikama-form-field"><label>' + esc(STRINGS.assign_school) + '</label>';
+        html += '<select id="ism-student-school" class="form-select"><option value="">' + esc(STRINGS.select_school) + '</option></select></div>';
+        html += '<div class="istikama-form-field"><label>' + esc(STRINGS.assign_level) + '</label>';
+        html += '<select id="ism-student-level" class="form-select" disabled><option value="">' + esc(STRINGS.select_level) + '</option></select></div>';
+        html += '<div class="istikama-form-field"><label>' + esc(STRINGS.assign_class) + '</label>';
+        html += '<select id="ism-student-class" class="form-select" disabled><option value="">' + esc(STRINGS.select_class) + '</option></select></div>';
+        html += '</div></div>';
+
+        modalBody.innerHTML = html;
+
+        // Load schools and set current values.
+        loadSchoolsInto('ism-student-school', a ? a.schoolid : null, function() {
+            if (a && a.schoolid) {
+                loadLevelsInto('ism-student-level', a.schoolid, a.levelid, function() {
+                    if (a.levelid) {
+                        loadClassesInto('ism-student-class', a.levelid, a.classid);
+                    }
+                });
+            }
+        });
+
+        // Wire cascading.
+        document.getElementById('ism-student-school').addEventListener('change', function() {
+            var sid = this.value;
+            resetSelect('ism-student-level', STRINGS.select_level);
+            resetSelect('ism-student-class', STRINGS.select_class);
+            if (sid) loadLevelsInto('ism-student-level', sid);
+        });
+        document.getElementById('ism-student-level').addEventListener('change', function() {
+            var lid = this.value;
+            resetSelect('ism-student-class', STRINGS.select_class);
+            if (lid) loadClassesInto('ism-student-class', lid);
+        });
+    }
+
+    // ── Teacher form ──
+    function renderTeacherForm(data) {
+        var html = '<div class="istikama-assignment-form" id="ism-teacher-assignments">';
+        html += '<div id="ism-teacher-list"></div>';
+        html += '<button type="button" class="btn istikama-btn-add-assignment" id="ism-teacher-add"><i class="fa fa-plus"></i> ' + esc(STRINGS.add_class) + '</button>';
+        html += '</div>';
+        modalBody.innerHTML = html;
+
+        var assignments = data.assignments || [];
+        if (assignments.length === 0) {
+            addTeacherRow(null);
+        } else {
+            assignments.forEach(function(a) { addTeacherRow(a); });
+        }
+
+        document.getElementById('ism-teacher-add').addEventListener('click', function() {
+            addTeacherRow(null);
+        });
+    }
+
+    var teacherRowIdx = 0;
+    function addTeacherRow(existingData) {
+        var idx = teacherRowIdx++;
+        var container = document.getElementById('ism-teacher-list');
+        var row = document.createElement('div');
+        row.className = 'istikama-teacher-row';
+        row.setAttribute('data-idx', idx);
+
+        var html = '<div class="istikama-teacher-row-header">';
+        html += '<span class="istikama-teacher-row-num">#' + (container.children.length + 1) + '</span>';
+        html += '<button type="button" class="istikama-teacher-row-remove" data-idx="' + idx + '"><i class="fa fa-trash"></i></button>';
+        html += '</div>';
+        html += '<div class="istikama-cascade-group">';
+        html += '<div class="istikama-form-field"><label>' + esc(STRINGS.assign_school) + '</label>';
+        html += '<select id="ism-t-school-' + idx + '" class="form-select ism-t-school"><option value="">' + esc(STRINGS.select_school) + '</option></select></div>';
+        html += '<div class="istikama-form-field"><label>' + esc(STRINGS.assign_level) + '</label>';
+        html += '<select id="ism-t-level-' + idx + '" class="form-select ism-t-level" disabled><option value="">' + esc(STRINGS.select_level) + '</option></select></div>';
+        html += '<div class="istikama-form-field"><label>' + esc(STRINGS.assign_class) + '</label>';
+        html += '<select id="ism-t-class-' + idx + '" class="form-select ism-t-class" disabled><option value="">' + esc(STRINGS.select_class) + '</option></select></div>';
+        html += '</div>';
+        html += '<div class="istikama-form-field"><label>' + esc(STRINGS.assign_subjects) + '</label>';
+        html += '<div class="istikama-subject-chips" id="ism-t-subjects-' + idx + '">';
+        html += '<span class="text-muted small">Select a class to view subjects.</span>';
+        html += '</div></div>';
+
+        row.innerHTML = html;
+        container.appendChild(row);
+
+        // Wire remove.
+        row.querySelector('.istikama-teacher-row-remove').addEventListener('click', function() {
+            if (container.children.length > 1) {
+                row.remove();
+                renumberTeacherRows();
+            }
+        });
+
+        // Load schools.
+        loadSchoolsInto('ism-t-school-' + idx, existingData ? existingData.schoolid : null, function() {
+            if (existingData && existingData.schoolid) {
+                loadLevelsInto('ism-t-level-' + idx, existingData.schoolid, existingData.levelid, function() {
+                    if (existingData.levelid) {
+                        loadClassesInto('ism-t-class-' + idx, existingData.levelid, existingData.classid, function() {
+                            if (existingData.classid) {
+                                loadSubjectsInto('ism-t-subjects-' + idx, existingData.classid, existingData.subjects || []);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        // Wire cascading.
+        document.getElementById('ism-t-school-' + idx).addEventListener('change', function() {
+            var rowIdx = this.id.split('-').pop();
+            resetSelect('ism-t-level-' + rowIdx, STRINGS.select_level);
+            resetSelect('ism-t-class-' + rowIdx, STRINGS.select_class);
+            document.getElementById('ism-t-subjects-' + rowIdx).innerHTML = '<span class="text-muted small">Select a class to view subjects.</span>';
+            if (this.value) loadLevelsInto('ism-t-level-' + rowIdx, this.value);
+        });
+        document.getElementById('ism-t-level-' + idx).addEventListener('change', function() {
+            var rowIdx = this.id.split('-').pop();
+            resetSelect('ism-t-class-' + rowIdx, STRINGS.select_class);
+            document.getElementById('ism-t-subjects-' + rowIdx).innerHTML = '<span class="text-muted small">Select a class to view subjects.</span>';
+            if (this.value) loadClassesInto('ism-t-class-' + rowIdx, this.value);
+        });
+        document.getElementById('ism-t-class-' + idx).addEventListener('change', function() {
+            var rowIdx = this.id.split('-').pop();
+            var subContainer = document.getElementById('ism-t-subjects-' + rowIdx);
+            if (this.value) {
+                subContainer.innerHTML = '<span class="text-muted small"><i class="fa fa-spinner fa-spin"></i> Loading subjects...</span>';
+                loadSubjectsInto('ism-t-subjects-' + rowIdx, this.value, []);
+            } else {
+                subContainer.innerHTML = '<span class="text-muted small">Select a class to view subjects.</span>';
+            }
+        });
+    }
+
+    function renumberTeacherRows() {
+        document.querySelectorAll('.istikama-teacher-row').forEach(function(row, i) {
+            row.querySelector('.istikama-teacher-row-num').textContent = '#' + (i + 1);
+        });
+    }
+
+    // ── Manager form ──
+    function renderManagerForm(data) {
+        var html = '<div class="istikama-assignment-form">';
+        html += '<label class="istikama-form-label-main"><i class="fa fa-building"></i> ' + esc(STRINGS.managed_schools) + '</label>';
+        html += '<div class="istikama-manager-schools" id="ism-manager-schools"></div>';
+        html += '</div>';
+        modalBody.innerHTML = html;
+
+        var assignedSchools = (data.assignments || []).map(function(a) { return a.schoolid; });
+
+        // Load all schools as checkboxes.
+        fetchData('getschools', {}, function(schools) {
+            var container = document.getElementById('ism-manager-schools');
+            if (!schools || schools.length === 0) {
+                container.innerHTML = '<div class="text-muted">No schools available</div>';
+                return;
+            }
+            var html = '';
+            schools.forEach(function(s) {
+                var checked = assignedSchools.indexOf(s.id) >= 0;
+                html += '<label class="istikama-school-check' + (checked ? ' active' : '') + '">';
+                html += '<input type="checkbox" value="' + s.id + '"' + (checked ? ' checked' : '') + '>';
+                html += '<i class="fa fa-university"></i> ' + esc(s.name);
+                html += '</label>';
+            });
+            container.innerHTML = html;
+
+            container.querySelectorAll('.istikama-school-check input').forEach(function(inp) {
+                inp.addEventListener('change', function() {
+                    this.parentElement.classList.toggle('active', this.checked);
+                });
+            });
+        });
+    }
+
+    // ── Parent form ──
+    function renderParentForm(data) {
+        var students = data.students || [];
+        var childIds = data.childIds || [];
+
+        var html = '<div class="istikama-assignment-form">';
+        html += '<div class="istikama-form-field" style="margin-bottom:16px;">';
+        html += '<div style="position:relative;">';
+        html += '<i class="fa fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#adb5bd;"></i>';
+        html += '<input type="text" id="ism-parent-search" class="form-control" placeholder="' + esc(STRINGS.parent_search) + '" style="padding-left:36px;border-radius:8px;">';
+        html += '</div></div>';
+
+        if (students.length === 0) {
+            html += '<div class="text-muted text-center py-4"><i class="fa fa-info-circle"></i> ' + esc(STRINGS.parent_no_students) + '</div>';
+        } else {
+            html += '<div id="ism-parent-students" style="max-height:380px;overflow-y:auto;">';
+            students.forEach(function(s) {
+                var checked = s.assigned ? ' checked' : '';
+                var badgeHtml = s.linked_to_others
+                    ? ' <span class="badge" style="background:#fff3cd;color:#856404;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:6px;"><i class="fa fa-link"></i> ' + esc(STRINGS.parent_linked) + '</span>'
+                    : '';
+                html += '<label class="istikama-parent-student-row' + (s.assigned ? ' active' : '') + '" data-name="' + esc(s.name.toLowerCase()) + '" style="display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:4px;border-radius:8px;cursor:pointer;border:1px solid ' + (s.assigned ? '#0d6efd' : '#e9ecef') + ';background:' + (s.assigned ? '#f0f6ff' : '#fff') + ';transition:all .2s;">';
+                html += '<input type="checkbox" value="' + s.id + '"' + checked + ' style="width:18px;height:18px;accent-color:#0d6efd;">';
+                html += '<div style="flex:1;min-width:0;">';
+                html += '<div style="font-weight:600;font-size:14px;">' + esc(s.name) + badgeHtml + '</div>';
+                html += '<div style="font-size:12px;color:#6c757d;">' + esc(s.email) + '</div>';
+                html += '</div></label>';
+            });
+            html += '</div>';
+            html += '<div style="margin-top:10px;font-size:13px;color:#6c757d;text-align:right;" id="ism-parent-count">';
+            var assignedCount = students.filter(function(s) { return s.assigned; }).length;
+            html += '<i class="fa fa-check-circle" style="color:#198754;"></i> ' + assignedCount + ' student(s) selected';
+            html += '</div>';
+        }
+        html += '</div>';
+        modalBody.innerHTML = html;
+
+        // Wire search filter.
+        var searchInput = document.getElementById('ism-parent-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                var query = this.value.toLowerCase().trim();
+                document.querySelectorAll('.istikama-parent-student-row').forEach(function(row) {
+                    var name = row.getAttribute('data-name') || '';
+                    row.style.display = name.indexOf(query) >= 0 ? '' : 'none';
+                });
+            });
+        }
+
+        // Wire checkbox visual toggle + count update.
+        var container = document.getElementById('ism-parent-students');
+        if (container) {
+            container.querySelectorAll('input[type=checkbox]').forEach(function(cb) {
+                cb.addEventListener('change', function() {
+                    var row = this.closest('.istikama-parent-student-row');
+                    if (this.checked) {
+                        row.classList.add('active');
+                        row.style.borderColor = '#0d6efd';
+                        row.style.background = '#f0f6ff';
+                    } else {
+                        row.classList.remove('active');
+                        row.style.borderColor = '#e9ecef';
+                        row.style.background = '#fff';
+                    }
+                    // Update count.
+                    var count = container.querySelectorAll('input[type=checkbox]:checked').length;
+                    var countEl = document.getElementById('ism-parent-count');
+                    if (countEl) {
+                        countEl.innerHTML = '<i class="fa fa-check-circle" style="color:#198754;"></i> ' + count + ' student(s) selected';
+                    }
+                });
+            });
+        }
+    }
+
+    // ── Save handler ──
+    saveBtn.addEventListener('click', function() {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> ' + esc(STRINGS.saving);
+        modalFeedback.style.display = 'none';
+
+        var payload = {};
+
+        if (currentRoleType === 'student') {
+            payload = {
+                schoolid: val('ism-student-school'),
+                levelid: val('ism-student-level'),
+                classid: val('ism-student-class')
+            };
+        } else if (currentRoleType === 'teacher') {
+            var assignments = [];
+            document.querySelectorAll('.istikama-teacher-row').forEach(function(row) {
+                var rowIdx = row.getAttribute('data-idx');
+                var subjects = [];
+                row.querySelectorAll('.istikama-chip input:checked').forEach(function(inp) {
+                    subjects.push(inp.value);
+                });
+                assignments.push({
+                    schoolid: val('ism-t-school-' + rowIdx),
+                    levelid: val('ism-t-level-' + rowIdx),
+                    classid: val('ism-t-class-' + rowIdx),
+                    subjects: subjects
+                });
+            });
+            payload = { assignments: assignments };
+        } else if (currentRoleType === 'manager') {
+            var schoolids = [];
+            document.querySelectorAll('#ism-manager-schools input:checked').forEach(function(inp) {
+                schoolids.push(parseInt(inp.value));
+            });
+            payload = { schoolids: schoolids };
+        } else if (currentRoleType === 'parent') {
+            var studentIds = [];
+            var parentContainer = document.getElementById('ism-parent-students');
+            if (parentContainer) {
+                parentContainer.querySelectorAll('input[type=checkbox]:checked').forEach(function(inp) {
+                    studentIds.push(parseInt(inp.value));
+                });
+            }
+            payload = { studentIds: studentIds };
+        }
+
+        var formData = new FormData();
+        formData.append('action', IS_SCHOOL_MANAGER ? 'smsaveuserassignment' : 'saveuserassignment');
+        formData.append('sesskey', SESSKEY);
+        formData.append('userid', currentUserId);
+        formData.append('roletype', currentRoleType);
+        formData.append('data', JSON.stringify(payload));
+
+        fetch(AJAX_URL, { method: 'POST', body: formData })
+            .then(function(r) { return r.json(); })
+            .then(function(result) {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fa fa-check"></i> ' + esc(STRINGS.save_changes);
+                if (result.success) {
+                    showFeedback(STRINGS.assignment_saved, 'success');
+                    // Refresh tab if active
+                    if (currentTab !== 'all') {
+                        setTimeout(function() { loadUsersForTab(currentTab); }, 800);
+                    }
+                } else {
+                    showFeedback(result.error || STRINGS.assignment_error, 'error');
+                }
+            })
+            .catch(function() {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fa fa-check"></i> ' + esc(STRINGS.save_changes);
+                showFeedback(STRINGS.assignment_error, 'error');
+            });
+    });
+
+    function showFeedback(msg, type) {
+        modalFeedback.textContent = msg;
+        modalFeedback.className = 'istikama-modal-feedback istikama-feedback-' + type;
+        modalFeedback.style.display = 'block';
+        setTimeout(function() { modalFeedback.style.display = 'none'; }, 4000);
+    }
+
+    // ── Utility functions ──
+    function fetchData(action, params, cb) {
+        var url = AJAX_URL + '?action=' + action + '&sesskey=' + SESSKEY;
+        for (var k in params) {
+            url += '&' + k + '=' + encodeURIComponent(params[k]);
+        }
+        fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(cb)
+            .catch(function() { cb([]); });
+    }
+
+    function loadSchoolsInto(selectId, selectedVal, cb) {
+        if (IS_SCHOOL_MANAGER) {
+            // School manager: pre-fill with their single school.
+            var sel = document.getElementById(selectId);
+            if (!sel) return;
+            sel.innerHTML = '<option value="' + MANAGER_SCHOOLID + '" selected>' + esc(MANAGER_SCHOOLNAME) + '</option>';
+            sel.disabled = true;
+            if (cb) cb();
+            return;
+        }
+        fetchData('getschools', {}, function(schools) {
+            var sel = document.getElementById(selectId);
+            if (!sel) return;
+            var html = '<option value="">' + esc(STRINGS.select_school) + '</option>';
+            schools.forEach(function(s) {
+                html += '<option value="' + s.id + '"' + (selectedVal && s.id == selectedVal ? ' selected' : '') + '>' + esc(s.name) + '</option>';
+            });
+            sel.innerHTML = html;
+            sel.disabled = false;
+            if (cb) cb();
+        });
+    }
+
+    function loadLevelsInto(selectId, schoolid, selectedVal, cb) {
+        var sel = document.getElementById(selectId);
+        sel.disabled = true;
+        sel.innerHTML = '<option value="">...</option>';
+        var levelAction = IS_SCHOOL_MANAGER ? 'smgetlevels' : 'getlevels';
+        var levelParams = IS_SCHOOL_MANAGER ? {} : { schoolid: schoolid };
+        fetchData(levelAction, levelParams, function(levels) {
+            var html = '<option value="">' + esc(STRINGS.select_level) + '</option>';
+            levels.forEach(function(l) {
+                html += '<option value="' + l.id + '"' + (selectedVal && l.id == selectedVal ? ' selected' : '') + '>' + esc(l.name) + '</option>';
+            });
+            sel.innerHTML = html;
+            sel.disabled = false;
+            if (cb) cb();
+        });
+    }
+
+    function loadClassesInto(selectId, levelid, selectedVal, cb) {
+        var sel = document.getElementById(selectId);
+        sel.disabled = true;
+        sel.innerHTML = '<option value="">...</option>';
+        var classAction = IS_SCHOOL_MANAGER ? 'smgetclasses' : 'getclasses';
+        fetchData(classAction, { levelid: levelid }, function(classes) {
+            var html = '<option value="">' + esc(STRINGS.select_class) + '</option>';
+            classes.forEach(function(c) {
+                html += '<option value="' + c.id + '"' + (selectedVal && c.id == selectedVal ? ' selected' : '') + '>' + esc(c.name) + '</option>';
+            });
+            sel.innerHTML = html;
+            sel.disabled = false;
+            if (cb) cb();
+        });
+    }
+
+    function loadSubjectsInto(containerId, classid, selectedIds) {
+        var container = document.getElementById(containerId);
+        if (!classid || !container) return;
+        fetchData('getsubjects', { classid: classid }, function(subjects) {
+            if (!subjects || subjects.length === 0) {
+                container.innerHTML = '<span class="text-muted small">No subjects assigned for this class.</span>';
+                return;
+            }
+            var html = '';
+            subjects.forEach(function(s) {
+                // Ensure correct comparison (strings to strings)
+                var sIdStr = String(s.id);
+                var checked = selectedIds.some(function(selId) { return String(selId) === sIdStr; });
+                html += '<label class="istikama-chip' + (checked ? ' active' : '') + '">';
+                html += '<input type="checkbox" value="' + esc(s.id) + '"' + (checked ? ' checked' : '') + '> <i class="fa fa-book mr-1"></i> ' + esc(s.name);
+                html += '</label>';
+            });
+            container.innerHTML = html;
+            // Wire chip toggles
+            container.querySelectorAll('.istikama-chip input').forEach(function(inp) {
+                inp.addEventListener('change', function() {
+                    this.parentElement.classList.toggle('active', this.checked);
+                });
+            });
+        });
+    }
+
+    function resetSelect(selectId, placeholder) {
+        var sel = document.getElementById(selectId);
+        if (sel) {
+            sel.innerHTML = '<option value="">' + esc(placeholder) + '</option>';
+            sel.disabled = true;
+        }
+    }
+
+    function val(id) {
+        var el = document.getElementById(id);
+        return el ? el.value : '';
+    }
+
+    function esc(str) {
+        if (!str) return '';
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
+    // ── Bind manage buttons ──
+    function bindManageButtons() {
+        document.querySelectorAll('.istikama-btn-manage').forEach(function(btn) {
+            btn.removeEventListener('click', handleManageClick);
+            btn.addEventListener('click', handleManageClick);
+        });
+    }
+
+    function handleManageClick() {
+        var uid = this.getAttribute('data-userid');
+        var uname = this.getAttribute('data-username');
+        var rtype = this.getAttribute('data-roletype');
+        teacherRowIdx = 0;
+        openModal(uid, uname, rtype);
+    }
+
+    // Initial binding.
+    bindManageButtons();
+});
+</script>

@@ -1,0 +1,25 @@
+{{!
+    Admin navigation bar — modernized with Istikama dashboard design system.
+    This navbar is rendered INSIDE the sidebar layout, so it acts as a
+    secondary breadcrumb / section-selector rather than a primary nav.
+}}
+<nav class="isti-tabs" id="istiAdminNav" dir="auto">
+    <a class="isti-tab" href="{{dashboardurl}}">
+        <i class="fa fa-tachometer-alt"></i> {{#str}}menu_dashboard, local_istikama_admin{{/str}}
+    </a>
+    <a class="isti-tab" href="{{usersurl}}">
+        <i class="fa fa-users"></i> {{#str}}menu_users, local_istikama_admin{{/str}}
+    </a>
+    <a class="isti-tab" href="{{contentbankurl}}">
+        <i class="fa fa-folder-open"></i> {{#str}}menu_contentbank, local_istikama_admin{{/str}}
+    </a>
+    <a class="isti-tab" href="{{reportsurl}}">
+        <i class="fa fa-chart-bar"></i> {{#str}}menu_reports, local_istikama_admin{{/str}}
+    </a>
+    <a class="isti-tab" href="{{siteadminurl}}">
+        <i class="fa fa-cogs"></i> {{#str}}menu_siteadmin, local_istikama_admin{{/str}}
+    </a>
+    <a class="isti-tab" href="{{supporturl}}">
+        <i class="fa fa-life-ring"></i> {{#str}}menu_support, local_istikama_admin{{/str}}
+    </a>
+</nav>

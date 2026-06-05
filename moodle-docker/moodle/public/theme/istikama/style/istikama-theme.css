@@ -1,0 +1,889 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+Arabic:wght@100..900&display=swap');
+
+/* ========== RESET & BASE ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* ── Landing Page Brand (unchanged) ── */
+  --golden:#006bff;--golden-light:#3389ff;--golden-dark:#0052cc;
+  --bs-primary:#006bff;--bs-primary-rgb:0,107,255;
+  --bs-link-color:#006bff;--bs-link-hover-color:#0052cc;
+  --dark-bg:#111827;--dark-surface:#1a2236;
+  --bg:#ffffff;--fg:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --card:#ffffff;--radius:0.5rem;
+
+  /* ── Dashboard Theme Engine ── */
+  --primary-color:#006bff;
+  --primary-light:#3389ff;
+  --primary-dark:#0052cc;
+  --primary-rgb:0,107,255;
+  --secondary-color:#6366f1;
+  --secondary-light:#818cf8;
+  --secondary-dark:#4f46e5;
+  --accent-color:#f59e0b;
+  --accent-light:#fbbf24;
+
+  --bg-color:#f1f5f9;
+  --bg-surface:#f8fafc;
+  --text-color:#111827;
+  --text-secondary:#6b7280;
+  --text-muted:#9ca3af;
+  --card-bg:#ffffff;
+  --card-border:#e5e7eb;
+
+  --success:#10b981;--success-light:#d1fae5;--success-dark:#059669;
+  --warning:#f59e0b;--warning-light:#fef3c7;--warning-dark:#d97706;
+  --danger:#ef4444;--danger-light:#fee2e2;--danger-dark:#dc2626;
+  --info:#3b82f6;--info-light:#dbeafe;--info-dark:#2563eb;
+
+  /* ── Layout ── */
+  --sidebar-width:260px;
+  --sidebar-collapsed-width:72px;
+  --sidebar-bg:#ffffff;
+  --sidebar-text:#64748b;
+  --sidebar-text-active:var(--primary-color);
+  --sidebar-active-bg:rgba(var(--primary-rgb),0.08);
+  --sidebar-active-border:var(--primary-color);
+  --topbar-height:64px;
+  --topbar-bg:#ffffff;
+  --topbar-shadow:0 1px 3px rgba(0,0,0,0.08);
+
+  /* ── Spacing Scale ── */
+  --space-xs:4px;--space-sm:8px;--space-md:16px;--space-lg:24px;--space-xl:32px;--space-2xl:48px;
+
+  /* ── Border Radius ── */
+  --radius-sm:6px;--radius-md:10px;--radius-lg:14px;--radius-xl:20px;--radius-full:9999px;
+
+  /* ── Shadows ── */
+  --shadow-xs:0 1px 2px rgba(0,0,0,0.05);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,0.08),0 2px 4px -1px rgba(0,0,0,0.04);
+  --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.08),0 4px 6px -2px rgba(0,0,0,0.04);
+  --shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04);
+
+  /* ── Transitions ── */
+  --transition-fast:0.15s ease;
+  --transition-normal:0.25s cubic-bezier(0.4,0,0.2,1);
+  --transition-slow:0.35s cubic-bezier(0.4,0,0.2,1);
+
+  /* ── Typography ── */
+  --font-arabic: 'Noto Sans Arabic', 'Segoe UI', Arial, sans-serif;
+  --font-latin:  'Montserrat', 'Segoe UI', Arial, sans-serif;
+  --font-dashboard: var(--font-latin);
+  --font-heading: var(--font-latin);
+  --font-body:    var(--font-latin);
+  --font-family-sans-serif: var(--font-body);
+  --font-family-base: var(--font-body);
+}
+
+html[lang^="ar"], html[dir="rtl"] {
+  --font-heading:var(--font-arabic);
+  --font-body:var(--font-arabic);
+  --font-family-sans-serif:var(--font-arabic);
+  --font-family-base:var(--font-arabic);
+}
+
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body) !important;color:var(--fg);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6{font-family:var(--font-heading) !important;line-height:1.2}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+ul{list-style:none}
+.container{max-width:1200px;margin:0 auto;padding:0 1rem}
+
+/* ========== UTILITY ========== */
+.section-subtitle{color:var(--golden);font-family:var(--font-body);font-style:italic;font-weight:500;letter-spacing:0.05em}
+.section-title{font-family:var(--font-heading);font-weight:700;font-size:2.5rem}
+.golden-divider{display:flex;align-items:center;justify-content:center;gap:4px;margin:1rem 0}
+.golden-divider::before,.golden-divider::after{content:'';height:1px;width:64px;background:rgba(212,160,23,0.4)}
+.golden-divider.left{justify-content:flex-start}
+.golden-dots{display:flex;gap:4px}
+.golden-dots span{width:8px;height:8px;border-radius:50%;background:var(--golden)}
+.golden-dots span:nth-child(2){opacity:0.6}
+.btn-primary{display:inline-block;background:var(--golden);color:#fff;padding:12px 32px;border-radius:var(--radius);font-weight:600;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.1em;transition:all 0.3s;border:none;cursor:pointer}
+.btn-primary:hover{background:var(--golden-light);box-shadow:0 8px 25px rgba(212,160,23,0.3)}
+.btn.btn-primary,.btn-primary{
+  background-color:var(--bs-primary) !important;
+  border-color:var(--bs-primary) !important;
+}
+.btn.btn-primary:hover,.btn.btn-primary:focus,.btn-primary:hover,.btn-primary:focus{
+  background-color:var(--golden-dark) !important;
+  border-color:var(--golden-dark) !important;
+}
+.btn.btn-outline-primary,.btn-outline-primary{
+  color:var(--bs-primary) !important;
+  border-color:var(--bs-primary) !important;
+}
+.btn.btn-outline-primary:hover,.btn-outline-primary:hover{
+  color:#fff !important;
+  background-color:var(--bs-primary) !important;
+  border-color:var(--bs-primary) !important;
+}
+.page-item.active .page-link,.nav-pills .nav-link.active{
+  background-color:var(--bs-primary) !important;
+  border-color:var(--bs-primary) !important;
+}
+.form-control:focus,.form-select:focus{
+  border-color:var(--bs-primary) !important;
+  box-shadow:0 0 0 .2rem rgba(var(--bs-primary-rgb),.2) !important;
+}
+.dropdown-item:active{
+  background-color:var(--bs-primary) !important;
+}
+.geometric-pattern{background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23d4a017' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.fade-in{animation:fadeIn 0.8s ease-out forwards}
+.fade-in-up{animation:fadeInUp 0.8s ease-out forwards}
+.fade-in-left{animation:fadeInLeft 0.8s ease-out forwards}
+.fade-in-right{animation:fadeInRight 0.8s ease-out forwards}
+
+/* ========== TOP BAR ========== */
+.topbar{background:var(--dark-bg);border-bottom:1px solid rgba(212,160,23,0.2);font-size:0.85rem}
+.topbar .inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:8px 0;gap:8px}
+.topbar .social{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,0.6)}
+.topbar .social a{color:rgba(255,255,255,0.5);transition:color 0.3s;font-size:1rem}
+.topbar .social a:hover{color:var(--golden)}
+.topbar .right{display:flex;align-items:center;gap:16px}
+.topbar .contact-link{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.6);transition:color 0.3s}
+.topbar .contact-link:hover{color:var(--golden)}
+.topbar .btn-outline{border:1px solid var(--golden);color:var(--golden);padding:4px 16px;border-radius:var(--radius);font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;transition:all 0.3s;background:transparent}
+.topbar .btn-outline:hover{background:var(--golden);color:#fff}
+.topbar .btn-sm{background:var(--golden);color:#fff;padding:4px 16px;border-radius:var(--radius);font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;transition:all 0.3s;border:none;cursor:pointer}
+.topbar .btn-sm:hover{background:var(--golden-light)}
+@media(max-width:640px){.topbar .contact-text{display:none}.topbar .btn-outline{display:none}}
+
+/* ========== NAVBAR ========== */
+.navbar{background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.navbar .inner{display:flex;align-items:center;justify-content:space-between;height:72px}
+.navbar .logo{display:flex;align-items:center;gap:12px}
+.navbar .logo-icon{width:44px;height:44px;border-radius:50%;background:rgba(212,160,23,0.15);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.4rem;font-weight:700;color:var(--golden)}
+.navbar .logo-text h1{font-size:1.25rem;font-weight:700;color:var(--fg)}
+.navbar .logo-text p{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:rgba(30,41,59,0.75);font-size:0.875rem;font-weight:500;transition:color 0.3s;display:flex;align-items:center;gap:4px}
+.nav-links a:hover{color:var(--golden)}
+.nav-links .arrow{font-size:0.6rem;transition:color 0.3s}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-right .search-btn{background:none;border:none;cursor:pointer;color:rgba(30,41,59,0.5);transition:color 0.3s;font-size:1.1rem}
+.nav-right .search-btn:hover{color:var(--golden)}
+.hamburger{display:none;background:none;border:none;cursor:pointer;font-size:1.5rem;color:var(--fg)}
+.mobile-menu{display:none;flex-direction:column;gap:0;background:var(--bg);border-top:1px solid var(--border);padding:16px 0}
+.mobile-menu a{display:block;padding:10px 0;color:rgba(30,41,59,0.75);font-size:0.875rem;font-weight:500;border-bottom:1px solid rgba(226,232,240,0.5);transition:color 0.3s}
+.mobile-menu a:hover{color:var(--golden)}
+.mobile-menu a.login-link{color:var(--golden);border-bottom:none}
+@media(max-width:1023px){.nav-links{display:none}.hamburger{display:block}.mobile-menu.open{display:flex}}
+
+/* ========== HERO ========== */
+.hero{position:relative;min-height:85vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero img.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(17,24,39,0.7),rgba(17,24,39,0.5),rgba(17,24,39,0.8))}
+.hero .content{position:relative;z-index:2;text-align:center;padding:0 1rem;max-width:800px}
+.hero h1{font-size:3.5rem;font-weight:700;color:#fff;margin-bottom:1.5rem;line-height:1.1}
+.hero h1 .accent{color:var(--golden)}
+.hero p{color:rgba(255,255,255,0.8);font-size:1.15rem;max-width:600px;margin:0 auto 2.5rem}
+.hero .bottom-fade{position:absolute;bottom:0;left:0;right:0;height:96px;background:linear-gradient(to top,var(--bg),transparent)}
+@media(max-width:768px){.hero h1{font-size:2.2rem}.hero p{font-size:1rem}}
+
+/* ========== ABOUT ========== */
+.about{padding:80px 0}
+.about .grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.about .img-wrap{position:relative}
+.about .img-wrap::before{content:'';position:absolute;left:-12px;top:-12px;width:100%;height:100%;border:2px solid var(--golden);border-radius:4px}
+.about .img-wrap img{position:relative;z-index:1;width:100%;height:420px;object-fit:cover;border-radius:4px;box-shadow:0 20px 40px rgba(0,0,0,0.1)}
+.about .text p.desc{color:var(--muted);margin-bottom:1rem;line-height:1.8}
+@media(max-width:1023px){.about .grid{grid-template-columns:1fr;gap:32px}.about .img-wrap img{height:320px}}
+
+/* ========== DONATION ========== */
+.donation{position:relative}
+.donation .grid{display:grid;grid-template-columns:1fr 1fr;min-height:560px}
+.donation .img-side{position:relative;overflow:hidden}
+.donation .img-side img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.donation .img-side .overlay{position:absolute;inset:0;background:rgba(17,24,39,0.3)}
+.donation .content-side{padding:64px;background:var(--bg)}
+.donation .amounts{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
+.donation .amounts button{padding:12px 24px;border-radius:var(--radius);border:2px solid var(--border);background:transparent;font-weight:600;font-size:0.875rem;cursor:pointer;transition:all 0.3s;font-family:var(--font-body);color:var(--fg)}
+.donation .amounts button.active{border-color:var(--golden);background:var(--golden);color:#fff}
+.donation .amounts button:hover{border-color:var(--golden)}
+.donation .causes li{display:flex;align-items:flex-start;gap:12px;color:var(--muted);margin-bottom:12px;font-size:0.95rem}
+.donation .causes li::before{content:'💧';font-size:0.8rem;margin-top:2px;flex-shrink:0}
+@media(max-width:1023px){.donation .grid{grid-template-columns:1fr}.donation .img-side{min-height:300px}.donation .content-side{padding:40px 24px}}
+
+/* ========== SERVICES ========== */
+.services{padding:80px 0;background:var(--bg)}
+.services .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.services .card{cursor:pointer;overflow:hidden;border-radius:var(--radius) var(--radius) 0 0}
+.services .card .img-wrap{overflow:hidden;border-radius:var(--radius) var(--radius) 0 0}
+.services .card img{width:100%;height:200px;object-fit:cover;transition:transform 0.5s}
+.services .card:hover img{transform:scale(1.1)}
+.services .card .label{padding:16px;text-align:center;font-family:var(--font-heading);font-weight:600;font-size:1.1rem;transition:all 0.3s;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius)}
+.services .card:hover .label{background:var(--golden);color:#fff;border-color:var(--golden)}
+@media(max-width:768px){.services .grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.services .grid{grid-template-columns:1fr}}
+
+/* ========== PILLARS ========== */
+.pillars{position:relative;padding:80px 0;overflow:hidden}
+.pillars .bg{position:absolute;inset:0}
+.pillars .bg img{width:100%;height:100%;object-fit:cover}
+.pillars .bg .overlay{position:absolute;inset:0;background:rgba(17,24,39,0.88)}
+.pillars .inner{position:relative;z-index:2;text-align:center}
+.pillars .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:24px}
+.pillars .pillar{text-align:center}
+.pillars .pillar .icon{width:96px;height:112px;margin:0 auto 16px;border:2px solid rgba(212,160,23,0.4);border-radius:50% 50% 0 0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;transition:all 0.3s}
+.pillars .pillar:hover .icon{border-color:var(--golden);background:rgba(212,160,23,0.1)}
+.pillars .pillar h3{color:#fff;font-family:var(--font-heading);font-weight:600;font-size:1.15rem;margin-bottom:4px}
+.pillars .pillar p{color:rgba(255,255,255,0.55);font-size:0.85rem}
+@media(max-width:768px){.pillars .grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.pillars .grid{grid-template-columns:1fr 1fr}}
+
+/* ========== BLOG & EVENTS ========== */
+.blog-events{padding:80px 0}
+.blog-events .grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.blog-post{display:flex;gap:20px;cursor:pointer;margin-bottom:24px}
+.blog-post img{width:200px;height:160px;object-fit:cover;border-radius:var(--radius);flex-shrink:0}
+.blog-post h3{font-family:var(--font-heading);font-weight:700;font-size:1.2rem;color:var(--fg);transition:color 0.3s;margin-bottom:8px}
+.blog-post:hover h3{color:var(--golden)}
+.blog-post .meta{display:flex;gap:16px;font-size:0.8rem;color:var(--muted);margin-bottom:8px}
+.blog-post .meta span{display:flex;align-items:center;gap:4px}
+.blog-post .excerpt{font-size:0.875rem;color:var(--muted);line-height:1.7;margin-bottom:8px}
+.blog-post .read-more{color:var(--golden);font-size:0.85rem;font-weight:500}
+.blog-post .read-more:hover{text-decoration:underline}
+.event-card{display:flex;align-items:flex-start;gap:20px;padding:20px;border-radius:var(--radius);border:1px solid var(--border);transition:all 0.3s;cursor:pointer;margin-bottom:12px}
+.event-card:hover{border-color:rgba(212,160,23,0.3);box-shadow:0 4px 16px rgba(0,0,0,0.06)}
+.event-card .date{text-align:center;flex-shrink:0}
+.event-card .date .day{font-family:var(--font-heading);font-size:1.8rem;font-weight:700;color:var(--golden);line-height:1}
+.event-card .date .month{font-size:0.8rem;font-weight:500;color:var(--golden)}
+.event-card h3{font-family:var(--font-heading);font-weight:700;font-size:1.1rem;color:var(--fg);transition:color 0.3s;margin-bottom:8px}
+.event-card:hover h3{color:var(--golden)}
+.event-card .info{display:flex;flex-wrap:wrap;gap:16px;font-size:0.8rem;color:var(--muted)}
+.event-card .info span{display:flex;align-items:center;gap:4px}
+.event-card .details-link{font-size:0.8rem;color:var(--muted);margin-top:8px;display:inline-block;transition:color 0.3s}
+.event-card .details-link:hover{color:var(--golden)}
+@media(max-width:1023px){.blog-events .grid{grid-template-columns:1fr}}
+@media(max-width:640px){.blog-post{flex-direction:column}.blog-post img{width:100%;height:200px}}
+
+/* ========== FOOTER ========== */
+.footer{background:var(--dark-bg);color:#fff;padding:64px 0 0}
+.footer .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px}
+.footer .logo{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.footer .logo-icon{width:40px;height:40px;border-radius:50%;background:rgba(212,160,23,0.2);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.1rem;font-weight:700;color:var(--golden)}
+.footer .logo h3{font-family:var(--font-heading);font-size:1.25rem;font-weight:700}
+.footer .desc{color:rgba(255,255,255,0.55);font-size:0.875rem;line-height:1.7}
+.footer h4{font-family:var(--font-heading);font-weight:600;font-size:1.1rem;color:var(--golden);margin-bottom:16px}
+.footer ul li{margin-bottom:8px}
+.footer ul li a{color:rgba(255,255,255,0.55);font-size:0.875rem;transition:color 0.3s}
+.footer ul li a:hover{color:var(--golden)}
+.footer .contact-item{display:flex;align-items:flex-start;gap:8px;color:rgba(255,255,255,0.55);font-size:0.875rem;margin-bottom:12px}
+.footer .contact-item svg{flex-shrink:0;color:var(--golden);margin-top:2px}
+.footer .bottom{border-top:1px solid rgba(255,255,255,0.08);margin-top:48px;padding:20px 0;text-align:center;font-size:0.8rem;color:rgba(255,255,255,0.35)}
+@media(max-width:768px){.footer .grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.footer .grid{grid-template-columns:1fr}}
+
+/* ========== LOGIN PAGE (hidden by default) ========== */
+.login-page{display:none;min-height:100vh;width:100%;max-width:100vw;}
+.login-page.active{display:flex}
+.login-left{width:50%;position:relative;overflow:hidden}
+.login-left img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.login-left .overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(17,24,39,0.8),rgba(17,24,39,0.6),rgba(17,24,39,0.8))}
+.login-left .content{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;text-align:center;padding:48px}
+.login-left .logo-circle{width:80px;height:80px;border-radius:50%;background:rgba(212,160,23,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-family:var(--font-heading);font-size:2.5rem;font-weight:700;color:var(--golden)}
+.login-left h1{font-size:2.5rem;font-weight:700;color:#fff;margin-bottom:16px}
+.login-left h1 .accent{color:var(--golden)}
+.login-left p{color:rgba(255,255,255,0.65);font-size:1.05rem;max-width:420px;line-height:1.7}
+.login-right{width:50%;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:48px;overflow-y:auto;max-height:100vh}
+.login-right::before, .login-right::after { content: ''; margin: auto; }
+.login-form{width:100%;max-width:420px;margin: 0 auto}
+.login-form h2{font-family:var(--font-heading);font-size:2rem;font-weight:700;margin-bottom:8px}
+.login-form .subtitle{color:var(--muted);margin-bottom:32px}
+.login-form label{display:block;font-size:0.85rem;font-weight:500;margin-bottom:8px;color:var(--fg)}
+.login-form .input-wrap{position:relative;margin-bottom:20px}
+.login-form .input-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);width:18px;height:18px}
+.login-form input[type="email"],.login-form input[type="password"],.login-form input[type="text"]{width:100%;padding:12px 12px 12px 42px;border:1px solid var(--border);border-radius:var(--radius);font-family:var(--font-body);font-size:0.95rem;color:var(--fg);transition:all 0.3s;outline:none;background:var(--bg)}
+.login-form input:focus{border-color:var(--golden);box-shadow:0 0 0 3px rgba(212,160,23,0.15)}
+.login-form .toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);transition:color 0.3s}
+.login-form .toggle-pw:hover{color:var(--fg)}
+.login-form .options{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;font-size:0.85rem}
+.login-form .options label{display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:0}
+.login-form .options a{color:var(--golden);font-weight:500}
+.login-form .options a:hover{text-decoration:underline}
+.login-form .btn-submit{width:100%;padding:14px;background:var(--golden);color:#fff;border:none;border-radius:var(--radius);font-weight:600;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.3s;font-family:var(--font-body)}
+.login-form .btn-submit:hover{background:var(--golden-light);box-shadow:0 8px 25px rgba(212,160,23,0.3)}
+.login-form .signup{text-align:center;margin-top:32px;font-size:0.875rem;color:var(--muted)}
+.login-form .signup a{color:var(--golden);font-weight:500}
+.login-form .back-link{text-align:center;margin-top:24px;font-size:0.85rem}
+.login-form .back-link a{color:var(--muted);transition:color 0.3s}
+.login-form .back-link a:hover{color:var(--golden)}
+.mobile-logo-login{display:none;text-align:center;margin-bottom:32px}
+.mobile-logo-login .logo-circle{width:56px;height:56px;border-radius:50%;background:rgba(212,160,23,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-family:var(--font-heading);font-size:1.8rem;font-weight:700;color:var(--golden)}
+.mobile-logo-login h2{font-family:var(--font-heading);font-size:1.5rem;font-weight:700}
+@media(max-width:1023px){.login-left{display:none}.login-right{width:100%}.mobile-logo-login{display:block}}
+
+/* SVG icons inline helper */
+.icon-sm{width:16px;height:16px;display:inline-block;vertical-align:middle}
+
+/* ========== MFORM OVERRIDES FOR SIGNUP ========== */
+.istikama-mform-override .mform { text-align: left; max-width: 100%; width: 100%; margin: 0; padding: 0; }
+.istikama-mform-override .mform .fitem { margin-bottom: 20px; display: block; width: 100%; padding: 0; }
+.istikama-mform-override .mform .col-form-label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--fg); text-align: left !important; padding: 0 !important; max-width: 100%; flex: 0 0 100%; }
+.istikama-mform-override .mform .col-md-9 { flex: 0 0 100%; max-width: 100%; padding: 0 !important; }
+.istikama-mform-override .mform .form-control, .istikama-mform-override .mform select { width: 100% !important; max-width: 100%; padding: 12px !important; border: 1px solid var(--border) !important; border-radius: var(--radius) !important; font-family: var(--font-body) !important; font-size: 0.95rem !important; background: var(--bg) !important; color: var(--fg) !important; outline: none !important; height: auto !important; }
+.istikama-mform-override .mform .form-control:focus, .istikama-mform-override .mform select:focus { border-color: var(--golden) !important; box-shadow: 0 0 0 3px rgba(212,160,23,0.15) !important; }
+.istikama-mform-override .mform .req { color: #dc3545; margin-left: 4px; }
+.istikama-mform-override .mform #id_submitbutton { width: 100%; padding: 14px; background: var(--golden); color: #fff; border: none; border-radius: var(--radius); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s; font-family: var(--font-body); display: block; margin-top: 32px; }
+.istikama-mform-override .mform #id_submitbutton:hover { background: var(--golden-light); box-shadow: 0 8px 25px rgba(212,160,23,0.3); }
+.istikama-mform-override .mform .fitem.fwrapper { margin-top: 32px; }
+.istikama-mform-override .mform div[data-fieldtype="recaptcha"] { margin-bottom: 24px; display: flex; justify-content: center; }
+.istikama-mform-override .mform .fdescription { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+/* ========== QUIZ SUBMIT POPUP FIX ========== */
+/* Moodle confirmation dialogs in quiz attempts — ensure submit button is ALWAYS visible */
+.modal.show .modal-footer,
+.modal .modal-footer {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+.modal .modal-footer .btn,
+.modal .modal-footer button {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+/* Moodle YUI dialogue fallback (older quiz pages) */
+.moodle-dialogue-base .moodle-dialogue-ft,
+.moodle-dialogue-base .moodle-dialogue-ft .btn,
+.moodle-dialogue-base .moodle-dialogue-ft button {
+  display: flex !important;
+  visibility: visible !important;
+}
+/* Quiz submit buttons in the attempt form itself */
+.mod_quiz .submitbtns,
+.path-mod-quiz .submitbtns {
+  display: block !important;
+  visibility: visible !important;
+  margin: 16px 0;
+}
+.mod_quiz .submitbtns .btn,
+.path-mod-quiz .submitbtns .btn,
+.path-mod-quiz input[type="submit"],
+.path-mod-quiz button[type="submit"] {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+/* Override any accidental hide from our custom styles */
+[data-region="question-nav"] .btn,
+.path-mod-quiz .mod-quiz-submit-btn,
+.mod_quiz [data-action="save"],
+.mod_quiz [data-action="submit"] {
+  display: inline-flex !important;
+  visibility: visible !important;
+}
+
+/* ========== ASSIGNMENT (HOMEWORK) THEMING ========== */
+/* Style mod_assign pages inside our dashboard layout */
+.path-mod-assign .activity-header { border-radius: var(--radius-lg); overflow: hidden; }
+.path-mod-assign .submissionstatustable { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--card-border); }
+.path-mod-assign .submissionstatustable td { padding: 10px 14px; }
+.path-mod-assign .submissionstatustable .cell.c0 { font-weight: 600; color: var(--text-color); }
+.path-mod-assign .generaltable { border-radius: var(--radius-md); overflow: hidden; }
+.path-mod-assign .submissionlinks .btn { border-radius: var(--radius-sm); }
+
+/* ========== QUIZ MODERNIZATION ========== */
+/* Elevate Moodle's native quiz views to match Istikama SaaS design */
+.path-mod-quiz #page-content { background-color: transparent !important; }
+.path-mod-quiz .quizinfo {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.path-mod-quiz .quizattempt {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+.path-mod-quiz .quizattempt table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+.path-mod-quiz .quizattempt th, 
+.path-mod-quiz .quizattempt td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.path-mod-quiz .quizattempt th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+}
+.path-mod-quiz .quizattempt tr:last-child td {
+    border-bottom: none;
+}
+.path-mod-quiz .quizattempt tr:hover td {
+    background: #f8fafc;
+}
+.path-mod-quiz .generaltable {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.path-mod-quiz .submitbtns .btn {
+    background: #006bff;
+    border-color: #006bff;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 107, 255, 0.2);
+    transition: all 0.2s ease-in-out;
+}
+.path-mod-quiz .submitbtns .btn:hover {
+    background: #0056cc;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 107, 255, 0.3);
+}
+.path-mod-quiz .mod_quiz-next-nav {
+    border-radius: 8px;
+    font-weight: 600;
+}
+.path-mod-quiz .qnbutton {
+    border-radius: 6px;
+    font-weight: 600;
+}
+.path-mod-quiz .que .content {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.path-mod-quiz .que .info {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   DARK MODE — system-wide override layer.
+   Activated when JS adds `dark-mode` class to <body> (see dashboard_layout.mustache).
+   Strategy:
+     1. Redefine the theme tokens (variables) — this fixes everything that
+        was already wired through var(--bg-color), var(--card-bg), etc.
+     2. Add scoped overrides for components that still use hardcoded colors,
+        scoped under `body.dark-mode` so light mode is untouched.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+body.dark-mode {
+    /* Surfaces */
+    --bg-color:        #0b1220;
+    --bg-surface:      #111a2e;
+    --card-bg:         #111a2e;
+    --card-border:     #1f2a44;
+
+    /* Text */
+    --text-color:      #e2e8f0;
+    --text-secondary:  #94a3b8;
+    --text-muted:      #64748b;
+
+    /* Brand stays the same so the platform identity is preserved */
+    --primary-color:   #3389ff;
+    --primary-light:   #60a5fa;
+    --primary-dark:    #1d4ed8;
+
+    /* Status pills (slightly muted in dark) */
+    --success-light: rgba(16, 185, 129, 0.16);
+    --warning-light: rgba(245, 158, 11, 0.16);
+    --danger-light:  rgba(239, 68, 68, 0.16);
+    --info-light:    rgba(59, 130, 246, 0.16);
+
+    /* Sidebar & topbar */
+    --sidebar-bg:      #0b1220;
+    --sidebar-text:    #94a3b8;
+    --topbar-bg:       #0b1220;
+    --topbar-shadow:   0 1px 3px rgba(0, 0, 0, 0.6);
+    --sidebar-active-bg: rgba(51, 137, 255, 0.18);
+
+    color-scheme: dark;
+}
+
+/* ── Body + main layout backgrounds ────────────────────────────────────────── */
+body.dark-mode,
+body.dark-mode.istikama-dashboard {
+    background: var(--bg-color) !important;
+    color: var(--text-color) !important;
+}
+
+body.dark-mode .container-fluid,
+body.dark-mode .isti-main,
+body.dark-mode #page-wrapper,
+body.dark-mode #page,
+body.dark-mode #page-content,
+body.dark-mode #region-main,
+body.dark-mode #region-main-box {
+    background: transparent !important;
+    color: var(--text-color);
+}
+
+/* Any inline background:#f8fafc (used as page background) → dark surface. */
+body.dark-mode [style*="background:#f8fafc"],
+body.dark-mode [style*="background: #f8fafc"],
+body.dark-mode [style*="background-color:#f8fafc"],
+body.dark-mode [style*="background-color: #f8fafc"],
+body.dark-mode [style*="background:#f1f5f9"],
+body.dark-mode [style*="background: #f1f5f9"] {
+    background: var(--bg-color) !important;
+}
+
+/* ── Cards & containers ────────────────────────────────────────────────────── */
+body.dark-mode .isti-card,
+body.dark-mode .isti-card-modern,
+body.dark-mode .card,
+body.dark-mode .card-body,
+body.dark-mode .modal-content,
+body.dark-mode .moodle-dialogue-bd,
+body.dark-mode .moodle-dialogue {
+    background: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-color);
+}
+
+/* Inline background:#fff and background:#ffffff inside cards → card-bg. */
+body.dark-mode .isti-card [style*="background:#fff"],
+body.dark-mode .isti-card [style*="background: #fff"],
+body.dark-mode .isti-card [style*="background:#ffffff"],
+body.dark-mode .isti-card [style*="background: #ffffff"],
+body.dark-mode [style*="background:#fff;"],
+body.dark-mode [style*="background:#ffffff;"] {
+    background: var(--card-bg) !important;
+}
+
+/* Reset hardcoded dark text on dark backgrounds. */
+body.dark-mode [style*="color:#0f172a"],
+body.dark-mode [style*="color: #0f172a"],
+body.dark-mode [style*="color:#1e293b"],
+body.dark-mode [style*="color: #1e293b"],
+body.dark-mode [style*="color:#334155"],
+body.dark-mode [style*="color: #334155"] {
+    color: var(--text-color) !important;
+}
+
+body.dark-mode [style*="color:#475569"],
+body.dark-mode [style*="color: #475569"],
+body.dark-mode [style*="color:#64748b"],
+body.dark-mode [style*="color: #64748b"] {
+    color: var(--text-secondary) !important;
+}
+
+body.dark-mode [style*="color:#94a3b8"],
+body.dark-mode [style*="color: #94a3b8"] {
+    color: var(--text-muted) !important;
+}
+
+/* ── Tables ─────────────────────────────────────────────────────────────────── */
+body.dark-mode table,
+body.dark-mode .generaltable,
+body.dark-mode .isti-table {
+    background: var(--card-bg) !important;
+    color: var(--text-color);
+}
+
+body.dark-mode table th,
+body.dark-mode .generaltable thead th,
+body.dark-mode .isti-table th {
+    background: #1a2542 !important;
+    color: var(--text-secondary) !important;
+    border-color: var(--card-border) !important;
+}
+
+body.dark-mode table td,
+body.dark-mode .generaltable tbody td,
+body.dark-mode .isti-table td {
+    border-color: var(--card-border) !important;
+    color: var(--text-color);
+}
+
+body.dark-mode table tbody tr:hover,
+body.dark-mode .generaltable tbody tr:hover {
+    background: rgba(51, 137, 255, 0.08) !important;
+}
+
+/* Striping */
+body.dark-mode table tbody tr[style*="background:white"],
+body.dark-mode table tbody tr[style*="background: #fafbfc"] {
+    background: var(--card-bg) !important;
+}
+
+/* ── Forms ─────────────────────────────────────────────────────────────────── */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="email"],
+body.dark-mode input[type="password"],
+body.dark-mode input[type="url"],
+body.dark-mode input[type="search"],
+body.dark-mode input[type="tel"],
+body.dark-mode input[type="date"],
+body.dark-mode input[type="datetime-local"],
+body.dark-mode input[type="time"],
+body.dark-mode input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode .isti-form-input,
+body.dark-mode .form-control {
+    background: #0f172a !important;
+    border-color: #1f2a44 !important;
+    color: var(--text-color) !important;
+}
+
+body.dark-mode input:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus,
+body.dark-mode .isti-form-input:focus,
+body.dark-mode .form-control:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(51, 137, 255, 0.18) !important;
+}
+
+body.dark-mode ::placeholder { color: var(--text-muted) !important; opacity: 1; }
+
+body.dark-mode label,
+body.dark-mode .isti-form-label {
+    color: var(--text-secondary) !important;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+body.dark-mode .isti-btn-outline,
+body.dark-mode .btn-outline-primary,
+body.dark-mode .btn-secondary,
+body.dark-mode .btn-default {
+    background: transparent !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-color) !important;
+}
+
+body.dark-mode .isti-btn-outline:hover,
+body.dark-mode .btn-outline-primary:hover {
+    background: var(--card-bg) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+/* ── Dropdowns & menus ────────────────────────────────────────────────────── */
+body.dark-mode .dropdown-menu,
+body.dark-mode .moodle-dialogue,
+body.dark-mode .moodle-dialogue-hd {
+    background: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-color);
+}
+
+body.dark-mode .dropdown-item {
+    color: var(--text-color) !important;
+}
+
+body.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-item:focus {
+    background: rgba(51, 137, 255, 0.12) !important;
+}
+
+body.dark-mode .dropdown-divider {
+    border-color: var(--card-border) !important;
+}
+
+/* ── Modals ───────────────────────────────────────────────────────────────── */
+body.dark-mode .modal-backdrop { background: rgba(0, 0, 0, 0.75); }
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+    background: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-color);
+}
+
+/* Submission viewer dialog (our own component). */
+body.dark-mode .isti-sv-dialog { background: var(--card-bg) !important; }
+body.dark-mode .isti-sv-header { background: var(--card-bg) !important; border-bottom-color: var(--card-border) !important; }
+body.dark-mode .isti-sv-nav    { background: #0f172a !important; border-right-color: var(--card-border) !important; }
+body.dark-mode .isti-sv-stage  { background: #0b1220 !important; }
+body.dark-mode .isti-sv-action { background: #1f2a44 !important; color: var(--text-color) !important; }
+body.dark-mode .isti-sv-action:hover { background: var(--primary-color) !important; color: #fff !important; }
+body.dark-mode .isti-sv-text   { background: var(--card-bg) !important; color: var(--text-color) !important; }
+body.dark-mode .isti-sv-iframe { background: var(--card-bg) !important; }
+body.dark-mode .isti-sv-navitem { color: var(--text-secondary) !important; }
+body.dark-mode .isti-sv-navitem:hover { background: rgba(51, 137, 255, 0.12) !important; color: var(--text-color) !important; }
+body.dark-mode .isti-sv-navitem.active { background: var(--primary-color) !important; color: #fff !important; }
+body.dark-mode .isti-sv-name { color: var(--text-color) !important; }
+body.dark-mode .isti-sv-meta { color: var(--text-muted) !important; }
+
+/* Grading workspace columns. */
+body.dark-mode .isti-grading-col            { background: var(--card-bg) !important; border-color: var(--card-border) !important; }
+body.dark-mode .isti-grading-col-header     { background: #1a2542 !important; border-bottom-color: var(--card-border) !important; color: var(--text-secondary) !important; }
+body.dark-mode .isti-grading-stage          { background: #0b1220 !important; }
+body.dark-mode .isti-grading-student-item   { color: var(--text-color) !important; }
+body.dark-mode .isti-grading-student-item:hover { background: rgba(51, 137, 255, 0.12) !important; color: var(--text-color) !important; }
+body.dark-mode .isti-grading-student-item.active { background: rgba(51, 137, 255, 0.20) !important; border-color: var(--primary-color) !important; color: #fff !important; }
+body.dark-mode .isti-grading-student-state  { color: var(--text-muted) !important; }
+body.dark-mode .isti-grading-student-item.active .isti-grading-student-state { color: rgba(255,255,255,0.85) !important; }
+
+/* File tiles. */
+body.dark-mode .isti-file-tile {
+    background: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-color) !important;
+}
+body.dark-mode .isti-file-tile:hover {
+    border-color: var(--primary-color) !important;
+}
+body.dark-mode .isti-file-tile-name { color: var(--text-color) !important; }
+body.dark-mode .isti-file-tile-meta { color: var(--text-muted) !important; }
+body.dark-mode .isti-file-tile-cta  { background: #1f2a44 !important; color: var(--text-secondary) !important; }
+
+/* Timeline pills. */
+body.dark-mode .isti-hw-timeline-step               { background: #0f172a !important; border-color: var(--card-border) !important; color: var(--text-secondary) !important; }
+body.dark-mode .isti-hw-timeline-step.done          { background: rgba(16, 185, 129, 0.15) !important; border-color: rgba(16, 185, 129, 0.35) !important; color: #34d399 !important; }
+body.dark-mode .isti-hw-timeline-step.current       { background: rgba(51, 137, 255, 0.18) !important; border-color: rgba(51, 137, 255, 0.40) !important; color: #93c5fd !important; }
+body.dark-mode .isti-hw-timeline-step.danger        { background: rgba(239, 68, 68, 0.15) !important; border-color: rgba(239, 68, 68, 0.40) !important; color: #fca5a5 !important; }
+
+/* ── Navigation & breadcrumbs ─────────────────────────────────────────────── */
+body.dark-mode .breadcrumb,
+body.dark-mode .nav-tabs,
+body.dark-mode .secondary-navigation {
+    background: transparent !important;
+    color: var(--text-secondary);
+}
+
+body.dark-mode .breadcrumb-item a,
+body.dark-mode .nav-tabs .nav-link {
+    color: var(--text-secondary) !important;
+}
+
+body.dark-mode .nav-tabs .nav-link.active {
+    background: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--card-border) !important;
+}
+
+/* ── Status badges / pills in tables ───────────────────────────────────────── */
+body.dark-mode .isti-badge,
+body.dark-mode .badge {
+    /* Preserve their colored backgrounds but tune readability if too light. */
+    color-scheme: dark;
+}
+
+body.dark-mode .isti-badge-neutral { background: #1f2a44 !important; color: var(--text-secondary) !important; }
+
+/* ── Code blocks / pre / inputs in viewer ─────────────────────────────────── */
+body.dark-mode pre,
+body.dark-mode code {
+    background: #0b1220 !important;
+    color: #e2e8f0 !important;
+    border-color: var(--card-border) !important;
+}
+
+/* ── Activity / quiz / question pages ──────────────────────────────────────── */
+body.dark-mode .que,
+body.dark-mode .quizattemptsummary,
+body.dark-mode .quizinfo,
+body.dark-mode .quizaccessnotices {
+    background: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-color) !important;
+}
+
+body.dark-mode .que .info {
+    background: #1a2542 !important;
+    color: var(--text-secondary) !important;
+}
+
+body.dark-mode .que .answer > div {
+    background: #0f172a !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-color) !important;
+}
+
+body.dark-mode .que .answer > div:hover {
+    border-color: var(--primary-color) !important;
+    background: rgba(51, 137, 255, 0.10) !important;
+}
+
+/* ── Sidebar & topbar in dark mode ─────────────────────────────────────────── */
+body.dark-mode .isti-sidebar     { background: var(--sidebar-bg) !important; border-color: var(--card-border) !important; }
+body.dark-mode .isti-topbar      { background: var(--topbar-bg) !important; border-bottom: 1px solid var(--card-border) !important; }
+body.dark-mode .isti-nav-item    { color: var(--sidebar-text) !important; }
+body.dark-mode .isti-nav-item:hover  { background: rgba(255, 255, 255, 0.04) !important; color: var(--text-color) !important; }
+body.dark-mode .isti-nav-item.active { background: var(--sidebar-active-bg) !important; color: var(--primary-light) !important; }
+
+/* Topbar search */
+body.dark-mode .isti-topbar-search input,
+body.dark-mode .isti-topbar-search {
+    background: #0f172a !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-color) !important;
+}
+
+/* Topbar buttons */
+body.dark-mode .isti-topbar-toggle,
+body.dark-mode .isti-topbar-btn {
+    background: transparent !important;
+    color: var(--text-secondary) !important;
+}
+
+body.dark-mode .isti-topbar-toggle:hover,
+body.dark-mode .isti-topbar-btn:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: var(--text-color) !important;
+}
+
+/* ── Override gradient hero/cards to use darker brand tones ───────────────── */
+body.dark-mode .isti-hero-welcome,
+body.dark-mode [style*="linear-gradient(135deg, #006bff"],
+body.dark-mode [style*="linear-gradient(135deg, #0052cc"] {
+    /* Keep the brand gradient — it works on both light and dark. */
+}
+
+/* ── Specific patch: light-blue/green/yellow inline cards must dim too ─── */
+body.dark-mode [style*="background:#eff6ff"],
+body.dark-mode [style*="background: #eff6ff"] { background: rgba(51, 137, 255, 0.12) !important; }
+body.dark-mode [style*="background:#f0fdf4"],
+body.dark-mode [style*="background: #f0fdf4"] { background: rgba(16, 185, 129, 0.12) !important; }
+body.dark-mode [style*="background:#fffbeb"],
+body.dark-mode [style*="background: #fffbeb"] { background: rgba(245, 158, 11, 0.12) !important; }
+body.dark-mode [style*="background:#fef2f2"],
+body.dark-mode [style*="background: #fef2f2"] { background: rgba(239, 68, 68, 0.12) !important; }
+
+/* Lessons grid card overrides */
+body.dark-mode .card.course-card                  { background: var(--card-bg) !important; border-color: var(--card-border) !important; }
+body.dark-mode .card.course-card .aalink.coursename,
+body.dark-mode .card.course-card .multiline      { color: var(--text-color) !important; }
+body.dark-mode .card.course-card .categoryname,
+body.dark-mode .card.course-card .text-muted     { color: var(--text-muted) !important; }
+body.dark-mode .card.course-card .progress       { background: #1a2542 !important; }
+
+/* Recently-accessed carousel & grid */
+body.dark-mode .card-grid,
+body.dark-mode .card-carousel,
+body.dark-mode [data-region="card-deck"] { background: transparent !important; }
+
+/* KPI / dashboard hero cards */
+body.dark-mode .isti-kpi-card,
+body.dark-mode .isti-card-modern { background: var(--card-bg) !important; border-color: var(--card-border) !important; }
+body.dark-mode .isti-kpi-label    { color: var(--text-muted) !important; }
+body.dark-mode .isti-kpi-value    { color: var(--text-color) !important; }
+
+/* Anchor links default color */
+body.dark-mode a:not(.isti-btn):not(.isti-nav-item) { color: var(--primary-light); }
+body.dark-mode a:not(.isti-btn):not(.isti-nav-item):hover { color: #fff; }

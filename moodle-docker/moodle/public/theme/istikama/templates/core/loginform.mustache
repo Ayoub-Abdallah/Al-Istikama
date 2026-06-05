@@ -1,0 +1,76 @@
+{{#error}}
+    <div class="alert alert-danger" id="loginerrormessage" role="alert" style="position: absolute; width: 100%; top: 0; z-index: 100;">{{error}}</div>
+{{/error}}
+{{#info}}
+    <div class="alert alert-info" id="logininfomessage" role="status" style="position: absolute; width: 100%; top: 0; z-index: 100;">{{info}}</div>
+{{/info}}
+
+<div class="login-page active" id="login-page" style="display: flex;">
+  <div class="login-left">
+    <img src="/local/istikama_admin/pix/landing/istakama-banner.jpg" alt="Mosque at dusk">
+    <div class="overlay"></div>
+    <div class="content">
+      {{#istikama_logourl}}
+        <img src="{{istikama_logourl}}" alt="Istikama Logo" style="max-height: 80px; width: auto; margin-bottom: 24px; position: relative;">
+      {{/istikama_logourl}}
+      {{^istikama_logourl}}
+        <div class="logo-circle">إ</div>
+      {{/istikama_logourl}}
+      <h1>Welcome to <span class="accent">Istikama</span></h1>
+      <p>Your gateway to comprehensive Quranic sciences education. Join our multi-school association and begin your journey of knowledge.</p>
+      <div class="golden-divider" style="margin-top:32px"><div class="golden-dots"><span></span><span></span><span></span></div></div>
+    </div>
+  </div>
+  <div class="login-right geometric-pattern">
+    <div class="login-form fade-in-up">
+      <div class="mobile-logo-login">
+        {{#istikama_compactlogourl}}
+          <img src="{{istikama_compactlogourl}}" alt="Istikama Logo" style="max-height: 56px; width: auto; margin: 0 auto 8px auto;">
+        {{/istikama_compactlogourl}}
+        {{^istikama_compactlogourl}}
+          <div class="logo-circle">إ</div>
+        {{/istikama_compactlogourl}}
+        <h2>Istikama</h2>
+      </div>
+      <h2>Student Login</h2>
+      <p class="subtitle">Enter your credentials to access your dashboard</p>
+      
+      <form action="{{loginurl}}" method="POST" id="login">
+        <input id="anchor" type="hidden" name="anchor" value="">
+        <script>document.getElementById('anchor').value = location.hash;</script>
+        <input type="hidden" name="logintoken" value="{{logintoken}}">
+
+        <label>Username</label>
+        <div class="input-wrap">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <input type="text" name="username" id="username" value="{{username}}" placeholder="Username" required>
+        </div>
+        
+        <label>Password</label>
+        <div class="input-wrap">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <input type="password" name="password" id="password" placeholder="••••••••" required>
+        </div>
+        
+        <div class="options">
+          <label><input type="checkbox" name="rememberusername" id="rememberusername"> Remember me</label>
+          <a href="{{forgotpasswordurl}}">Forgot Password?</a>
+        </div>
+        
+        <button type="submit" id="loginbtn" class="btn-submit">Sign In</button>
+      </form>
+
+      {{#cansignup}}
+      <p class="signup">Don't have an account? <a href="{{signupurl}}">Sign Up</a></p>
+      {{/cansignup}}
+      
+      <div class="back-link"><a href="/">← Back to Home</a></div>
+    </div>
+  </div>
+</div>
+
+{{#js}}
+    require(['core_form/submit'], function(Submit) {
+        Submit.init("loginbtn");
+    });
+{{/js}}

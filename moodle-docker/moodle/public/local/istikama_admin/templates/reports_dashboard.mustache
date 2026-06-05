@@ -1,0 +1,1096 @@
+{{!
+    Reports dashboard — modern, role-aware layout.
+
+    Sections (in order, each conditional on the user's tier):
+      * Season banner (selector + status)
+      * Executive Summary (KPI tiles, brand-colored only)
+      * Key Insights (auto-generated narrative)
+      * Section cards — engagement, schools, content, classes, students
+      * Empty states that explain WHY data is missing + suggest an action
+    Charts use Chart.js, themed with brand colors. Dark-mode aware via the
+    theme's CSS variables.
+}}
+<div class="istikama-reports-dashboard" dir="auto">
+
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{! SEASON BANNER                                                          }}
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{#season_banner}}
+<div class="rpt-season-banner">
+    <div class="rpt-season-banner-meta">
+        <span class="rpt-season-banner-label">{{label}}</span>
+        <span class="rpt-season-banner-name">
+            {{name}}
+            {{#status_label}}<span class="rpt-season-banner-state {{status_class}}">{{status_label}}</span>{{/status_label}}
+        </span>
+    </div>
+    {{#picker_options.length}}
+    <select class="rpt-season-banner-select" onchange="if(this.value) window.location.href=this.value">
+        {{#picker_options}}
+        <option value="{{url}}"{{#selected}} selected{{/selected}}>{{label}}</option>
+        {{/picker_options}}
+    </select>
+    {{/picker_options.length}}
+</div>
+{{/season_banner}}
+
+
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{! ADMIN — system-wide reports                                            }}
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{#is_admin}}
+
+{{! Executive Summary }}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-chart-pie"></i> {{#str}}report_section_executive, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_executive_subtitle, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    <div class="rpt-kpi-grid">
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-users"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_activeusers, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{kpis.active_users}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-user-group"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_totalusers, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{kpis.total_users}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-book"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_totalcourses, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{kpis.total_courses}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-check-circle"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_completionrate, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{kpis.completion_rate}}%</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-folder-open"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_fileusage, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{kpis.file_usage}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-bolt"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_engagement, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{kpis.engagement}}</div></div></div>
+    </div>
+</div>
+
+{{#has_insights}}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <h3 class="rpt-section-title"><i class="fa fa-lightbulb"></i> {{#str}}report_section_insights, local_istikama_admin{{/str}}</h3>
+    </header>
+    <div class="rpt-insights-grid">
+        {{#insights}}
+        <div class="rpt-insight rpt-tone-{{tone}}">
+            <span class="rpt-insight-icon"><i class="fa {{icon}}"></i></span>
+            <span class="rpt-insight-text">{{text}}</span>
+        </div>
+        {{/insights}}
+    </div>
+</div>
+{{/has_insights}}
+
+{{! Growth: login trend chart }}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-chart-line"></i> {{#str}}report_section_growth, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_growth_subtitle, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    {{#has_login_trend}}
+    <div class="rpt-card">
+        <div class="rpt-chart-wrap"><canvas id="rptLoginTrendChart"></canvas></div>
+    </div>
+    {{/has_login_trend}}
+    {{^has_login_trend}}
+    <div class="rpt-empty">
+        <i class="fa fa-chart-line rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_login_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_login_msg, local_istikama_admin{{/str}}</p>
+    </div>
+    {{/has_login_trend}}
+</div>
+
+{{! School performance }}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-school"></i> {{#str}}report_section_school_perf, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_school_perf_subtitle, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    {{#has_school_perf}}
+    <div class="rpt-card">
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr>
+                    <th>{{#str}}rpt_col_school, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_students, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_teachers, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_avg_grade, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_completion, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_submission, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_logins_7d, local_istikama_admin{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                    {{#school_perf}}
+                    <tr>
+                        <td><strong>{{name}}</strong></td>
+                        <td>{{students_enrolled}}{{#students_upcoming}} <span class="rpt-pill rpt-pill-info">+{{students_upcoming}} {{#str}}rpt_upcoming, local_istikama_admin{{/str}}</span>{{/students_upcoming}}</td>
+                        <td>{{teachers_active}}</td>
+                        <td>{{#avg_grade_pct}}{{avg_grade_pct}}%{{/avg_grade_pct}}{{^avg_grade_pct}}<span class="rpt-muted">—</span>{{/avg_grade_pct}}</td>
+                        <td>
+                            <div class="rpt-progress"><div class="rpt-progress-fill" style="width:{{completion_rate}}%"></div></div>
+                            <span class="rpt-progress-label">{{completion_rate}}%</span>
+                        </td>
+                        <td>{{#submission_rate}}{{submission_rate}}%{{/submission_rate}}{{^submission_rate}}<span class="rpt-muted">—</span>{{/submission_rate}}</td>
+                        <td>{{recent_logins_7d}}</td>
+                    </tr>
+                    {{/school_perf}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/has_school_perf}}
+    {{^has_school_perf}}
+    <div class="rpt-empty">
+        <i class="fa fa-school rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_schools_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_schools_msg, local_istikama_admin{{/str}}</p>
+        <a href="/local/istikama_admin/schools.php" class="rpt-empty-cta">
+            <i class="fa fa-arrow-right"></i> {{#str}}report_empty_schools_action, local_istikama_admin{{/str}}
+        </a>
+    </div>
+    {{/has_school_perf}}
+</div>
+
+{{! Content & Library }}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-folder-open"></i> {{#str}}report_section_content, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_content_subtitle, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    {{#has_content}}
+    <div class="rpt-grid-2">
+        <div class="rpt-card">
+            <h4 class="rpt-card-title">{{#str}}report_content_by_type, local_istikama_admin{{/str}}</h4>
+            <div class="rpt-chart-wrap rpt-chart-sm"><canvas id="rptContentTypeChart"></canvas></div>
+        </div>
+        <div class="rpt-card">
+            <h4 class="rpt-card-title">{{#str}}report_content_by_status, local_istikama_admin{{/str}}</h4>
+            <div class="rpt-chart-wrap rpt-chart-sm"><canvas id="rptContentStatusChart"></canvas></div>
+        </div>
+    </div>
+    <div class="rpt-card" style="margin-top:16px">
+        <h4 class="rpt-card-title">{{#str}}report_upload_trend, local_istikama_admin{{/str}}</h4>
+        <div class="rpt-chart-wrap rpt-chart-sm"><canvas id="rptUploadTrendChart"></canvas></div>
+    </div>
+    {{/has_content}}
+    {{^has_content}}
+    <div class="rpt-empty">
+        <i class="fa fa-folder-open rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_content_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_content_msg, local_istikama_admin{{/str}}</p>
+        <a href="/local/istikama_admin/contentbank.php" class="rpt-empty-cta">
+            <i class="fa fa-arrow-right"></i> {{#str}}report_empty_content_action, local_istikama_admin{{/str}}
+        </a>
+    </div>
+    {{/has_content}}
+</div>
+
+{{/is_admin}}
+
+
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{! SCHOOL MANAGER reports                                                 }}
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{#is_manager}}
+
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-school"></i> {{school_name}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_executive_subtitle, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    <div class="rpt-kpi-grid">
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-chalkboard-user"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}tab_teachers, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{manager_kpis.total_teachers}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-user-graduate"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}tab_students, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{manager_kpis.total_students}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-bolt"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_activeusers, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{manager_kpis.active_users}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-folder-open"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_fileusage, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{manager_kpis.total_content}}</div></div></div>
+    </div>
+</div>
+
+{{#has_insights}}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <h3 class="rpt-section-title"><i class="fa fa-lightbulb"></i> {{#str}}report_section_insights, local_istikama_admin{{/str}}</h3>
+    </header>
+    <div class="rpt-insights-grid">
+        {{#insights}}
+        <div class="rpt-insight rpt-tone-{{tone}}">
+            <span class="rpt-insight-icon"><i class="fa {{icon}}"></i></span>
+            <span class="rpt-insight-text">{{text}}</span>
+        </div>
+        {{/insights}}
+    </div>
+</div>
+{{/has_insights}}
+
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-chart-line"></i> {{#str}}report_section_growth, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_growth_subtitle, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    {{#has_login_trend}}
+    <div class="rpt-card"><div class="rpt-chart-wrap"><canvas id="mrptLoginTrendChart"></canvas></div></div>
+    {{/has_login_trend}}
+    {{^has_login_trend}}
+    <div class="rpt-empty">
+        <i class="fa fa-chart-line rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_login_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_login_msg, local_istikama_admin{{/str}}</p>
+    </div>
+    {{/has_login_trend}}
+</div>
+
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <h3 class="rpt-section-title"><i class="fa fa-chalkboard-user"></i> {{#str}}tab_teachers, local_istikama_admin{{/str}}</h3>
+    </header>
+    {{#has_teachers}}
+    <div class="rpt-card">
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr>
+                    <th>{{#str}}name, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}email, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}kpi_fileusage, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}lastlogin, local_istikama_admin{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                    {{#school_teachers}}
+                    <tr>
+                        <td><strong>{{name}}</strong></td>
+                        <td class="rpt-muted">{{email}}</td>
+                        <td><span class="rpt-pill rpt-pill-primary">{{upload_count}}</span></td>
+                        <td>{{lastaccess}}</td>
+                    </tr>
+                    {{/school_teachers}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/has_teachers}}
+    {{^has_teachers}}
+    <div class="rpt-empty">
+        <i class="fa fa-chalkboard-user rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_teachers_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_teachers_msg, local_istikama_admin{{/str}}</p>
+    </div>
+    {{/has_teachers}}
+</div>
+
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-folder-open"></i> {{#str}}report_section_content, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_content_subtitle, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    {{#has_content}}
+    <div class="rpt-grid-2">
+        <div class="rpt-card">
+            <h4 class="rpt-card-title">{{#str}}report_content_by_type, local_istikama_admin{{/str}}</h4>
+            <div class="rpt-chart-wrap rpt-chart-sm"><canvas id="mrptContentTypeChart"></canvas></div>
+        </div>
+        <div class="rpt-card">
+            <h4 class="rpt-card-title">{{#str}}report_content_by_status, local_istikama_admin{{/str}}</h4>
+            <div class="rpt-chart-wrap rpt-chart-sm"><canvas id="mrptContentStatusChart"></canvas></div>
+        </div>
+    </div>
+    {{/has_content}}
+    {{^has_content}}
+    <div class="rpt-empty">
+        <i class="fa fa-folder-open rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_content_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_content_msg, local_istikama_admin{{/str}}</p>
+    </div>
+    {{/has_content}}
+</div>
+
+{{! ── Enrollment funnel ───────────────────────────────────────────── }}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <h3 class="rpt-section-title"><i class="fa fa-arrow-down-up-across-line"></i> {{#str}}report_section_enrollment_funnel, local_istikama_admin{{/str}}</h3>
+        <p class="rpt-section-sub">{{#str}}report_enrollment_funnel_sub, local_istikama_admin{{/str}}</p>
+    </header>
+    <div class="rpt-kpi-grid">
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-user-check"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}status_enrolled, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{school_funnel.enrolled}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-calendar-plus"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}status_upcoming, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{school_funnel.upcoming}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-user-graduate"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}status_graduated, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{school_funnel.graduated}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-arrow-right"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}status_transferred, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{school_funnel.transferred}}</div></div></div>
+    </div>
+</div>
+
+{{! ── Class performance ──────────────────────────────────────────── }}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-chalkboard"></i> {{#str}}report_section_class_perf, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_class_perf_sub, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    {{#has_class_perf}}
+    <div class="rpt-card">
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr>
+                    <th>{{#str}}report_col_class, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_level, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_students, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_avg_grade, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_completion, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_submission, local_istikama_admin{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                {{#class_perf}}
+                <tr>
+                    <td><strong>{{class_name}}</strong></td>
+                    <td><span class="rpt-pill rpt-pill-neutral">{{level_name}}</span></td>
+                    <td>{{students}}</td>
+                    <td>{{#avg_grade}}{{avg_grade}}%{{/avg_grade}}{{^avg_grade}}<span class="rpt-muted">—</span>{{/avg_grade}}</td>
+                    <td>
+                        <div class="rpt-progress"><div class="rpt-progress-fill" style="width:{{completion}}%"></div></div>
+                        <span class="rpt-progress-label">{{completion}}%</span>
+                    </td>
+                    <td>{{#submission_rate}}{{submission_rate}}%{{/submission_rate}}{{^submission_rate}}<span class="rpt-muted">—</span>{{/submission_rate}}</td>
+                </tr>
+                {{/class_perf}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/has_class_perf}}
+    {{^has_class_perf}}
+    <div class="rpt-empty">
+        <i class="fa fa-chalkboard rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_classes_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_classes_msg, local_istikama_admin{{/str}}</p>
+    </div>
+    {{/has_class_perf}}
+</div>
+
+{{! ── Teacher effectiveness ──────────────────────────────────────── }}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-chalkboard-user"></i> {{#str}}report_section_teacher_eff, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_teacher_eff_sub, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    {{#has_teacher_eff}}
+    <div class="rpt-card">
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr>
+                    <th>{{#str}}name, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_courses, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_uploads, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}lastlogin, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_activity, local_istikama_admin{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                {{#teacher_eff}}
+                <tr>
+                    <td><strong>{{name}}</strong><br><span class="rpt-muted">{{email}}</span></td>
+                    <td>{{courses}}</td>
+                    <td><span class="rpt-pill rpt-pill-primary">{{uploads}}</span></td>
+                    <td class="rpt-muted">{{last_access}}</td>
+                    <td>
+                        {{#active_recently}}<span class="rpt-pill" style="background:rgba(16,185,129,0.18);color:#047857"><i class="fa fa-circle-check"></i> Active</span>{{/active_recently}}
+                        {{^active_recently}}<span class="rpt-pill" style="background:rgba(100,116,139,0.15);color:#475569"><i class="fa fa-pause"></i> Quiet</span>{{/active_recently}}
+                    </td>
+                </tr>
+                {{/teacher_eff}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/has_teacher_eff}}
+    {{^has_teacher_eff}}
+    <div class="rpt-empty">
+        <i class="fa fa-chalkboard-user rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_teachers_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_teachers_msg, local_istikama_admin{{/str}}</p>
+    </div>
+    {{/has_teacher_eff}}
+</div>
+
+{{! ── Subject performance ────────────────────────────────────────── }}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-book-open-reader"></i> {{#str}}report_section_subject_perf, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_subject_perf_sub, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    {{#has_subject_perf}}
+    <div class="rpt-card">
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr>
+                    <th>{{#str}}report_col_subject, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_students, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_avg_grade, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_completion, local_istikama_admin{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                {{#subject_perf}}
+                <tr>
+                    <td><strong>{{subject_name}}</strong></td>
+                    <td>{{students}}</td>
+                    <td>{{#avg_grade}}{{avg_grade}}%{{/avg_grade}}{{^avg_grade}}<span class="rpt-muted">—</span>{{/avg_grade}}</td>
+                    <td>
+                        <div class="rpt-progress"><div class="rpt-progress-fill" style="width:{{completion}}%"></div></div>
+                        <span class="rpt-progress-label">{{completion}}%</span>
+                    </td>
+                </tr>
+                {{/subject_perf}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/has_subject_perf}}
+    {{^has_subject_perf}}
+    <div class="rpt-empty">
+        <i class="fa fa-book-open-reader rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_subjects_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_subjects_msg, local_istikama_admin{{/str}}</p>
+    </div>
+    {{/has_subject_perf}}
+</div>
+
+{{! ── At-risk students ───────────────────────────────────────────── }}
+{{#has_at_risk_students}}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-triangle-exclamation"></i> {{#str}}report_section_at_risk, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_at_risk_sub, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    <div class="rpt-card">
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr>
+                    <th>{{#str}}name, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}class, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_last_access, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_col_days_inactive, local_istikama_admin{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                {{#at_risk_students}}
+                <tr>
+                    <td><strong>{{name}}</strong><br><span class="rpt-muted">{{email}}</span></td>
+                    <td><span class="rpt-pill rpt-pill-neutral">{{class_name}}</span></td>
+                    <td class="rpt-muted">{{last_access}}</td>
+                    <td><span class="rpt-pill" style="background:rgba(239,68,68,0.15);color:#991b1b"><i class="fa fa-clock"></i> {{days_inactive}}d</span></td>
+                </tr>
+                {{/at_risk_students}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{/has_at_risk_students}}
+
+{{/is_manager}}
+
+
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{! TEACHER reports                                                        }}
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{#is_teacher}}
+{{#has_classes}}
+
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <div>
+            <h3 class="rpt-section-title"><i class="fa fa-chart-pie"></i> {{#str}}report_section_executive, local_istikama_admin{{/str}}</h3>
+            <p class="rpt-section-sub">{{#str}}report_executive_subtitle, local_istikama_admin{{/str}}</p>
+        </div>
+    </header>
+    <div class="rpt-kpi-grid">
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-chalkboard"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_myclasses, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{teacher_kpis.classes_count}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-user-graduate"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_mystudents, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{teacher_kpis.students_count}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-user-check"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_avgattendance, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{teacher_kpis.avg_attendance}}%</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-star"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">{{#str}}kpi_avggrade, local_istikama_admin{{/str}}</div><div class="rpt-kpi-value">{{teacher_kpis.avg_grade}}%</div></div></div>
+    </div>
+</div>
+
+{{#has_insights}}
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <h3 class="rpt-section-title"><i class="fa fa-lightbulb"></i> {{#str}}report_section_insights, local_istikama_admin{{/str}}</h3>
+    </header>
+    <div class="rpt-insights-grid">
+        {{#insights}}
+        <div class="rpt-insight rpt-tone-{{tone}}">
+            <span class="rpt-insight-icon"><i class="fa {{icon}}"></i></span>
+            <span class="rpt-insight-text">{{text}}</span>
+        </div>
+        {{/insights}}
+    </div>
+</div>
+{{/has_insights}}
+
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <h3 class="rpt-section-title"><i class="fa fa-book"></i> {{#str}}report_section_class_perf, local_istikama_admin{{/str}}</h3>
+    </header>
+    {{#has_lessons}}
+    <div class="rpt-card">
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr>
+                    <th>{{#str}}report_lesson_name, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_lesson_class, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_lesson_content, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_lesson_enrolled, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_lesson_completion, local_istikama_admin{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                    {{#teacher_lessons}}
+                    <tr>
+                        <td><strong>{{lesson_name}}</strong></td>
+                        <td><span class="rpt-pill rpt-pill-neutral">{{classname}}</span></td>
+                        <td>{{linked_content}}</td>
+                        <td>{{enrolled}}</td>
+                        <td>
+                            <div class="rpt-progress"><div class="rpt-progress-fill" style="width:{{completion_rate}}%"></div></div>
+                            <span class="rpt-progress-label">{{completion_rate}}%</span>
+                        </td>
+                    </tr>
+                    {{/teacher_lessons}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/has_lessons}}
+    {{^has_lessons}}
+    <div class="rpt-empty">
+        <i class="fa fa-book rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_lessons_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_lessons_msg, local_istikama_admin{{/str}}</p>
+    </div>
+    {{/has_lessons}}
+</div>
+
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <h3 class="rpt-section-title"><i class="fa fa-user-graduate"></i> {{#str}}tab_students, local_istikama_admin{{/str}}</h3>
+    </header>
+    {{#has_students}}
+    <div class="rpt-card">
+        <div class="rpt-table-toolbar">
+            <input type="text" id="rptStudentSearch" class="rpt-input" placeholder="{{#str}}rpt_search_students_ph, local_istikama_admin{{/str}}">
+        </div>
+        <div class="rpt-table-wrap">
+            <table class="rpt-table" id="rptStudentTable">
+                <thead><tr>
+                    <th class="rpt-sortable" data-sort="name">{{#str}}report_student_name, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_student_class, local_istikama_admin{{/str}}</th>
+                    <th class="rpt-sortable" data-sort="attendance">{{#str}}report_student_attendance, local_istikama_admin{{/str}}</th>
+                    <th class="rpt-sortable" data-sort="grade">{{#str}}report_student_grade, local_istikama_admin{{/str}}</th>
+                    <th>{{#str}}report_student_lastaccess, local_istikama_admin{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                    {{#teacher_students}}
+                    <tr data-name="{{name}}" data-attendance="{{attendance}}" data-grade="{{avg_grade}}">
+                        <td><strong>{{name}}</strong><br><span class="rpt-muted">{{email}}</span></td>
+                        <td><span class="rpt-pill rpt-pill-neutral">{{classname}}</span></td>
+                        <td><span class="rpt-pill rpt-att-pill" data-val="{{attendance}}">{{attendance}}%</span></td>
+                        <td><span class="rpt-pill rpt-grade-pill" data-val="{{avg_grade}}">{{avg_grade}}%</span></td>
+                        <td>{{lastaccess}}</td>
+                    </tr>
+                    {{/teacher_students}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/has_students}}
+    {{^has_students}}
+    <div class="rpt-empty">
+        <i class="fa fa-user-graduate rpt-empty-icon"></i>
+        <h4 class="rpt-empty-title">{{#str}}report_empty_students_title, local_istikama_admin{{/str}}</h4>
+        <p class="rpt-empty-msg">{{#str}}report_empty_students_msg, local_istikama_admin{{/str}}</p>
+    </div>
+    {{/has_students}}
+</div>
+
+{{/has_classes}}
+{{^has_classes}}
+<div class="rpt-empty">
+    <i class="fa fa-chalkboard rpt-empty-icon"></i>
+    <h4 class="rpt-empty-title">{{#str}}report_no_classes, local_istikama_admin{{/str}}</h4>
+    <p class="rpt-empty-msg">{{#str}}rpt_empty_student, local_istikama_admin{{/str}}</p>
+</div>
+{{/has_classes}}
+{{/is_teacher}}
+
+
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{! TECHNICAL PROFESSOR — kept lean, no emojis                              }}
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{#is_techprof}}
+
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <h3 class="rpt-section-title"><i class="fa fa-chart-pie"></i> {{#str}}report_section_executive, local_istikama_admin{{/str}}</h3>
+    </header>
+    <div class="rpt-kpi-grid">
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-question-circle"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">Total Questions</div><div class="rpt-kpi-value">{{tp_kpis.total_questions}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-recycle"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">Reusable</div><div class="rpt-kpi-value">{{tp_kpis.reusable}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-clipboard-list"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">Total Quizzes</div><div class="rpt-kpi-value">{{tp_kpis.total_quizzes}}</div></div></div>
+        <div class="rpt-kpi"><div class="rpt-kpi-icon"><i class="fa fa-layer-group"></i></div>
+            <div class="rpt-kpi-body"><div class="rpt-kpi-label">Active Levels</div><div class="rpt-kpi-value">{{tp_kpis.active_levels}}</div></div></div>
+    </div>
+</div>
+
+<div class="rpt-grid-2">
+    <div class="rpt-card">
+        <h4 class="rpt-card-title"><i class="fa fa-fire"></i> Most-Used Questions</h4>
+        {{#tp_has_mostused}}
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr><th>{{#str}}act_col_question, local_istikama_admin{{/str}}</th><th>{{#str}}act_col_type, local_istikama_admin{{/str}}</th><th>{{#str}}rpt_col_category, local_istikama_admin{{/str}}</th><th class="rpt-right">{{#str}}rpt_col_uses, local_istikama_admin{{/str}}</th></tr></thead>
+                <tbody>{{#tp_mostused}}<tr><td><strong>{{name}}</strong></td><td><span class="rpt-pill rpt-pill-neutral">{{qtype}}</span></td><td>{{category}}</td><td class="rpt-right"><span class="rpt-pill rpt-pill-primary">{{uses}}</span></td></tr>{{/tp_mostused}}</tbody>
+            </table>
+        </div>
+        {{/tp_has_mostused}}
+        {{^tp_has_mostused}}<div class="rpt-empty-inline">No question usage data yet.</div>{{/tp_has_mostused}}
+    </div>
+    <div class="rpt-card">
+        <h4 class="rpt-card-title"><i class="fa fa-snowflake"></i> Never-Used Questions</h4>
+        {{#tp_has_unused}}
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr><th>{{#str}}act_col_question, local_istikama_admin{{/str}}</th><th>{{#str}}act_col_type, local_istikama_admin{{/str}}</th><th>{{#str}}rpt_col_category, local_istikama_admin{{/str}}</th><th class="rpt-right">{{#str}}act_col_modified, local_istikama_admin{{/str}}</th></tr></thead>
+                <tbody>{{#tp_unused}}<tr><td><strong>{{name}}</strong></td><td><span class="rpt-pill rpt-pill-neutral">{{qtype}}</span></td><td>{{category}}</td><td class="rpt-right rpt-muted">{{modified}}</td></tr>{{/tp_unused}}</tbody>
+            </table>
+        </div>
+        {{/tp_has_unused}}
+        {{^tp_has_unused}}<div class="rpt-empty-inline">Every question is in use.</div>{{/tp_has_unused}}
+    </div>
+</div>
+
+<div class="rpt-section">
+    <header class="rpt-section-head">
+        <h3 class="rpt-section-title"><i class="fa fa-trophy"></i> Top Teachers by Quiz Creation</h3>
+    </header>
+    {{#tp_has_topteachers}}
+    <div class="rpt-card">
+        <div class="rpt-table-wrap">
+            <table class="rpt-table">
+                <thead><tr><th>{{#str}}rpt_col_teacher, local_istikama_admin{{/str}}</th><th class="rpt-right">{{#str}}rpt_col_quizzes, local_istikama_admin{{/str}}</th><th class="rpt-right">{{#str}}rpt_col_question_slots, local_istikama_admin{{/str}}</th></tr></thead>
+                <tbody>{{#tp_topteachers}}<tr><td><strong>{{name}}</strong></td><td class="rpt-right">{{quizzes}}</td><td class="rpt-right">{{slots}}</td></tr>{{/tp_topteachers}}</tbody>
+            </table>
+        </div>
+    </div>
+    {{/tp_has_topteachers}}
+    {{^tp_has_topteachers}}<div class="rpt-empty-inline">No teacher activity data yet.</div>{{/tp_has_topteachers}}
+</div>
+
+{{/is_techprof}}
+
+</div>
+
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{! Styles — scoped to .istikama-reports-dashboard                         }}
+{{! ─────────────────────────────────────────────────────────────────────── }}
+<style>
+.istikama-reports-dashboard {
+    --rpt-bg: var(--card-bg, #ffffff);
+    --rpt-text: var(--text-color, #0f172a);
+    --rpt-muted: var(--text-secondary, #64748b);
+    --rpt-border: var(--card-border, #e2e8f0);
+    --rpt-primary: var(--primary-color, #006bff);
+    --rpt-primary-dark: var(--primary-dark, #0052cc);
+    --rpt-primary-soft: rgba(0, 107, 255, 0.08);
+    --rpt-success: #10b981;
+    --rpt-success-soft: rgba(16, 185, 129, 0.12);
+    --rpt-warning: #f59e0b;
+    --rpt-warning-soft: rgba(245, 158, 11, 0.12);
+    --rpt-danger: #ef4444;
+    --rpt-danger-soft: rgba(239, 68, 68, 0.12);
+}
+
+/* Season banner */
+.rpt-season-banner {
+    background: var(--rpt-bg);
+    border: 1px solid var(--rpt-border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.rpt-season-banner-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--rpt-muted); font-weight: 600; display: block; }
+.rpt-season-banner-name { font-size: 1.05rem; font-weight: 700; color: var(--rpt-text); display: flex; align-items: center; gap: 10px; margin-top: 3px; }
+.rpt-season-banner-state {
+    font-size: 0.7rem; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+    background: var(--rpt-primary-soft); color: var(--rpt-primary);
+    text-transform: uppercase; letter-spacing: 0.4px;
+}
+.rpt-season-banner-state.active   { background: var(--rpt-success-soft); color: var(--rpt-success); }
+.rpt-season-banner-state.legacy,
+.rpt-season-banner-state.closed   { background: rgba(100, 116, 139, 0.12); color: var(--rpt-muted); }
+.rpt-season-banner-state.upcoming { background: var(--rpt-primary-soft); color: var(--rpt-primary); }
+.rpt-season-banner-select {
+    padding: 9px 14px; border: 1px solid var(--rpt-border); border-radius: 9px;
+    background: var(--rpt-bg); color: var(--rpt-text); font-weight: 500; min-width: 240px; cursor: pointer;
+}
+
+/* Section structure */
+.rpt-section { margin-bottom: 28px; }
+.rpt-section-head { margin-bottom: 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.rpt-section-title {
+    margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--rpt-text);
+    display: flex; align-items: center; gap: 10px;
+}
+.rpt-section-title i { color: var(--rpt-primary); font-size: 0.95rem; }
+.rpt-section-sub { margin: 4px 0 0; color: var(--rpt-muted); font-size: 0.84rem; }
+
+/* KPI tiles */
+.rpt-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+}
+.rpt-kpi {
+    background: var(--rpt-bg);
+    border: 1px solid var(--rpt-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: border-color .12s ease, box-shadow .12s ease;
+}
+.rpt-kpi:hover { border-color: var(--rpt-primary); box-shadow: 0 4px 14px rgba(0, 107, 255, 0.08); }
+.rpt-kpi-icon {
+    width: 44px; height: 44px;
+    border-radius: 11px;
+    background: var(--rpt-primary-soft);
+    color: var(--rpt-primary);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.rpt-kpi-body { flex: 1; min-width: 0; }
+.rpt-kpi-label { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.45px; color: var(--rpt-muted); font-weight: 600; }
+.rpt-kpi-value { font-size: 1.5rem; font-weight: 700; color: var(--rpt-text); margin-top: 2px; line-height: 1.1; }
+
+/* Insights */
+.rpt-insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+}
+.rpt-insight {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    background: var(--rpt-primary-soft);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    color: var(--rpt-text);
+    line-height: 1.45;
+}
+.rpt-insight-icon { color: var(--rpt-primary); font-size: 1rem; margin-top: 1px; flex-shrink: 0; }
+.rpt-insight.rpt-tone-positive { background: var(--rpt-success-soft); }
+.rpt-insight.rpt-tone-positive .rpt-insight-icon { color: var(--rpt-success); }
+.rpt-insight.rpt-tone-warn { background: var(--rpt-warning-soft); }
+.rpt-insight.rpt-tone-warn .rpt-insight-icon { color: var(--rpt-warning); }
+.rpt-insight.rpt-tone-danger { background: var(--rpt-danger-soft); }
+.rpt-insight.rpt-tone-danger .rpt-insight-icon { color: var(--rpt-danger); }
+
+/* Cards */
+.rpt-card {
+    background: var(--rpt-bg);
+    border: 1px solid var(--rpt-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+}
+.rpt-card-title {
+    font-size: 0.95rem; font-weight: 700; color: var(--rpt-text);
+    margin: 0 0 14px;
+    display: flex; align-items: center; gap: 8px;
+}
+.rpt-card-title i { color: var(--rpt-primary); }
+.rpt-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 16px;
+}
+
+/* Charts */
+.rpt-chart-wrap { position: relative; height: 320px; }
+.rpt-chart-sm { height: 240px; }
+
+/* Tables — match the platform's unified blue-header data table. */
+.rpt-table-wrap { overflow-x: auto; border-radius: 12px; }
+.rpt-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.rpt-table thead th {
+    background: linear-gradient(180deg, #006bff 0%, #0058d6 100%);
+    color: #ffffff;
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 0;
+    white-space: nowrap;
+}
+.rpt-table tbody td {
+    padding: 12px 16px;
+    border-top: 1px solid var(--rpt-border);
+    color: var(--rpt-text);
+    font-size: 0.88rem;
+    vertical-align: middle;
+}
+.rpt-table tbody tr:first-child td { border-top: 0; }
+.rpt-table tbody tr:hover { background: var(--rpt-primary-soft); }
+.rpt-table .rpt-right { text-align: right; }
+.rpt-table, .rpt-table th, .rpt-table td { border-left: 0 !important; border-right: 0 !important; }
+.rpt-sortable { cursor: pointer; }
+.rpt-sortable:after { content: ' ↕'; opacity: 0.4; font-size: 0.8em; }
+.rpt-table-toolbar { padding: 0 0 12px; }
+.rpt-input {
+    padding: 9px 13px; border: 1px solid var(--rpt-border); border-radius: 8px;
+    background: var(--rpt-bg); color: var(--rpt-text); font-size: 0.88rem;
+    width: 320px; max-width: 100%;
+}
+.rpt-input:focus { outline: 0; border-color: var(--rpt-primary); box-shadow: 0 0 0 3px rgba(0, 107, 255, 0.12); }
+
+/* Pills */
+.rpt-pill {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 0.74rem; font-weight: 600; white-space: nowrap;
+}
+.rpt-pill-primary { background: var(--rpt-primary-soft); color: var(--rpt-primary); }
+.rpt-pill-neutral { background: rgba(100, 116, 139, 0.12); color: var(--rpt-muted); }
+.rpt-pill-info    { background: rgba(59, 130, 246, 0.14); color: #1d4ed8; }
+
+/* Progress bars */
+.rpt-progress {
+    display: inline-block; vertical-align: middle;
+    width: 80px; height: 6px;
+    border-radius: 4px;
+    background: rgba(100, 116, 139, 0.18);
+    overflow: hidden;
+    margin-right: 8px;
+}
+.rpt-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--rpt-primary), var(--rpt-primary-dark));
+    border-radius: 4px;
+}
+.rpt-progress-label { font-size: 0.8rem; font-weight: 600; color: var(--rpt-text); }
+.rpt-muted { color: var(--rpt-muted); }
+
+/* Empty states */
+.rpt-empty {
+    background: var(--rpt-bg);
+    border: 1.5px dashed var(--rpt-border);
+    border-radius: 12px;
+    padding: 36px 28px;
+    text-align: center;
+}
+.rpt-empty-icon { font-size: 2.4rem; color: var(--rpt-muted); opacity: 0.5; display: block; margin-bottom: 12px; }
+.rpt-empty-title { font-size: 1.02rem; font-weight: 700; color: var(--rpt-text); margin: 0 0 6px; }
+.rpt-empty-msg { color: var(--rpt-muted); font-size: 0.88rem; max-width: 60ch; margin: 0 auto 14px; line-height: 1.55; }
+.rpt-empty-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--rpt-primary); color: #fff;
+    padding: 9px 18px; border-radius: 9px; text-decoration: none;
+    font-weight: 600; font-size: 0.86rem; transition: background .12s ease;
+}
+.rpt-empty-cta:hover { background: var(--rpt-primary-dark); color: #fff; text-decoration: none; }
+.rpt-empty-inline { padding: 24px; text-align: center; color: var(--rpt-muted); font-size: 0.88rem; }
+
+/* Dynamic attendance/grade pills */
+.rpt-att-pill,
+.rpt-grade-pill { background: rgba(100, 116, 139, 0.15); color: var(--rpt-text); }
+</style>
+
+{{! ─────────────────────────────────────────────────────────────────────── }}
+{{! Chart.js — themed + season-aware                                       }}
+{{! ─────────────────────────────────────────────────────────────────────── }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Chart === 'undefined') return;
+
+    // Pull theme tokens so charts respect light/dark mode.
+    var root = getComputedStyle(document.documentElement);
+    var brand   = root.getPropertyValue('--primary-color').trim() || '#006bff';
+    var brandSoft = 'rgba(0, 107, 255, 0.10)';
+    var text    = root.getPropertyValue('--text-color').trim() || '#0f172a';
+    var muted   = root.getPropertyValue('--text-secondary').trim() || '#64748b';
+    var border  = root.getPropertyValue('--card-border').trim() || '#e2e8f0';
+
+    Chart.defaults.font.family = root.getPropertyValue('--font-dashboard').trim()
+                              || "Inter, system-ui, sans-serif";
+    Chart.defaults.color = muted;
+
+    var brandPalette = [brand, '#10b981', '#f59e0b', '#a855f7', '#06b6d4', '#3389ff', '#64748b', '#8b5cf6'];
+    var grid = { color: border + '40' };
+
+    function lineChart(canvasId, data, label) {
+        var el = document.getElementById(canvasId);
+        if (!el || !data || !data.length) return;
+        new Chart(el.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: data.map(function(d) { return d.label; }),
+                datasets: [{
+                    label: label,
+                    data: data.map(function(d) { return d.value; }),
+                    borderColor: brand,
+                    backgroundColor: brandSoft,
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 3,
+                    pointBackgroundColor: brand,
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: grid, ticks: { color: muted } },
+                    x: { grid: { display: false }, ticks: { color: muted } }
+                }
+            }
+        });
+    }
+
+    function doughnutChart(canvasId, data) {
+        var el = document.getElementById(canvasId);
+        if (!el || !data || !data.length) return;
+        new Chart(el.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: data.map(function(d) { return d.label; }),
+                datasets: [{
+                    data: data.map(function(d) { return d.value; }),
+                    backgroundColor: brandPalette,
+                    borderWidth: 0,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: text } } },
+                cutout: '65%',
+            }
+        });
+    }
+
+    function barChart(canvasId, data, label) {
+        var el = document.getElementById(canvasId);
+        if (!el || !data || !data.length) return;
+        new Chart(el.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: data.map(function(d) { return d.label; }),
+                datasets: [{
+                    label: label,
+                    data: data.map(function(d) { return d.value; }),
+                    backgroundColor: brand,
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: grid, ticks: { color: muted } },
+                    x: { grid: { display: false }, ticks: { color: muted } }
+                }
+            }
+        });
+    }
+
+    {{#is_admin}}
+    try { lineChart('rptLoginTrendChart', {{{login_trend}}}, 'Daily logins'); } catch(e) {}
+    try { doughnutChart('rptContentTypeChart',   {{{content_by_type_json}}});   } catch(e) {}
+    try { doughnutChart('rptContentStatusChart', {{{content_by_status_json}}}); } catch(e) {}
+    try { barChart('rptUploadTrendChart', {{{upload_trend_json}}}, 'Uploads'); } catch(e) {}
+    {{/is_admin}}
+
+    {{#is_manager}}
+    try { lineChart('mrptLoginTrendChart', {{{login_trend}}}, 'Daily logins'); } catch(e) {}
+    try { doughnutChart('mrptContentTypeChart',   {{{content_by_type_json}}});   } catch(e) {}
+    try { doughnutChart('mrptContentStatusChart', {{{content_by_status_json}}}); } catch(e) {}
+    {{/is_manager}}
+
+    {{#is_teacher}}
+    // ── Student table interactions ──
+    var s = document.getElementById('rptStudentSearch');
+    if (s) {
+        s.addEventListener('input', function() {
+            var q = this.value.toLowerCase().trim();
+            document.querySelectorAll('#rptStudentTable tbody tr').forEach(function(row) {
+                var n = (row.getAttribute('data-name') || '').toLowerCase();
+                row.style.display = n.indexOf(q) >= 0 ? '' : 'none';
+            });
+        });
+    }
+    document.querySelectorAll('#rptStudentTable th[data-sort]').forEach(function(th) {
+        th.addEventListener('click', function() {
+            var key = th.getAttribute('data-sort');
+            var tbody = document.querySelector('#rptStudentTable tbody');
+            var rows = Array.from(tbody.querySelectorAll('tr'));
+            var asc = th.dataset.asc !== 'true';
+            th.dataset.asc = asc;
+            rows.sort(function(a, b) {
+                var va = key === 'name'
+                    ? (a.getAttribute('data-name') || '')
+                    : parseFloat(a.getAttribute('data-' + key) || '0');
+                var vb = key === 'name'
+                    ? (b.getAttribute('data-name') || '')
+                    : parseFloat(b.getAttribute('data-' + key) || '0');
+                if (typeof va === 'string') return asc ? va.localeCompare(vb) : vb.localeCompare(va);
+                return asc ? va - vb : vb - va;
+            });
+            rows.forEach(function(r) { tbody.appendChild(r); });
+        });
+    });
+    {{/is_teacher}}
+
+    // ── Dynamic color for attendance/grade pills ──
+    document.querySelectorAll('.rpt-att-pill, .rpt-grade-pill').forEach(function(pill) {
+        var v = parseFloat(pill.getAttribute('data-val') || '0');
+        if (v >= 80)      { pill.style.background = 'rgba(16,185,129,0.18)';  pill.style.color = '#047857'; }
+        else if (v >= 50) { pill.style.background = 'rgba(245,158,11,0.18)';  pill.style.color = '#92400e'; }
+        else              { pill.style.background = 'rgba(239,68,68,0.18)';   pill.style.color = '#991b1b'; }
+    });
+});
+</script>

@@ -1,0 +1,55 @@
+<div class="istikama-section" dir="auto">
+    <div class="isti-action-row">
+        <a class="isti-btn isti-btn-primary" href="{{corecontenturl}}">
+            <i class="fa fa-cloud"></i> {{#str}}digitalcontent, local_istikama_admin{{/str}}
+        </a>
+        <a class="isti-btn isti-btn-outline" href="{{corequestionbankurl}}">
+            <i class="fa fa-question-circle"></i> {{#str}}quizbank, local_istikama_admin{{/str}}
+        </a>
+        <a class="isti-btn isti-btn-secondary" href="{{corequizcreateurl}}">
+            <i class="fa fa-puzzle-piece"></i> {{#str}}activities, local_istikama_admin{{/str}}
+        </a>
+    </div>
+
+    {{> local_istikama_admin/content_upload }}
+
+    <div class="isti-card isti-mb-lg">
+        <div class="isti-card-header">
+            <h5><i class="fa fa-check-circle"></i> {{#str}}validation, local_istikama_admin{{/str}}</h5>
+        </div>
+        <div class="isti-card-body" style="padding:0">
+            <div class="table-responsive">
+                <table class="isti-table">
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>{{#str}}actions, local_istikama_admin{{/str}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#contentitems}}
+                        <tr>
+                            <td><strong>{{filename}}</strong></td>
+                            <td>{{category}}</td>
+                            <td>
+                                {{#statuspending}}<span class="isti-badge isti-badge-warning">{{#str}}pending, local_istikama_admin{{/str}}</span>{{/statuspending}}
+                                {{#statusapproved}}<span class="isti-badge isti-badge-success">{{#str}}approved, local_istikama_admin{{/str}}</span>{{/statusapproved}}
+                            </td>
+                            <td>
+                                <div class="isti-action-row">
+                                    <a class="isti-btn isti-btn-success isti-btn-sm" href="{{approveurl}}"><i class="fa fa-check"></i> Approve</a>
+                                    <a class="isti-btn isti-btn-sm" style="background:var(--warning);color:#fff;border-color:var(--warning)" href="{{pendingurl}}"><i class="fa fa-clock"></i> Set pending</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/contentitems}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {{> local_istikama_admin/quiz_bank }}
+</div>

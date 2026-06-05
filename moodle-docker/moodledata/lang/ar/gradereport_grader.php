@@ -1,0 +1,57 @@
+<?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'gradereport_grader', language 'ar', version '5.1'.
+ *
+ * @package     gradereport_grader
+ * @category    string
+ * @copyright   1999 Ayoub Ben Chahla and contributors
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+$string['advancedgrading'] = 'معاينة {$a} من النتائج';
+$string['aria:dropdowncolumns'] = 'أعمدة مطوية تم العثور عليها';
+$string['cellactions'] = 'إجراءات الخلية';
+$string['clearsearch'] = 'إخلاء خانة البحث من المستخدمين';
+$string['collapsedcolumns'] = 'الأعمدة المطوية <span class="badge rounded-pill bg-primary text-white ms-1" data-collapse="count">{$a}</span>';
+$string['editingmode_title'] = 'تحرير تقرير المقيِّم';
+$string['eventgradereportviewed'] = 'تقرير مقيم تمت معاينته';
+$string['grader:manage'] = 'إدارة تقرير المقيم';
+$string['grader:view'] = 'معاينة تقرير المقيم';
+$string['overriddengrade'] = 'علامة تم تجاوزها';
+$string['pluginname'] = 'تقرير المُقِّيم';
+$string['preferences'] = 'تفضيلات تقرير المقيم';
+$string['privacy:metadata:preference:grade_report_aggregationposition'] = 'فيما إذا كان ينبغي عَرض عمودَي إجمالي التصنيف وإجمالي المقرر عند بداية التقرير أو نهايته';
+$string['privacy:metadata:preference:grade_report_averagesdecimalpoints'] = 'عدد المراتب العشرية المستعملة لعرض المتوسطات، أو فيما إذا كان إعداد المراتب العشرية العمومي للتصنيف أو عنصر التقييم هو المستعمل (وراثة)';
+$string['privacy:metadata:preference:grade_report_averagesdisplaytype'] = 'فيما إذا كان المتوسط (المعدل) معروضاً بقيمه الحقيقية، نسبه المئوية، أو بالحروف، أو أن طريقة العرض للتصنيف أو عنصر التقييم هي المستعملة (وراثة)';
+$string['privacy:metadata:preference:grade_report_grader_collapsed_categories'] = 'قائمة تصنيفات سجل التقديرات القابلة للطي';
+$string['privacy:metadata:preference:grade_report_meanselection'] = 'فيما إذا كان ينبغي تضمين الخلايا غير الحاوية على تقديرات عند احتساب المتوسط (المعدل) لكل تصنيف أو عنصر تقييم';
+$string['privacy:metadata:preference:grade_report_quickgrading'] = 'فيما إذا كان ينبغي عرض مربع إدخال لكل ردجة مما يسمح بتحرير العديد من التقديرات في نفس الوقت';
+$string['privacy:metadata:preference:grade_report_rangesdecimalpoints'] = 'عدد المراتب العشرية المستعملة لعرض كل مدى، أو فيما إذا كان إعداد المراتب العشرية العمومي للتصنيف أو عنصر التقييم هو المستعمل (وراثة)';
+$string['privacy:metadata:preference:grade_report_rangesdisplaytype'] = 'فيما إذا كان المدى معروضاً بقيمه الحقيقية، نسبه المئوية، أو بالحروف، أو أن طريقة العرض للتصنيف أو عنصر التقييم هي المستعملة (وراثة)';
+$string['privacy:metadata:preference:grade_report_showaverages'] = 'فيما إذا كان ينبغي عرض سطر إضافي يحتوي على المتوسط (المعدل) لكل تصنيف أو عنصر تقييم';
+$string['privacy:metadata:preference:grade_report_shownumberofgrades'] = 'فيما إذا كان ينبغي عرض الأقواس المضلعة بعد كل متوسط للدلالة على عدد القيم المستعملة في حسابه';
+$string['privacy:metadata:preference:grade_report_showonlyactiveenrol'] = 'فيما إذا كان تقرير سجل التقديرات يقتصر على عرض ذوي الانضمامات النشطة (وليس المعلقين) أو كل المنضمين';
+$string['privacy:metadata:preference:grade_report_showranges'] = 'فيما إذا كان ينبغي عرض سطر إضافي يحتوي على المدى لكل تصنيف أو عنصر تقييم';
+$string['privacy:metadata:preference:grade_report_showuserimage'] = 'فيما إذا كان ينبغي إظهار صورة المستخدم بجوار اسمه';
+$string['privacy:metadata:preference:grade_report_studentsperpage'] = 'عدد الطلبة المعروضين في الصفحة في تقرير المقيِّم';
+$string['privacy:request:preference:grade_report_grader_collapsed_categories'] = 'لديك بعض التصنيفات المطوية في سجل التقديرات للمساق الدراسي "{$a->name}"';
+$string['reopencolumn'] = 'توسيع عمود {$a}';
+$string['summarygrader'] = 'جدول فيه أسماء الطلاب في العمود الأول مع النشاطات القابلة للتقييم منظمة في مجموعات حسب المساق والتصنيف عند رأسه.';
+$string['useractivitygrade'] = 'علامة {$a}';
