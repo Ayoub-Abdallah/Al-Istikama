@@ -4,6 +4,8 @@
 
 ### Centralized Educational Management Platform
 
+*Developed by me for Istikama schools*
+
 **Multi-school administration · Digital learning · Academic excellence**
 
 [![Platform](https://img.shields.io/badge/platform-Moodle%205.1-orange)](https://moodle.org)
@@ -19,19 +21,11 @@
 
 ## Overview
 
-**Istikama** is a centralized educational management platform that streamlines the
-complete lifecycle of school operations — from organizational structure and user
-enrollment to digital content delivery, academic assessment, attendance, and parent
-engagement.
+**Istikama** is a centralized educational management platform, developed by me for **Istikama schools**, that streamlines the complete lifecycle of school operations — from organizational structure and user enrollment to digital content delivery, academic assessment, attendance, and parent engagement.
 
-Purpose-built for **private school networks**, Istikama unifies administration,
-pedagogy, and communication into a single platform with **role-based dashboards** for
-every stakeholder. It is delivered as a tightly-integrated **Moodle 5.1** distribution
-composed of a custom plugin and theme, deployed via Docker.
+Purpose-built for **private school networks**, Istikama unifies administration, pedagogy, and communication into a single platform with **role-based dashboards** for every stakeholder. It is delivered as a tightly-integrated **Moodle 5.1** distribution composed of a custom plugin and theme, deployed via Docker.
 
-It scales to **500 schools**, **10,000 users**, and **5,000 digital content items** from
-a single deployment, with first-class **Arabic (RTL)**, **English**, and **French**
-localization.
+It scales to **500 schools**, **10,000 users**, and **5,000 digital content items** from a single deployment, with first-class **Arabic (RTL)**, **English**, and **French** localization.
 
 ---
 
@@ -54,10 +48,9 @@ localization.
 
 ## Architecture
 
-Istikama is a **Moodle distribution**: the Moodle core provides the LMS foundation, and
-all product-specific behavior lives in a custom plugin and theme.
+Istikama is a **Moodle distribution**: the Moodle core provides the LMS foundation, and all product-specific behavior lives in a custom plugin and theme.
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────┐
 │  Browser (responsive — phone · tablet · desktop, LTR + RTL)        │
 └───────────────────────────────┬──────────────────────────────────┘
@@ -66,14 +59,15 @@ all product-specific behavior lives in a custom plugin and theme.
 │  moodle_app  (moodlehq/moodle-php-apache:8.2)                      │
 │  ┌──────────────────────────────────────────────────────────────┐ │
 │  │  Moodle 5.1 core  (document root: /var/www/html/public)       │ │
-│  │   ├── local/istikama_admin   ← business logic, pages, AJAX    │ │
-│  │   └── theme/istikama         ← dashboard shell, layouts, CSS  │ │
+│  │   ├── local/istikama_admin    ← business logic, pages, AJAX    │ │
+│  │   └── theme/istikama          ← dashboard shell, layouts, CSS  │ │
 │  └──────────────────────────────────────────────────────────────┘ │
 └───────────────────────────────┬──────────────────────────────────┘
                                  │ mysqli
 ┌───────────────────────────────▼──────────────────────────────────┐
-│  moodle_db  (mysql:8.4)   ·   moodledata (file storage, on host)  │
+│  moodle_db  (mysql:8.4)  ·   moodledata (file storage, on host)  │
 └──────────────────────────────────────────────────────────────────┘
+
 ```
 
 ### Components
@@ -89,20 +83,20 @@ all product-specific behavior lives in a custom plugin and theme.
 
 ## Tech Stack
 
-- **LMS core:** Moodle `5.1.3+` (build 20260320, branch 501)
-- **Runtime:** PHP `8.2` (Apache), via `moodlehq/moodle-php-apache:8.2`
-- **Database:** MySQL `8.4`
-- **Front end:** Server-rendered PHP + Mustache templates, vanilla JS, Chart.js, custom CSS design system
-- **Orchestration:** Docker Compose
-- **Plugin:** `local_istikama_admin` v0.23.0 · **Theme:** `theme_istikama`
+* **LMS core:** Moodle `5.1.3+` (build 20260320, branch 501)
+* **Runtime:** PHP `8.2` (Apache), via `moodlehq/moodle-php-apache:8.2`
+* **Database:** MySQL `8.4`
+* **Front end:** Server-rendered PHP + Mustache templates, vanilla JS, Chart.js, custom CSS design system
+* **Orchestration:** Docker Compose
+* **Plugin:** `local_istikama_admin` v0.23.0 · **Theme:** `theme_istikama`
 
 ---
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) **20.10+**
-- [Docker Compose](https://docs.docker.com/compose/) **v2+** (`docker compose`)
-- ~4 GB free disk, ports **8080** (app) and **3306** (internal) available
+* [Docker](https://docs.docker.com/get-docker/) **20.10+**
+* [Docker Compose](https://docs.docker.com/compose/) **v2+** (`docker compose`)
+* ~4 GB free disk, ports **8080** (app) and **3306** (internal) available
 
 ---
 
@@ -110,7 +104,7 @@ all product-specific behavior lives in a custom plugin and theme.
 
 ```bash
 # 1. Clone
-git clone https://github.com/Ayoub-Abdallah/Al-Istikama.git
+git clone [https://github.com/Ayoub-Abdallah/Al-Istikama.git](https://github.com/Ayoub-Abdallah/Al-Istikama.git)
 cd Al-Istikama
 
 # 2. Start the stack (PHP/Apache + MySQL)
@@ -131,6 +125,7 @@ docker exec -it istikama-moodle_app \
 # 4. Purge caches
 docker exec -it istikama-moodle_app \
   php /var/www/html/public/admin/cli/purge_caches.php
+
 ```
 
 Then open **http://localhost:8080** and sign in with the admin credentials from step 3.
@@ -142,7 +137,7 @@ Then open **http://localhost:8080** and sign in with the admin credentials from 
 
 ### Service configuration
 
-Defined in [`docker-compose.yml`](docker-compose.yml):
+Defined in [`docker-compose.yml`](https://www.google.com/search?q=docker-compose.yml):
 
 | Service | Image | Port | Notes |
 | --- | --- | --- | --- |
@@ -153,7 +148,7 @@ Defined in [`docker-compose.yml`](docker-compose.yml):
 
 ## Project Structure
 
-```
+```text
 .
 ├── docker-compose.yml                 # Two-service stack definition
 ├── README.md
@@ -173,6 +168,7 @@ Defined in [`docker-compose.yml`](docker-compose.yml):
     │           ├── templates/          #   dashboard_layout, frontpage
     │           └── style/              #   theme CSS
     └── moodledata/                    # Moodle file storage (runtime)
+
 ```
 
 ### Custom database tables
@@ -197,18 +193,19 @@ docker exec istikama-moodle_app php /var/www/html/public/admin/cli/purge_caches.
 
 # Run any Moodle CLI (e.g. DB upgrade after a plugin version bump)
 docker exec -it istikama-moodle_app php /var/www/html/public/admin/cli/upgrade.php
+
 ```
 
 **Conventions**
 
-- User-facing strings live in `lang/{ar,en,fr}/local_istikama_admin.php` and are read via
-  `get_string('key', 'local_istikama_admin')` / `{{#str}}key, local_istikama_admin{{/str}}`.
-- After editing a stylesheet referenced with a `?v=NN` cache-buster (e.g.
-  `istikama_admin.css?v=NN` in `theme/istikama/templates/dashboard_layout.mustache`),
-  bump `NN` and purge caches.
-- The platform is fully responsive — a global responsive layer at the end of
-  `local/istikama_admin/styles/istikama_admin.css` handles tables, grids, modals and
-  layouts across all breakpoints (320 px → 1440 px), LTR and RTL.
+* User-facing strings live in `lang/{ar,en,fr}/local_istikama_admin.php` and are read via
+`get_string('key', 'local_istikama_admin')` / `{{#str}}key, local_istikama_admin{{/str}}`.
+* After editing a stylesheet referenced with a `?v=NN` cache-buster (e.g.
+`istikama_admin.css?v=NN` in `theme/istikama/templates/dashboard_layout.mustache`),
+bump `NN` and purge caches.
+* The platform is fully responsive — a global responsive layer at the end of
+`local/istikama_admin/styles/istikama_admin.css` handles tables, grids, modals and
+layouts across all breakpoints (320 px → 1440 px), LTR and RTL.
 
 ---
 
@@ -218,22 +215,27 @@ docker exec -it istikama-moodle_app php /var/www/html/public/admin/cli/upgrade.p
 > This repository is a **development environment** and intentionally contains the local
 > `config.php`, `moodledata/`, and Docker default credentials for convenience. **Before
 > any production or shared deployment:**
-> - Rotate all credentials (`docker-compose.yml` DB passwords, the Moodle admin password).
-> - Replace `moodle-docker/moodle/config.php` (`$CFG->dbpass`, `$CFG->passwordsaltmain`,
->   `$CFG->wwwroot`) with production values and keep it out of version control.
-> - Do not commit `moodledata/` (runtime state, sessions, uploaded files) in production.
-> - Serve over HTTPS behind a reverse proxy.
+> * Rotate all credentials (`docker-compose.yml` DB passwords, the Moodle admin password).
+> * Replace `moodle-docker/moodle/config.php` (`$CFG->dbpass`, `$CFG->passwordsaltmain`,
+> `$CFG->wwwroot`) with production values and keep it out of version control.
+> * Do not commit `moodledata/` (runtime state, sessions, uploaded files) in production.
+> * Serve over HTTPS behind a reverse proxy.
+> 
+> 
 
 ---
 
-## License
+## License & Contact
 
-- **Moodle core** is distributed under the **GNU GPL v3** — see `moodle-docker/moodle/COPYING.txt`.
-- The `local_istikama_admin` plugin and `theme_istikama` theme are Moodle plugins and,
-  as derivative works of Moodle, are likewise **GPL v3**.
+This platform features custom, proprietary software developed exclusively for **Istikama Schools**. 
 
+* **Custom Extensions:** The `local_istikama_admin` plugin, `theme_istikama` theme, and custom deployment architectures are the intellectual property of **Ayoub Abdallah**. Commercial use, external distribution, or unauthorized deployment of this platform is strictly prohibited.
+* **Moodle Core Component:** The underlying Moodle core framework bundled within this distribution remains subject to its original open-source **GNU GPL v3** terms.
+
+For any deployment permissions, technical integration requests, or system access, you must contact the lead engineer directly:
+
+* **Lead Engineer:** Ayoub Abdallah
+* **GitHub:** [@Ayoub-Abdallah](https://github.com/Ayoub-Abdallah)
+* **Email:** ayoubabdallah.dev@gmail.com <!-- Replace with your actual email -->
+* **Phone/Telegram:** +213 792 975 400 <!-- Replace or remove if not wanted -->
 ---
-
-<div align="center">
-<sub>Istikama — Empowering schools with intelligent administration, digital learning & academic excellence.</sub>
-</div>
