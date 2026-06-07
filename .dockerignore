@@ -1,0 +1,28 @@
+# Git directories
+.git
+moodle-docker/moodle/.git
+moodle-docker/.git
+
+# Runtime/ephemeral data
+moodle-docker/moodledata/sessions
+moodle-docker/moodledata/cache
+moodle-docker/moodledata/localcache
+moodle-docker/moodledata/temp
+moodle-docker/moodledata/trashdir
+moodle-docker/moodledata/muc
+
+# Documentation and assets not needed in container
+*.pdf
+assets/
+.claude/
+.gemini/
+README.md
+ISTIKAMA_Technical_File.md
+
+# PHPUnit (not needed in production)
+moodle-docker/moodle/.phpunit.cache
+moodle-docker/moodle/phpunit.xml
+moodle-docker/moodle/phpunit.xml.dist
+
+# Node/Grunt (not needed in production)
+moodle-docker/moodle/node_modules
