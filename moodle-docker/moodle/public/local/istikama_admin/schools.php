@@ -480,12 +480,34 @@ if ($canmanage) {
 if ($canmanage) {
     // We pass global levels for the inline creator.
     $gl_options_json = json_encode($global_levels);
-    
+
+    // Strings used by the modal's client-side JS, passed as a JSON map so the
+    // markup the script builds at runtime is localised too.
+    $assignsub_js = json_encode([
+        'loading_subjects' => get_string('assignsub_loading_subjects', 'local_istikama_admin'),
+        'none'             => get_string('assignsub_none', 'local_istikama_admin'),
+        'load_failed'      => get_string('assignsub_load_failed', 'local_istikama_admin'),
+        'name_required'    => get_string('assignsub_name_required', 'local_istikama_admin'),
+        'creating'         => get_string('assignsub_creating', 'local_istikama_admin'),
+        'created'          => get_string('assignsub_created', 'local_istikama_admin'),
+        'reused'           => get_string('assignsub_reused', 'local_istikama_admin'),
+        'failed'           => get_string('assignsub_failed', 'local_istikama_admin'),
+        'network_error'    => get_string('assignsub_network_error', 'local_istikama_admin'),
+        'info_class'       => get_string('assignsub_info_class', 'local_istikama_admin'),
+        'info_level'       => get_string('assignsub_info_level', 'local_istikama_admin'),
+        'info_school'      => get_string('assignsub_info_school', 'local_istikama_admin'),
+        'no_classes'       => get_string('assignsub_no_classes', 'local_istikama_admin'),
+        'processing'       => get_string('assignsub_processing', 'local_istikama_admin'),
+        'success'          => get_string('assignsub_success', 'local_istikama_admin'),
+        'select_one'       => get_string('assignsub_select_one', 'local_istikama_admin'),
+        'error'            => get_string('assignsub_error', 'local_istikama_admin'),
+    ], JSON_UNESCAPED_UNICODE);
+
     echo '<div class="istikama-modal-overlay" id="istikama-subject-modal" style="display:none;">
     <div class="istikama-modal-container" style="max-width: 600px;">
         <div class="istikama-modal-header">
             <div class="istikama-modal-title-group">
-                <h3 id="istikama-smodal-title"><i class="fa fa-tags"></i> Assign Subjects</h3>
+                <h3 id="istikama-smodal-title"><i class="fa fa-tags"></i> ' . get_string('assignsub_title', 'local_istikama_admin') . '</h3>
                 <span class="istikama-modal-subtitle" id="istikama-smodal-subtitle"></span>
             </div>
             <button class="istikama-modal-close" id="istikama-smodal-close">&times;</button>
@@ -493,38 +515,38 @@ if ($canmanage) {
         <div class="istikama-modal-body" id="istikama-smodal-body">
             <div class="istikama-modal-loading" id="istikama-smodal-loading" style="display:none;">
                 <div class="istikama-spinner"></div>
-                <span>Loading...</span>
+                <span>' . get_string('assignsub_loading', 'local_istikama_admin') . '</span>
             </div>
             <div id="istikama-smodal-content">
                 <div class="alert alert-info small" id="istikama-smodal-info"></div>
                 
                 <div class="istikama-cascade-group mb-3" style="display:none;" id="istikama-smodal-selectors">
                     <div class="istikama-form-field">
-                        <label>Target School</label>
-                        <select id="ism-s-school" class="form-control form-select"><option value="">Select School</option></select>
+                        <label>' . get_string('assignsub_target_school', 'local_istikama_admin') . '</label>
+                        <select id="ism-s-school" class="form-control form-select"><option value="">' . get_string('select_school', 'local_istikama_admin') . '</option></select>
                     </div>
                     <div class="istikama-form-field">
-                        <label>Target Level</label>
-                        <select id="ism-s-level" class="form-control form-select" disabled><option value="">Select Level</option></select>
+                        <label>' . get_string('assignsub_target_level', 'local_istikama_admin') . '</label>
+                        <select id="ism-s-level" class="form-control form-select" disabled><option value="">' . get_string('select_level', 'local_istikama_admin') . '</option></select>
                     </div>
                     <div class="istikama-form-field" id="ism-s-class-container">
-                        <label>Target Class</label>
-                        <select id="ism-s-class" class="form-control form-select" disabled><option value="">Select Class</option></select>
+                        <label>' . get_string('assignsub_target_class', 'local_istikama_admin') . '</label>
+                        <select id="ism-s-class" class="form-control form-select" disabled><option value="">' . get_string('select_class', 'local_istikama_admin') . '</option></select>
                     </div>
                 </div>
 
                 <div class="istikama-form-field">
-                    <label>Subjects</label>
+                    <label>' . get_string('subjects', 'local_istikama_admin') . '</label>
                     <div class="istikama-subject-chips" id="istikama-smodal-tags">
-                        <span class="text-muted small">Loading subjects...</span>
+                        <span class="text-muted small">' . get_string('assignsub_loading_subjects', 'local_istikama_admin') . '</span>
                     </div>
-                    <small class="text-muted mt-1 d-block">Selected subjects will be assigned to all targets. Missing subjects will be auto-created.</small>
+                    <small class="text-muted mt-1 d-block">' . get_string('assignsub_help', 'local_istikama_admin') . '</small>
                 </div>
 
                 <div class="mt-4 pt-3 border-top">
-                    <h6>Create New Dynamic Subject</h6>
+                    <h6>' . get_string('assignsub_create_new', 'local_istikama_admin') . '</h6>
                     <div class="input-group input-group-sm mb-2">
-                        <input type="text" id="ism-new-subject-name" class="form-control" placeholder="Subject Name...">
+                        <input type="text" id="ism-new-subject-name" class="form-control" placeholder="' . get_string('assignsub_name_ph', 'local_istikama_admin') . '">
                         <div class="input-group-append">
                             <button class="btn btn-outline-primary" type="button" id="ism-create-subject-btn"><i class="fa fa-plus text-primary"></i></button>
                         </div>
@@ -536,9 +558,9 @@ if ($canmanage) {
         <div class="istikama-modal-footer">
             <div id="istikama-smodal-feedback" class="istikama-modal-feedback" style="display:none;"></div>
             <div class="istikama-modal-actions">
-                <button class="btn istikama-btn-cancel" id="istikama-smodal-cancel-btn">Close</button>
+                <button class="btn istikama-btn-cancel" id="istikama-smodal-cancel-btn">' . get_string('assignsub_close', 'local_istikama_admin') . '</button>
                 <button class="btn istikama-btn-save" id="istikama-smodal-save-btn">
-                    <i class="fa fa-check"></i> Assign &amp; Create
+                    <i class="fa fa-check"></i> ' . get_string('assignsub_save', 'local_istikama_admin') . '
                 </button>
             </div>
         </div>
@@ -563,6 +585,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var currentId = 0;
     var AJAX_URL = M.cfg.wwwroot + "/local/istikama_admin/ajax.php";
     var SESSKEY = M.cfg.sesskey;
+    var STR = ' . $assignsub_js . ';
     
     var rawHierarchy = ' . json_encode($hierarchy) . '; // Pass hierarchy down
     var targetClassIds = [];
@@ -581,12 +604,12 @@ document.addEventListener("DOMContentLoaded", function() {
     // Render subjective tags based loosely on context
     function fetchAndRenderTags(selectId = null) {
         var container = document.getElementById("istikama-smodal-tags");
-        container.innerHTML = "<div class=\'spinner-border spinner-border-sm text-primary\'></div> Loading subjects...";
+        container.innerHTML = "<div class=\'spinner-border spinner-border-sm text-primary\'></div> " + STR.loading_subjects;
         
         var url = AJAX_URL + "?action=getglobaltags&targetcatid=" + currentId + "&context=" + currentContext + "&sesskey=" + SESSKEY;
         fetch(url).then(function(r) { return r.json(); }).then(function(tags) {
             if (tags.length === 0) {
-                container.innerHTML = "<span class=\'text-muted small\'>No subjects found for this level. Create one below.</span>";
+                container.innerHTML = "<span class=\'text-muted small\'>" + STR.none + "</span>";
                 return;
             }
             var html = "";
@@ -605,7 +628,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             });
         }).catch(function(err) {
-            container.innerHTML = "<span class=\'text-danger small\'>Failed to load targets.</span>";
+            container.innerHTML = "<span class=\'text-danger small\'>" + STR.load_failed + "</span>";
         });
     }
 
@@ -618,13 +641,13 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!name) {
             fback.style.display = "block";
             fback.className = "small mt-1 text-danger";
-            fback.textContent = "Please provide a Subject Name.";
+            fback.textContent = STR.name_required;
             return;
         }
 
         fback.style.display = "block";
         fback.className = "small mt-1 text-info";
-        fback.textContent = "Creating...";
+        fback.textContent = STR.creating;
 
         var formData = new FormData();
         formData.append("action", "createsubject");
@@ -640,20 +663,20 @@ document.addEventListener("DOMContentLoaded", function() {
                     nameInp.value = "";
                     fback.className = "small mt-1 text-success";
                     if (result.is_new) {
-                        fback.textContent = "Created " + result.name + "!";
+                        fback.textContent = STR.created.replace("{name}", result.name);
                     } else {
-                        fback.textContent = "Reused existing tag: " + result.name + "!";
+                        fback.textContent = STR.reused.replace("{name}", result.name);
                     }
                     // Retrigger tags and pass the newly created/reused ID to auto-select it
                     fetchAndRenderTags(result.id);
                     setTimeout(function() { fback.style.display = "none"; }, 3000);
                 } else {
                     fback.className = "small mt-1 text-danger";
-                    fback.textContent = result.error || "Failed";
+                    fback.textContent = result.error || STR.failed;
                 }
             }).catch(function() {
                 fback.className = "small mt-1 text-danger";
-                fback.textContent = "Network error";
+                fback.textContent = STR.network_error;
             });
     });
 
@@ -710,11 +733,11 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             
             modalSubtitle.textContent = name;
-            modalInfo.innerHTML = "Assigning subjects to " + (currentContext === "class" ? "this class" : (currentContext === "level" ? "all classes in this level" : "all classes in this school"));
+            modalInfo.innerHTML = (currentContext === "class" ? STR.info_class : (currentContext === "level" ? STR.info_level : STR.info_school));
             
             targetClassIds = flattenClasses(currentContext, currentId);
             if (targetClassIds.length === 0) {
-                modalInfo.innerHTML = "<span class=\'text-danger\'>No classes found in this target to assign subjects to.</span>";
+                modalInfo.innerHTML = "<span class=\'text-danger\'>" + STR.no_classes + "</span>";
                 saveBtn.disabled = true;
             } else {
                 saveBtn.disabled = false;
@@ -735,13 +758,13 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         
         if (selectedSubjects.length === 0) {
-            showFeedback("Please select at least one subject.", "error");
+            showFeedback(STR.select_one, "error");
             return;
         }
         if (targetClassIds.length === 0) return;
         
         saveBtn.disabled = true;
-        saveBtn.innerHTML = \'<i class="fa fa-spinner fa-spin"></i> Processing...\';
+        saveBtn.innerHTML = \'<i class="fa fa-spinner fa-spin"></i> \' + STR.processing;
         
         var payload = {
             classids: targetClassIds,
@@ -757,18 +780,18 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(function(r) { return r.json(); })
             .then(function(result) {
                 if (result.success) {
-                    showFeedback("Successfully assigned subjects! Created " + result.createdcount + " new courses.", "success");
+                    showFeedback(STR.success.replace("{count}", result.createdcount), "success");
                     setTimeout(function() { window.location.reload(); }, 1500);
                 } else {
                     saveBtn.disabled = false;
-                    saveBtn.innerHTML = \'<i class="fa fa-check"></i> Assign &amp; Create\';
-                    showFeedback(result.error || "An error occurred", "error");
+                    saveBtn.innerHTML = \'<i class="fa fa-check"></i> \' + ' . json_encode(get_string('assignsub_save', 'local_istikama_admin'), JSON_UNESCAPED_UNICODE) . ';
+                    showFeedback(result.error || STR.error, "error");
                 }
             })
             .catch(function(err) {
                 saveBtn.disabled = false;
-                saveBtn.innerHTML = \'<i class="fa fa-check"></i> Assign &amp; Create\';
-                showFeedback("Network error", "error");
+                saveBtn.innerHTML = \'<i class="fa fa-check"></i> \' + ' . json_encode(get_string('assignsub_save', 'local_istikama_admin'), JSON_UNESCAPED_UNICODE) . ';
+                showFeedback(STR.network_error, "error");
             });
     });
     

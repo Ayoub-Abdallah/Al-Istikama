@@ -235,7 +235,7 @@ $dir = right_to_left() ? 'rtl' : 'ltr';
                         <th><?= get_string('support_table_priority', 'local_istikama_admin') ?></th>
                         <th><?= get_string('support_table_status',   'local_istikama_admin') ?></th>
                         <th><?= get_string('support_table_updated',  'local_istikama_admin') ?></th>
-                        <th class="isti-th-right">Actions</th>
+                        <th class="isti-th-right"><?= get_string('support_table_actions', 'local_istikama_admin') ?></th>
                     </tr></thead>
                     <tbody>
                     <?php foreach ($rows as $r): ?>
@@ -244,7 +244,7 @@ $dir = right_to_left() ? 'rtl' : 'ltr';
                                 <span class="isti-cell-id">#<?= (int)$r['id'] ?></span>
                                 <span class="isti-cell-title"><?= s($r['subject']) ?></span>
                                 <?php if ($r['message_count'] > 0): ?>
-                                    <span class="isti-cell-meta"><i class="fa fa-comment"></i> <?= (int)$r['message_count'] ?> replies</span>
+                                    <span class="isti-cell-meta"><i class="fa fa-comment"></i> <?= (int)$r['message_count'] ?> <?= get_string('support_replies_count', 'local_istikama_admin') ?></span>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -375,7 +375,7 @@ $dir = right_to_left() ? 'rtl' : 'ltr';
                     </div>
                 </div>
                 <div class="isti-modal-footer">
-                    <button type="button" class="isti-btn isti-btn-outline" id="newTicketModalCancel">Cancel</button>
+                    <button type="button" class="isti-btn isti-btn-outline" id="newTicketModalCancel"><?= get_string('support_cancel', 'local_istikama_admin') ?></button>
                     <button type="submit" class="isti-btn isti-btn-primary">
                         <i class="fa fa-paper-plane"></i> <?= get_string('support_create_btn', 'local_istikama_admin') ?>
                     </button>

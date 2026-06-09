@@ -1581,3 +1581,38 @@ $string['sq_no_questions_yet']='No questions yet'; $string['sq_add_first']='Add 
 $string['sq_points_prefix']='Points: '; $string['sq_remove']='Remove';
 
 $string['t_lbl_activity_name']='Activity Name'; $string['t_lbl_class']='Class'; $string['t_lbl_description']='Description'; $string['t_lbl_activity']='Activity'; $string['t_lbl_lesson']='Lesson';
+
+// ── Assign Subjects modal (schools.php) ─────────────────────────────────────
+$string['assignsub_title']            = 'Assign Subjects';
+$string['assignsub_loading']          = 'Loading...';
+$string['assignsub_target_school']    = 'Target School';
+$string['assignsub_target_level']     = 'Target Level';
+$string['assignsub_target_class']     = 'Target Class';
+$string['assignsub_loading_subjects'] = 'Loading subjects...';
+$string['assignsub_help']             = 'Selected subjects will be assigned to all targets. Missing subjects will be auto-created.';
+$string['assignsub_create_new']       = 'Create New Dynamic Subject';
+$string['assignsub_name_ph']          = 'Subject Name...';
+$string['assignsub_close']            = 'Close';
+$string['assignsub_save']             = 'Assign & Create';
+$string['assignsub_none']             = 'No subjects found for this level. Create one below.';
+$string['assignsub_load_failed']      = 'Failed to load targets.';
+$string['assignsub_name_required']    = 'Please provide a Subject Name.';
+$string['assignsub_creating']         = 'Creating...';
+$string['assignsub_created']          = 'Created {name}!';
+$string['assignsub_reused']           = 'Reused existing tag: {name}!';
+$string['assignsub_failed']           = 'Failed';
+$string['assignsub_network_error']    = 'Network error';
+$string['assignsub_info_class']       = 'Assigning subjects to this class';
+$string['assignsub_info_level']       = 'Assigning subjects to all classes in this level';
+$string['assignsub_info_school']      = 'Assigning subjects to all classes in this school';
+$string['assignsub_no_classes']       = 'No classes found in this target to assign subjects to.';
+$string['assignsub_processing']       = 'Processing...';
+$string['assignsub_success']          = 'Successfully assigned subjects! Created {count} new courses.';
+$string['assignsub_select_one']       = 'Please select at least one subject.';
+$string['assignsub_error']            = 'An error occurred';
+
+// ── Support page extras (support.php) ───────────────────────────────────────
+$string['support_table_actions'] = 'Actions';
+$string['support_replies_count'] = 'replies';
+$string['support_cancel_btn']    = 'Cancel';
+$string['support_close']         = 'Close';
